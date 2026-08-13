@@ -12,6 +12,74 @@ listed as not existing rather than demonstrated with fake data.
 
 ---
 
+## The real-world asset
+
+The asset is **a named carrier's contractual obligation to perform a specific
+delivery** — in v1, a parcel from **Port Harcourt to Lagos**, at a quoted rate,
+within a stated service window, fulfilled through Shipbubble. That obligation
+already exists off-chain as an ordinary commercial commitment. RouteLock makes it
+a transferable instrument.
+
+**What the token is a claim on.** One `ServiceEntitlement` (ERC-721) represents
+one unit of a *class* — a specific route, weight band, and service level, sold by
+a specific registered issuer, under terms whose signed document is committed
+on-chain as `termsHash`. Holding the token is holding that issuer's promise to
+move one parcel on those terms.
+
+**Why it is an asset and not a voucher.** Two things back it, and both are
+enforced by the contracts rather than promised in prose:
+
+- **Collateral precedes issuance.** The issuer must post `payoutObligation` per
+  unit into `SettlementEscrow` *before* any entitlement of that class can be
+  minted. `EntitlementFactory.mint` reverts with `InsufficientCollateral` if
+  backing does not cover the obligation after the mint, so an uncollateralized
+  entitlement is not merely discouraged — it is unreachable. Collateral can be
+  withdrawn only down to, never below, outstanding obligations.
+- **The buyer's payment is escrowed, not paid.** Funds go from the buyer into
+  `SettlementEscrow` at purchase and are released to the issuer only when the
+  carrier produces a real label, recorded by the backend oracle from the carrier's
+  own API response. **Compliance approving an activation releases nothing.** If
+  the parcel is refused, remedied, or expires, the buyer is refunded.
+
+So the holder has a claim that is economically backed if honoured *and* if
+defaulted on, which is what distinguishes it from a prepaid credit.
+
+**Why it is transferable.** Before parcel data is bound to it, the token is
+generic — it names a route and a service level, nothing about any person. It can
+be resold, gifted, or held as inventory by a freight broker. The moment a
+consignee and parcel are attached, transfers lock permanently: moving it
+afterwards would either leak the recipient's details to whoever received the
+token, or let a shipment the carrier has already accepted be redirected.
+
+**Why delivery is only the first adapter.** The contracts never mention parcels,
+carriers, or customs. They describe a service commitment identified by a class
+and a terms hash, with an off-chain adapter handling fulfilment. The same
+deployed contracts back a pallet-month of bonded warehousing, a cold-chain
+window, an hour of machine time, or a freight slot, without a redeploy. Delivery
+is the adapter that proves the primitive works against a real counterparty.
+
+### What is not yet true of the asset
+
+This section exists because the claim above is the part most worth being
+sceptical of, and the honest position today is narrower than the design.
+
+- **No issuer agreement exists.** Whether Shipbubble permits platform or
+  third-party shipment creation through their API has not been confirmed in
+  writing. That written confirmation is the foundation of the RWA claim, and it
+  has not been obtained.
+- **No real carrier commitment is bound to the deployment yet.** The live
+  contracts on X Layer testnet currently hold **zero registered issuers, zero
+  classes, zero entitlements, and zero fulfilment receipts** — verifiable by
+  calling `totalMinted()` and `totalReceipts()` on the addresses below. The
+  machinery is real and live; nothing has been issued through it.
+- **No shipment has been purchased.** Zero of the five available live shipments
+  have been used, and the carrier adapter is not built.
+
+Until those three are resolved, RouteLock is a working, deployed settlement and
+compliance layer for a real-world service obligation — not yet a tokenized one.
+
+---
+
 ## What works today
 
 - **Four-target chain configuration, verified against the live networks.** Chain
@@ -26,14 +94,15 @@ listed as not existing rather than demonstrated with fake data.
 
 | Chain environment | Carrier credentials | Money |
 |---|---|---|
-| X Layer / BOT Chain **testnet** | Shipbubble **sandbox** key | none |
-| X Layer / BOT Chain **mainnet** | Shipbubble **live** key | real |
+| X Layer **testnet** | Shipbubble **sandbox** key | none |
+| X Layer **mainnet** | Shipbubble **live** key | real |
+| BOT Chain **testnet** | Shipbubble **sandbox** key | none |
+| BOT Chain **mainnet** | Shipbubble **live** key | real |
 
 - **The contract set, with 159 passing tests at 100% branch coverage.**
-  `ServiceEntitlement`
-  (ERC-721 lifecycle plus the transfer lock), `EntitlementFactory` (issuers,
-  classes, collateral-backed purchase), `SettlementEscrow`, `ActivationRegistry`,
-  and a soulbound `FulfilmentReceipt`.
+  `ServiceEntitlement` (ERC-721 lifecycle plus the transfer lock),
+  `EntitlementFactory` (issuers, classes, collateral-backed purchase),
+  `SettlementEscrow`, `ActivationRegistry`, and a soulbound `FulfilmentReceipt`.
 
   Two properties are enforced structurally rather than by convention:
 
@@ -53,34 +122,52 @@ listed as not existing rather than demonstrated with fake data.
   verifies everything and writes nothing, so a simulation cannot leave behind a
   file that reads as a real deployment.
 
-- **A live deployment on X Layer testnet**, 13 August 2026, block 38195716:
+## Deployments
 
-  | Contract | Address |
-  |---|---|
-  | `ServiceEntitlement` | `0x8A9A92a5Cd3c1eF2D2F0b5cD67E33e73949C992b` |
-  | `SettlementEscrow` | `0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83` |
-  | `EntitlementFactory` | `0x366544F805e10e7320779d138Cca57FA0E4c5cdf` |
-  | `ActivationRegistry` | `0x38D8a1e9bC45378E4019320ECa4fc5431BeF40Bb` |
-  | `FulfilmentReceipt` | `0x83Ee9a4d2A3f0851DDD022A114663524694571C4` |
+### X Layer testnet — live
 
-  The central guarantee is checkable on that deployment right now, without
-  trusting this README. Simulating a grant of `COMPLIANCE_ROLE` on the escrow
-  **as the contract's own admin** reverts with `ComplianceRoleForbiddenHere()`,
-  while the same call for `ORACLE_ROLE` succeeds:
+Chain 1952, deployed 13 August 2026 at block 38195716.
+Addresses: [`deployments/xlayer_testnet.json`](deployments/xlayer_testnet.json).
+Transaction records: [`packages/contracts/broadcast/Deploy.s.sol/1952/`](packages/contracts/broadcast/Deploy.s.sol/1952/).
 
-  ```bash
-  cast call --rpc-url https://testrpc.xlayer.tech \
-    --from 0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6 \
-    0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83 \
-    'grantRole(bytes32,address)' \
-    $(cast keccak COMPLIANCE_ROLE) \
-    0xA30D83117470c884fB3C35532d2a49Bc65B0922a
-  # reverts: 0xa3dd6e91 == ComplianceRoleForbiddenHere()
-  ```
+| Contract | Address |
+|---|---|
+| `ServiceEntitlement` | `0x8A9A92a5Cd3c1eF2D2F0b5cD67E33e73949C992b` |
+| `SettlementEscrow` | `0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83` |
+| `EntitlementFactory` | `0x366544F805e10e7320779d138Cca57FA0E4c5cdf` |
+| `ActivationRegistry` | `0x38D8a1e9bC45378E4019320ECa4fc5431BeF40Bb` |
+| `FulfilmentReceipt` | `0x83Ee9a4d2A3f0851DDD022A114663524694571C4` |
+
+Settlement token: USD₮0 `0x9e29b3AaDa05Bf2D2c827Af80Bd28Dc0b9b4FB0c`, 6 decimals.
+
+**Check the central guarantee yourself**, without trusting this README.
+Simulating a grant of `COMPLIANCE_ROLE` on the escrow **as the contract's own
+admin** reverts, while the same call for `ORACLE_ROLE` from the same caller
+succeeds — so the refusal is specific to the compliance role, not a broken call:
+
+```bash
+cast call --rpc-url https://testrpc.xlayer.tech \
+  --from 0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6 \
+  0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83 \
+  'grantRole(bytes32,address)' \
+  $(cast keccak COMPLIANCE_ROLE) \
+  0xA30D83117470c884fB3C35532d2a49Bc65B0922a
+# reverts: 0xa3dd6e91 == ComplianceRoleForbiddenHere()
+```
+
+### X Layer mainnet — not deployed
+
+Deliberately. A mainnet contract set with no compliance engine and no carrier
+adapter behind it would be an address, not a product.
+
+### BOT Chain testnet — not deployed
+
+Blocked on testnet gas. Deploy costs ~0.21 tBOT there, because BOT Chain gas is
+20 gwei against X Layer's 0.02.
+
+### BOT Chain mainnet — not deployed
 
 ## Not finished yet
-
-**Not deployed to BOT Chain testnet or either mainnet.**
 
 **Not built at all:** the compliance engine, the carrier adapter, the attestation
 and replay endpoint, the frontend, and the classification benchmark. These are
@@ -113,6 +200,13 @@ to the OP Stack. Both of OKX's own testnet RPCs report 1952, and
 pnpm install
 pnpm verify:chains    # re-verify all four chains against live RPC
 pnpm test             # run the suite
+```
+
+Deploying:
+
+```bash
+./scripts/deploy.sh xlayer_testnet               # simulate, writes nothing
+./scripts/deploy.sh botchain_testnet --broadcast # deploy for real
 ```
 
 Requires Node 20+, pnpm, and Foundry.
