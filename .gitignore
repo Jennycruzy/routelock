@@ -1,0 +1,24 @@
+node_modules/
+dist/
+build/
+out/
+cache/
+.next/
+coverage/
+*.tsbuildinfo
+
+# Secrets — never commit. Carrier keys and deployer keys live only in .env.
+.env
+.env.*
+!.env.example
+
+# Foundry
+packages/contracts/out/
+packages/contracts/cache/
+packages/contracts/broadcast/*/dry-run/
+
+# Carrier artifacts contain consignee PII and label PDFs — keep them off GitHub.
+artifacts/carrier/
+*.pdf
+
+.DS_Store
