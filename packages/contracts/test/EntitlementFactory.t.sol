@@ -273,4 +273,75 @@ contract EntitlementFactoryTest is RouteLockBase {
         vm.expectRevert(EntitlementFactory.ZeroAddress.selector);
         new EntitlementFactory(admin, address(entitlement), address(0));
     }
+
+    function test_registerZeroIssuerReverts() public {
+        vm.prank(admin);
+        vm.expectRevert(EntitlementFactory.ZeroAddress.selector);
+        factory.registerIssuer(address(0));
+    }
+
+    /// @notice Pausing is the issuer's own control over their own classes.
+    ///         Neither a stranger nor the protocol admin may pause for them.
+    function test_onlyClassIssuerPausesTheClass() public {
+        _createClass();
+
+        address[2] memory outsiders = [stranger, admin];
+        for (uint256 i = 0; i < outsiders.length; i++) {
+            vm.prank(outsiders[i]);
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    EntitlementFactory.NotClassIssuer.selector, CLASS_ID, outsiders[i]
+                )
+            );
+            factory.pauseClass(CLASS_ID, true);
+        }
+
+        assertFalse(factory.getClass(CLASS_ID).paused);
+    }
+
+    function test_pauseClassOnUnknownClassReverts() public {
+        bytes32 unknown = keccak256("no-such-class");
+
+        vm.prank(issuer);
+        vm.expectRevert(abi.encodeWithSelector(EntitlementFactory.NoSuchClass.selector, unknown));
+        factory.pauseClass(unknown, true);
+    }
+
+    function test_issuerCanUnpauseTheirOwnClass() public {
+        _createClass();
+        _fundCollateral(OBLIGATION * MAX_SUPPLY);
+
+        vm.prank(issuer);
+        factory.pauseClass(CLASS_ID, true);
+        assertTrue(factory.getClass(CLASS_ID).paused);
+
+        vm.prank(issuer);
+        factory.pauseClass(CLASS_ID, false);
+        assertFalse(factory.getClass(CLASS_ID).paused);
+
+        _buy(buyer); // selling resumes
+    }
+
+    // ---------------------------------------------------------------------
+    // IEntitlementClasses — the read surface other contracts depend on
+    // ---------------------------------------------------------------------
+
+    /// @notice `ServiceEntitlement.expire` reads `classValidUntil` through this
+    ///         interface, so the three views are asserted directly rather than
+    ///         only via the one caller that happens to use one of them.
+    function test_classViewsReportTheClass() public {
+        _createClass();
+
+        assertEq(factory.classIssuer(CLASS_ID), issuer);
+        assertEq(factory.classValidUntil(CLASS_ID), validUntil);
+        assertTrue(factory.classExists(CLASS_ID));
+    }
+
+    function test_classViewsOnUnknownClassReturnEmpty() public view {
+        bytes32 unknown = keccak256("no-such-class");
+
+        assertEq(factory.classIssuer(unknown), address(0));
+        assertEq(factory.classValidUntil(unknown), 0);
+        assertFalse(factory.classExists(unknown), "unknown class reported as existing");
+    }
 }

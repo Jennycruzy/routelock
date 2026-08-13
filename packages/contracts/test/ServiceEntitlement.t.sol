@@ -6,6 +6,8 @@ import {ServiceEntitlement} from "../src/ServiceEntitlement.sol";
 import {ActivationRegistry, Verdict} from "../src/ActivationRegistry.sol";
 import {EntitlementState, Roles} from "../src/RouteLockTypes.sol";
 import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 /// @notice Every edge of the state machine, in both directions: the transitions
 ///         that must succeed, and the ones that must revert.
@@ -407,5 +409,21 @@ contract ServiceEntitlementTest is RouteLockBase {
     function test_constructor_rejectsZeroAdmin() public {
         vm.expectRevert(ServiceEntitlement.ZeroAddress.selector);
         new ServiceEntitlement("x", "x", address(0));
+    }
+
+    function test_setClasses_rejectsZeroFactory() public {
+        ServiceEntitlement fresh = new ServiceEntitlement("x", "x", admin);
+        vm.prank(admin);
+        vm.expectRevert(ServiceEntitlement.ZeroAddress.selector);
+        fresh.setClasses(address(0));
+
+        assertEq(address(fresh.classes()), address(0));
+    }
+
+    function test_supportsBothInterfaces() public view {
+        assertTrue(entitlement.supportsInterface(type(IERC721).interfaceId));
+        assertTrue(entitlement.supportsInterface(type(IAccessControl).interfaceId));
+        assertTrue(entitlement.supportsInterface(type(IERC165).interfaceId));
+        assertFalse(entitlement.supportsInterface(bytes4(0xdeadbeef)));
     }
 }
