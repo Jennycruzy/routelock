@@ -11,6 +11,8 @@ via_ir = false
 # pnpm links dependencies out of the workspace root store, so the compiler has to
 # be allowed to read through those symlinks.
 allow_paths = ["../../node_modules"]
+# Deploy.s.sol writes one address file per chain. Nothing else is writable.
+fs_permissions = [{access = "read-write", path = "../../deployments"}]
 
 [profile.default.fuzz]
 runs = 512

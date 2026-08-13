@@ -15,7 +15,9 @@ coverage/
 # Foundry
 packages/contracts/out/
 packages/contracts/cache/
-packages/contracts/broadcast/*/dry-run/
+# Dry runs only. Real broadcast records stay tracked — they carry the tx hashes
+# and timestamps that evidence the testnet-before-mainnet sequence.
+packages/contracts/broadcast/**/dry-run/
 
 # Carrier artifacts contain consignee PII and label PDFs — keep them off GitHub.
 artifacts/carrier/
