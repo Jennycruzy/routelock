@@ -280,4 +280,166 @@ contract SettlementEscrowTest is RouteLockBase {
         vm.expectRevert(SettlementEscrow.ZeroAddress.selector);
         new SettlementEscrow(address(0));
     }
+
+    // =====================================================================
+    // The escrow's own guards, called as the factory calls them
+    // =====================================================================
+    //
+    // These paths are unreachable through `EntitlementFactory`, which validates
+    // first. They are tested by pranking as the factory address, because the
+    // escrow must not depend on its caller having checked — it is the contract
+    // holding the money, and a second factory could be wired to it tomorrow.
+
+    function test_classCannotBeRegisteredTwice() public {
+        _createClass();
+
+        vm.prank(address(factory));
+        vm.expectRevert(
+            abi.encodeWithSelector(SettlementEscrow.ClassAlreadyRegistered.selector, CLASS_ID)
+        );
+        escrow.registerClass(CLASS_ID, issuer, address(token), OBLIGATION);
+    }
+
+    /// @notice A re-registration must not be able to redirect an existing
+    ///         class's payouts to a different issuer or a different token.
+    function test_reRegistrationCannotRepointAnExistingClass() public {
+        _createClass();
+        _fundCollateral(OBLIGATION);
+
+        vm.prank(address(factory));
+        vm.expectRevert(
+            abi.encodeWithSelector(SettlementEscrow.ClassAlreadyRegistered.selector, CLASS_ID)
+        );
+        escrow.registerClass(CLASS_ID, stranger, address(token), OBLIGATION);
+
+        (address escrowIssuer,,, uint256 collateral,,) = escrow.classEscrow(CLASS_ID);
+        assertEq(escrowIssuer, issuer, "class issuer was repointed");
+        assertEq(collateral, OBLIGATION, "collateral survived under the wrong issuer");
+    }
+
+    function test_registerClassRejectsZeroIssuer() public {
+        vm.prank(address(factory));
+        vm.expectRevert(SettlementEscrow.ZeroAddress.selector);
+        escrow.registerClass(keccak256("zero-issuer"), address(0), address(token), OBLIGATION);
+    }
+
+    /// @notice A zero settlement token would make every later transfer call an
+    ///         address with no code, which silently succeeds for some patterns.
+    function test_registerClassRejectsZeroToken() public {
+        vm.prank(address(factory));
+        vm.expectRevert(SettlementEscrow.ZeroAddress.selector);
+        escrow.registerClass(keccak256("zero-token"), issuer, address(0), OBLIGATION);
+    }
+
+    function test_recordMintOnUnregisteredClassReverts() public {
+        bytes32 unknown = keccak256("never-registered");
+
+        vm.prank(address(factory));
+        vm.expectRevert(abi.encodeWithSelector(SettlementEscrow.UnknownClass.selector, unknown));
+        escrow.recordMint(1, unknown, buyer, PRICE);
+    }
+
+    // =====================================================================
+    // Collateral withdrawal edges
+    // =====================================================================
+
+    function test_withdrawFromUnknownClassReverts() public {
+        bytes32 unknown = keccak256("never-registered");
+
+        vm.prank(issuer);
+        vm.expectRevert(abi.encodeWithSelector(SettlementEscrow.UnknownClass.selector, unknown));
+        escrow.withdrawCollateral(unknown, 1);
+    }
+
+    /// @dev Checked before the issuer check, so an unknown class does not leak
+    ///      whether the caller would have been authorised on a real one.
+    function test_unknownClassChecksBeforeAuthorisation() public {
+        bytes32 unknown = keccak256("never-registered");
+
+        vm.prank(stranger);
+        vm.expectRevert(abi.encodeWithSelector(SettlementEscrow.UnknownClass.selector, unknown));
+        escrow.withdrawCollateral(unknown, 1);
+    }
+
+    function test_withdrawZeroCollateralReverts() public {
+        _createClass();
+        _fundCollateral(OBLIGATION);
+
+        vm.prank(issuer);
+        vm.expectRevert(SettlementEscrow.ZeroAmount.selector);
+        escrow.withdrawCollateral(CLASS_ID, 0);
+
+        (,,, uint256 collateral,,) = escrow.classEscrow(CLASS_ID);
+        assertEq(collateral, OBLIGATION);
+    }
+
+    function test_withdrawMoreThanPostedReverts() public {
+        _createClass();
+        _fundCollateral(OBLIGATION);
+
+        vm.prank(issuer);
+        vm.expectRevert(); // arithmetic underflow on collateral - amount
+        escrow.withdrawCollateral(CLASS_ID, OBLIGATION + 1);
+    }
+
+    // =====================================================================
+    // Zero-price classes
+    // =====================================================================
+
+    /// @notice A free entitlement still carries a real payout obligation.
+    ///
+    /// Price and obligation are independent: an issuer may give a slot away and
+    /// still owe the holder if they fail to honour it. The escrow must take no
+    /// payment, and must still refuse to mint uncollateralized.
+    function test_zeroPriceClassStillRequiresCollateral() public {
+        bytes32 freeClass = keccak256("PHC-LOS-FREE");
+        vm.prank(issuer);
+        factory.createClass(freeClass, TERMS_HASH, address(token), 0, OBLIGATION, validUntil, MAX_SUPPLY);
+
+        vm.prank(buyer);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                SettlementEscrow.InsufficientCollateral.selector, freeClass, 0, OBLIGATION
+            )
+        );
+        factory.mint(freeClass, buyer);
+    }
+
+    function test_zeroPriceMintTakesNoPayment() public {
+        bytes32 freeClass = keccak256("PHC-LOS-FREE");
+        vm.prank(issuer);
+        factory.createClass(freeClass, TERMS_HASH, address(token), 0, OBLIGATION, validUntil, MAX_SUPPLY);
+
+        token.mint(issuer, OBLIGATION);
+        vm.startPrank(issuer);
+        token.approve(address(escrow), OBLIGATION);
+        escrow.postCollateral(freeClass, OBLIGATION);
+        vm.stopPrank();
+
+        uint256 escrowBefore = token.balanceOf(address(escrow));
+
+        // The buyer holds nothing and has approved nothing.
+        vm.prank(buyer);
+        uint256 tokenId = factory.mint(freeClass, buyer);
+
+        assertEq(entitlement.ownerOf(tokenId), buyer);
+        assertEq(token.balanceOf(address(escrow)), escrowBefore, "escrow pulled funds for a free mint");
+
+        (,, uint256 amount, bool settled) = escrow.deposits(tokenId);
+        assertEq(amount, 0);
+        assertFalse(settled);
+
+        // And refunding a zero deposit is a no-op that still discharges the
+        // obligation, rather than a transfer of nothing that reverts.
+        vm.prank(oracle);
+        escrow.refundBuyer(tokenId);
+
+        (,,, bool settledAfter) = escrow.deposits(tokenId);
+        assertTrue(settledAfter);
+        assertEq(token.balanceOf(buyer), 0);
+
+        vm.prank(issuer);
+        escrow.withdrawCollateral(freeClass, OBLIGATION);
+        assertEq(token.balanceOf(issuer), OBLIGATION, "obligation not discharged by the refund");
+    }
 }
