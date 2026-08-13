@@ -29,7 +29,8 @@ listed as not existing rather than demonstrated with fake data.
 | X Layer / BOT Chain **testnet** | Shipbubble **sandbox** key | none |
 | X Layer / BOT Chain **mainnet** | Shipbubble **live** key | real |
 
-- **The contract set, compiling with 71 passing tests.** `ServiceEntitlement`
+- **The contract set, with 159 passing tests at 100% branch coverage.**
+  `ServiceEntitlement`
   (ERC-721 lifecycle plus the transfer lock), `EntitlementFactory` (issuers,
   classes, collateral-backed purchase), `SettlementEscrow`, `ActivationRegistry`,
   and a soulbound `FulfilmentReceipt`.
@@ -44,15 +45,25 @@ listed as not existing rather than demonstrated with fake data.
     them, because transferring afterwards would either leak the consignee's
     details or let an accepted shipment be redirected.
 
+- **A deployment script that refuses more than it accepts.** It picks the
+  settlement token from the chain id rather than the environment, reads
+  `decimals()` before trusting the token, aborts on any chain id it has not
+  verified, and asserts the whole role graph — including that the escrow still
+  rejects `COMPLIANCE_ROLE` — before recording a single address. A dry run
+  verifies everything and writes nothing, so a simulation cannot leave behind a
+  file that reads as a real deployment. Simulated clean against X Layer testnet
+  and BOT Chain testnet.
+
 ## Not finished yet
 
-**Contract test coverage is incomplete and the README will say so until it is
-not.** `ActivationRegistry` is at 20% branch coverage and `FulfilmentReceipt` at
-0% — neither has a dedicated test file. The spec's target of 100% on state
-transitions and access control is not yet met.
+**Nothing has been deployed.** The script above has never been broadcast; there
+is no funded deployer key yet, so there are no live contract addresses to show.
 
-Also not built: the compliance engine, carrier adapter, attestation and replay
-endpoint, frontend, deployment scripts, and the classification benchmark. See
+**Not built at all:** the compliance engine, the carrier adapter, the attestation
+and replay endpoint, the frontend, and the classification benchmark. These are
+blocked on credentials — a Shipbubble sandbox key and an inference credential —
+and nothing has been stubbed in their place, because a simulated feature
+presented as working would be worse than an absent one. See
 [`PROGRESS.md`](PROGRESS.md).
 
 ## Verified networks

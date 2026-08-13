@@ -86,20 +86,65 @@ Two design decisions worth not re-litigating:
   `Refused` are all committed on-chain with the same decision hash treatment, so
   the on-chain record is not a biased log of successes.
 
-**71 tests passing, 0 failing.** Coverage as measured, not as hoped:
+**159 tests passing, 0 failing.** Coverage as measured:
 
 | File | % Branches | % Lines |
 |---|---|---|
-| `ServiceEntitlement.sol` | 90.91% | 96.83% |
-| `EntitlementFactory.sol` | 88.89% | 93.75% |
-| `SettlementEscrow.sol` | 70.59% | 98.72% |
-| `ActivationRegistry.sol` | **20.00%** | 58.00% |
-| `FulfilmentReceipt.sol` | **0.00%** | 21.05% |
+| `ServiceEntitlement.sol` | 100% | 100% |
+| `EntitlementFactory.sol` | 100% | 100% |
+| `SettlementEscrow.sol` | 100% | 100% |
+| `ActivationRegistry.sol` | 100% | 100% |
+| `FulfilmentReceipt.sol` | 100% | 100% |
 
-The spec's target is 100% branch coverage on state transitions and access
-control, so this is **not yet met**. `ActivationRegistry` and `FulfilmentReceipt`
-have no dedicated test files — they are currently exercised only indirectly
-through the shared fixture's helpers.
+The spec's target — 100% branch coverage on state transitions and access
+control — **is met**. Every contract also reaches 100% on lines, statements and
+functions.
+
+Three things found while closing the gaps, worth not rediscovering:
+
+- The escrow's uncovered branches were not the "zero-amount and already-settled
+  edges" an earlier note guessed at. They were the guards the factory happens to
+  validate *first*: duplicate class registration, zero issuer/token, and
+  unknown-class withdrawal. They are tested by pranking as the factory address,
+  because the contract holding the money must not depend on its caller having
+  checked — a second factory could be wired to it later.
+- `ActivationRegistry.publishTracking`'s `NoActivation` guard is unreachable
+  through a single registry, since delivery implies submission. It is covered by
+  wiring a *second* registry to the same entitlement, which is exactly the
+  situation the guard exists for.
+- A zero-price class is reachable: the factory does not require a non-zero
+  price, and price and payout obligation are independent. A free entitlement
+  still carries a real obligation and still cannot be minted uncollateralized.
+
+### Deployment script — written, tested, simulated against two live chains
+
+`script/Deploy.s.sol` performs the exact wiring in `test/RouteLockBase.t.sol`.
+What it refuses to do is the substance of it:
+
+- **Settlement token comes from the chain, not the environment.** The address is
+  selected by `block.chainid` from the four verified values, so a typo in a shell
+  variable cannot point a deployment at the wrong token. An unrecognised chain id
+  reverts — including **195**, the stale X Layer testnet id that directories
+  still publish.
+- **The token is read before it is trusted**: no code at the address, or a
+  `decimals()` other than 6, aborts the deploy. The codelength check is explicit
+  because a high-level call to a codeless address reverts *without data*, which
+  `try/catch` cannot turn into a named error.
+- **The role graph is asserted after wiring**, including the negative half — that
+  compliance holds nothing on the escrow and that the escrow still rejects
+  `COMPLIANCE_ROLE` outright.
+- **A dry run records nothing.** Simulation produces the same addresses a
+  broadcast would, at contracts that do not exist; writing them would leave a
+  file in `deployments/` indistinguishable from a real deployment. Only
+  `--broadcast` writes `deployments/<chain>.json`.
+- Admin handover is built: deploy with the deployer as admin (the wiring calls
+  are admin-gated), then grant to `ROUTELOCK_ADMIN` and renounce, grants before
+  renounces so a part-way failure leaves the contracts administrable.
+
+Simulated clean against **X Layer testnet (1952)** and **BOT Chain testnet
+(968)** on 2026-08-13 — both real settlement tokens answered `decimals() = 6`
+over live RPC. Estimated deploy cost: ~10.48M gas (~0.00042 OKB at 0.04 gwei).
+No broadcast has been made: there is no funded deployer key on this box.
 
 ### Blocked on a human
 
@@ -110,26 +155,33 @@ deployer wallets.
 
 ### Next — resume here
 
-1. **Write `test/ActivationRegistry.t.sol`.** The largest coverage gap and the
-   most important untested surface, since it is where refusal is recorded. Cases
-   to cover: only the token holder may `submitParcel`; only `COMPLIANCE_ROLE` may
-   `recordDecision`; `Verdict.None` and an empty `engineVersion` both revert; a
-   decision on a token that is not `PendingReview` reverts; resubmission after a
-   refusal increments `attempt` and clears the stale `decisionHash`; a refusal
-   still stores its decision hash; `recordCarrier` is oracle-only and
-   state-gated; `publishTracking` only succeeds once `Delivered`.
+The on-chain half is finished and tested. **Everything remaining is blocked on a
+credential this box does not have** — see `HANDOFF.md` §4. Listed in the order
+they unblock work:
 
-2. **Write `test/FulfilmentReceipt.t.sol`** — soulbound transfer reverts, minting
-   is oracle-only, a second receipt for the same entitlement reverts.
+1. **Deploy to X Layer testnet, then BOT Chain testnet** — the script is ready
+   and simulated; it needs a funded deployer key. X Layer's eligibility gate
+   requires testnet **before** mainnet with provable timestamps, so the broadcast
+   records under `packages/contracts/broadcast/` are evidence and stay tracked in
+   git (only `dry-run/` is ignored).
 
-3. **Close the remaining escrow branches** (70.59%) — the untaken paths are
-   mostly zero-amount and already-settled edges.
+2. `CarrierAdapter` interface + `ShipbubbleAdapter` against the **free**
+   endpoints only — address validation and rate quotes, PHC→LOS. Blocked on a
+   sandbox key.
 
-4. **Deployment script** `script/Deploy.s.sol` performing the exact wiring in
-   `test/RouteLockBase.t.sol`, writing addresses to `deployments/<chain>.json`.
-
-5. `CarrierAdapter` interface + `ShipbubbleAdapter` against the **free** endpoints
-   only — address validation and rate quotes, PHC→LOS. Blocked on a sandbox key.
-
-6. Locate and document the Shipbubble cancellation endpoint and its refund
+3. Locate and document the Shipbubble cancellation endpoint and its refund
    behaviour **before** any live purchase.
+
+4. **Compliance engine** (`packages/compliance`) — blocked on an inference
+   credential. There is no LLM API key on this box and none in the repo. The
+   package is empty; nothing has been stubbed, because a compliance engine that
+   cannot perform real inference is exactly the kind of simulated feature §1.2
+   forbids.
+
+5. **Benchmark** (`bench/`) — 200–300 real product descriptions with ground-truth
+   HS codes, reporting top-1 accuracy, refusal precision, and a calibration
+   curve. Depends on (4). This is the differentiator; the contingency order is to
+   shrink it, never drop it.
+
+Empty and untouched: `packages/{compliance,carrier,attest}`, `apps/{web,api}`,
+`bench/`. Nothing in them is stubbed or scaffolded with placeholder behaviour.

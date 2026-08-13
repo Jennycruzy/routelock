@@ -118,30 +118,67 @@ Day 1 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 BOT Chain testnet faucet: `https://faucet.botchain.ai/basic` — 10 tBOT per address
 per 24h. Testnet explorer `https://scan.bohr.life`, mainnet `https://scan.botchain.ai`.
 
-### Contracts — written, compiling, 71 tests passing
+### Contracts — complete, 159 tests passing, 100% branch coverage
 
 All five contracts from spec §4 exist under `packages/contracts/src`. Solidity
 0.8.28, OpenZeppelin 5.6.1 via pnpm rather than git submodules, so a clone needs
 only `pnpm install` and `forge build`.
 
-**Coverage is honestly incomplete.** `ActivationRegistry` sits at 20% branch
-coverage and `FulfilmentReceipt` at 0% — neither has a dedicated test file yet.
-The other three are at 71–91%. The spec's 100%-on-state-transitions target is
-**not met**; `PROGRESS.md` lists the exact cases to write, in order.
+**The spec's coverage target is met**: 100% branches, lines, statements and
+functions on all five contracts. Every state transition and every access-control
+edge is exercised, in both the succeeding and the reverting direction.
 
-Two things not to undo when picking this back up:
+Three things not to undo when picking this back up:
 
 - `SettlementEscrow._grantRole` **reverts** on `COMPLIANCE_ROLE`. The compliance
   service cannot be granted authority over funds by any admin at any point. This
   is deliberate and is the structural form of "the AI never moves money".
 - `Verdict` is a three-way enum (`Approved` / `NeedsInformation` / `Refused`),
   not a bool, so refusals are committed on-chain with the same treatment as
-  approvals.
+  approvals. The test suite mirrors this — refusal and needs-information paths
+  are written out separately rather than parameterised, so a regression names
+  the verdict it broke.
+- The deploy script asserts the role graph *including its negative half* and
+  re-attempts the forbidden `COMPLIANCE_ROLE` grant on every deployment. That
+  assertion failing means the central guarantee has been lost; it is not noise.
+
+### Deployment script — ready, never broadcast
+
+`packages/contracts/script/Deploy.s.sol`, with `test/Deploy.t.sol` exercising it
+under `forge test` so the deploy path is not first tried against a real chain.
+Simulated clean against X Layer testnet (1952) and BOT Chain testnet (968) on
+2026-08-13. **No broadcast has been made — there is no funded deployer key here.**
+
+```bash
+cd /root/routelock/packages/contracts
+export ROUTELOCK_ADMIN=0x…       # ends up holding ADMIN_ROLE
+export ROUTELOCK_ORACLE=0x…      # backend signer; writes carrier-sourced facts
+export ROUTELOCK_COMPLIANCE=0x…  # records decisions, moves no money
+
+# Verify without deploying — writes nothing:
+forge script script/Deploy.s.sol:Deploy --rpc-url $XLAYER_TESTNET_RPC
+
+# Deploy for real, and record deployments/<chain>.json:
+forge script script/Deploy.s.sol:Deploy --rpc-url $XLAYER_TESTNET_RPC \
+  --broadcast --private-key $DEPLOYER_KEY
+```
+
+The settlement token is chosen by `block.chainid` from the four verified
+addresses, never read from the environment — a shell typo cannot repoint a
+deployment. An unrecognised chain id aborts, **including 195**, the stale X Layer
+testnet id. A dry run deliberately writes no address file, because simulated
+addresses in `deployments/` would be indistinguishable from a real deployment.
+
+Broadcast records under `packages/contracts/broadcast/` are **tracked in git** —
+they carry the tx hashes and timestamps that evidence X Layer's
+testnet-before-mainnet requirement. Only `dry-run/` subdirectories are ignored.
 
 ### Not started
 
-Compliance engine, carrier adapter, attestation package, frontend, benchmark,
-deployment script. See `PROGRESS.md` for the running state.
+Compliance engine, carrier adapter, attestation package, frontend, benchmark.
+All four are blocked on credentials — see §4. Nothing in them has been stubbed
+or scaffolded with placeholder behaviour; the directories are empty. See
+`PROGRESS.md` for the running state.
 
 ---
 
@@ -201,6 +238,22 @@ These cannot be resolved from this box and are listed in the order they block wo
    For X Layer testnet, the faucet at `0xf6d088123a3c17e6047ae9338b8cf072ad448907`
    dispenses USD₮0, USDC_TEST and USDG — fund the demo buyer wallet from it.
 
+   This is now the top blocker: the deploy script is written, tested and
+   simulated clean against both testnets. A funded key is the only thing between
+   here and a real testnet deployment, which is itself a hard eligibility gate.
+   Budget ~0.00042 OKB per deployment (~10.48M gas at 0.04 gwei) — trivial, but
+   the wallet must exist. Also decide the three role addresses:
+   `ROUTELOCK_ADMIN`, `ROUTELOCK_ORACLE`, `ROUTELOCK_COMPLIANCE`. The oracle key
+   is the backend signer and will be used unattended by the cron, so it should
+   not be the same key as admin.
+
+7. **An inference credential for the compliance engine.** There is no LLM API key
+   on this box and none in the repo, so `packages/compliance` cannot be started —
+   the engine is the one component that cannot be written against anything but a
+   real model, and the benchmark depends on it. This blocks the project's stated
+   differentiator, so it is worth resolving early even though it sits behind the
+   carrier work in the plan.
+
 ---
 
 ## 5. Commands
@@ -214,8 +267,8 @@ pnpm --filter @routelock/chain test         # environment-pairing + config tests
 
 cd packages/contracts
 forge build
-forge test                                  # 71 passing
-forge coverage --report summary             # shows the two untested contracts
+forge test                                  # 159 passing
+forge coverage --report summary             # 100% branches on all five contracts
 
 git log --format='%an <%ae>' -20            # identity check before any push
 ```
