@@ -30,7 +30,13 @@ force-pushing, because the author line is part of the commit hash.
 Note the easy confusion: this VPS's hostname is also `Jennycruzy`. The box and the
 GitHub account are the same identity — there is nothing to translate between them.
 
-### 1.2 No AI attribution — anywhere, ever
+### 1.2 Commit messages: short and clean
+
+A one-line subject, and a body only when a reader needs one — two or three lines,
+not paragraphs. **No phase or milestone labels** ("Phase 1", "Day 2", "Step 3").
+The history records changes, not the project plan.
+
+### 1.3 No AI attribution — anywhere, ever
 
 Commit messages carry a subject and a body. Nothing else.
 
@@ -53,13 +59,13 @@ git log -20 --format=%B | grep -inE 'claude|anthropic|co-authored|generated with
 hackathons are reviewed in part by AI judges. An AI-attribution trailer on every
 commit reads as a generated project rather than an engineered one.
 
-### 1.3 Build on the VPS, push from the VPS
+### 1.4 Build on the VPS, push from the VPS
 
 RouteLock is built here, on this box, at `/root/routelock`, and pushed to GitHub
 from here. It is not built locally and uploaded. Contract deployments, the
 compliance cron, and the API all run from this host.
 
-### 1.4 The engineering rules that shape the code
+### 1.5 The engineering rules that shape the code
 
 From §1.2 of the specification, restated because they get tested under time pressure:
 

@@ -47,9 +47,13 @@ export const CHAINS = {
     settlement: {
       kind: "unresolved",
       reason:
-        "No stablecoin confirmed on X Layer testnet as of 2026-08-13. Resolve before " +
-        "day-2 testnet deploy: either locate an OKX-published test USDT or deploy a " +
-        "RouteLock test ERC-20 and document it as such in the README.",
+        "No spendable stablecoin found on X Layer testnet as of 2026-08-13. A USD Coin " +
+        "(USDC, 6dp) contract does exist at 0x74b7F16337b8972027F6196A17a631aC6dE26d22, " +
+        "but its totalSupply is 0 — nothing has ever been minted, so no account can hold " +
+        "or pay with it. No USDT contract was found at any address that resolves on this " +
+        "chain. Resolve before the testnet deploy: either obtain a faucet token and " +
+        "configure its real address, or deploy a RouteLock test ERC-20 and label it " +
+        "plainly as such in the README. See docs/chain-verification.md.",
     },
     env: "test",
     carrierMode: "sandbox",

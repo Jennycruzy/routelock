@@ -47,20 +47,55 @@ X Layer mainnet, confirmed the same way:
 
 USDT is configured as the settlement token for consistency with BOT Chain.
 
-## Unresolved
+## X Layer testnet chain ID: 1952, not 195
 
-**X Layer testnet has no confirmed settlement token.** Nothing has been
-configured for it. `requireSettlementToken()` throws when asked for it and
-`verify:chains` reports it as a failing check, rather than defaulting to a zero
-address or a guessed one.
+Third-party listings (thirdweb among them) still give X Layer testnet as chain ID
+**195**. That value is stale — it predates X Layer's migration to the OP Stack.
+Both of OKX's own testnet endpoints report **1952**:
 
-Two acceptable resolutions before the day-2 testnet deploy:
+```
+https://testrpc.xlayer.tech      ->  "0x7a0"  = 1952
+https://xlayertestrpc.okx.com    ->  "0x7a0"  = 1952
+```
 
-1. Locate an OKX-published test USDT on X Layer testnet and configure it.
+`195` is `0xc3`, which neither endpoint returns. Configuring 195 would produce
+signature-verification failures on every transaction, so `verify:chains` asserts
+the chain ID against the live RPC on every run specifically to catch this class
+of stale-documentation error.
+
+## Unresolved: X Layer testnet settlement token
+
+**No spendable stablecoin was found on X Layer testnet.** Every candidate was
+probed directly against `testrpc.xlayer.tech`:
+
+| Address probed | Source of the claim | Result on chain 1952 |
+|---|---|---|
+| `0x74b7F16337b8972027F6196A17a631aC6dE26d22` | X Layer mainnet USDC | **`USD Coin` / `USDC` / 6 dp — but `totalSupply` is 0** |
+| `0x1E4a5963aBFD975d8c9021ce480b42188849D41d` | X Layer mainnet USDT | no contract code |
+| `0x382bB369d343125BfB2117af9c149795C6C65C50` | search result claiming "X Layer testnet USDT" | no contract code — this is the **OKT Chain** USDT address |
+| `0x4ae46a509f6b1d9056937ba4500cb143933d2dc8` | X Layer mainnet USDG | no contract code |
+
+The USDC contract is real but has never had a single token minted, so no account
+can hold or spend it. It is not usable as settlement in its current state.
+
+For completeness, on X Layer **mainnet** there is a token named `TestUSDT`
+(symbol `USDT`, 6 dp, 1,000,000 supply) at
+`0x83bf0bacd31f9c2ae93da3a863a4f210f7b9bce1`. It is somebody's test token
+deployed to mainnet, not an official bridged asset, and it is not on testnet.
+
+The X Layer faucet advertises "OKB, USDG, and more", but the USDG it dispenses is
+not at the mainnet USDG address, so its testnet address is still unknown.
+
+Two acceptable resolutions before the testnet deploy:
+
+1. Claim from the faucet, read the **actual token contract address** out of the
+   receiving wallet or the transaction on OKLink, and configure that.
 2. Deploy a RouteLock test ERC-20 and state plainly in the README that testnet
    settlement uses a project-deployed test token with no value.
 
-Either is honest. Guessing an address is not.
+Either is honest. Guessing an address is not — and as the table above shows, the
+addresses circulating in search results for "X Layer testnet USDT" belong to a
+different chain entirely.
 
 ## Other network facts confirmed
 
