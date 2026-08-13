@@ -146,6 +146,38 @@ Simulated clean against **X Layer testnet (1952)** and **BOT Chain testnet
 over live RPC. Estimated deploy cost: ~10.48M gas (~0.00042 OKB at 0.04 gwei).
 No broadcast has been made: there is no funded deployer key on this box.
 
+### Deployer and role keys — set up 2026-08-13
+
+| Role | Address | Where the key lives |
+|---|---|---|
+| Deployer + `ADMIN` + `ORACLE` | `0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6` | Foundry keystore, `routelock-deployer`, encrypted |
+| `COMPLIANCE` | `0xA30D83117470c884fB3C35532d2a49Bc65B0922a` | `.env`, plaintext, `0600`, gitignored |
+
+Balances checked live: **X Layer testnet 0.3999 OKB** (deploy costs 0.000376,
+so ~1,000× headroom), X Layer mainnet 0.00045 OKB, **both BOT Chain networks 0**.
+BOT Chain testnet gas is **20 gwei — 1,000× X Layer's 0.02** — so a deploy there
+costs ~0.21 tBOT rather than a rounding error. One 10 tBOT faucet claim still
+covers ~47 deploys.
+
+Two things about this arrangement worth knowing:
+
+- **`ADMIN` and `ORACLE` deliberately share one key, as a testnet shortcut.**
+  Re-point before mainnet. The oracle signs unattended from this box, so a box
+  compromise currently also reaches role administration. Note the deployer
+  address is not a fresh key — it had 397 mainnet transactions before this
+  project.
+- **`COMPLIANCE` must never equal `ORACLE`,** and the deploy script enforces it.
+  Setting all three roles to one address was tried first and correctly aborted
+  with `WiringAssertionFailed("escrow.compliance.oracle")`: the oracle role on
+  the escrow is what releases funds, so sharing it with compliance would hand
+  the AI authority over money and void the guarantee the design rests on. The
+  compliance key is therefore fresh, disposable, and used for nothing else —
+  and `ADMIN` can revoke its role without a redeploy.
+
+The compliance key is plaintext because the compliance cron runs unattended and
+cannot answer a keystore password prompt. It needs no gas until it starts
+calling `recordDecision`.
+
 ### Blocked on a human
 
 Full list with detail in `HANDOFF.md` §4. In short: GitHub push credential is
