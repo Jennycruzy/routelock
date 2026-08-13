@@ -63,39 +63,57 @@ signature-verification failures on every transaction, so `verify:chains` asserts
 the chain ID against the live RPC on every run specifically to catch this class
 of stale-documentation error.
 
-## Unresolved: X Layer testnet settlement token
+## X Layer testnet settlement: USD₮0, found via the faucet contract
 
-**No spendable stablecoin was found on X Layer testnet.** Every candidate was
-probed directly against `testrpc.xlayer.tech`:
+Settlement on X Layer testnet is **USD₮0** at
+`0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c` — verified `symbol()` = `USD₮0`,
+`decimals()` = 6, `totalSupply` = 1,000,000,000,000. It is the omnichain USDT
+deployment and, critically, **it is one of the tokens the X Layer testnet faucet
+actually dispenses**, so demo and judge wallets can genuinely be funded with it.
+
+### How it was found, and why the obvious guesses all failed
+
+The mainnet token addresses do not carry over to testnet. Every address that
+circulates in search results for "X Layer testnet USDT" was probed directly and
+none of them is a token on chain 1952:
 
 | Address probed | Source of the claim | Result on chain 1952 |
 |---|---|---|
-| `0x74b7F16337b8972027F6196A17a631aC6dE26d22` | X Layer mainnet USDC | **`USD Coin` / `USDC` / 6 dp — but `totalSupply` is 0** |
+| `0x74b7F16337b8972027F6196A17a631aC6dE26d22` | X Layer mainnet USDC | real `USD Coin` contract, but `totalSupply` is **0** — unspendable |
 | `0x1E4a5963aBFD975d8c9021ce480b42188849D41d` | X Layer mainnet USDT | no contract code |
 | `0x382bB369d343125BfB2117af9c149795C6C65C50` | search result claiming "X Layer testnet USDT" | no contract code — this is the **OKT Chain** USDT address |
 | `0x4ae46a509f6b1d9056937ba4500cb143933d2dc8` | X Layer mainnet USDG | no contract code |
 
-The USDC contract is real but has never had a single token minted, so no account
-can hold or spend it. It is not usable as settlement in its current state.
+The real addresses came from the **faucet contract** at
+`0xf6d088123a3c17e6047ae9338b8cf072ad448907`. That address is not a token —
+every ERC-20 view call on it reverts, because it is an EIP-1967 proxy
+(implementation `0xf879f2e23693dc92da2582f5bcb8495fe96835e5`) whose bytecode
+contains faucet error strings such as `Receiver must be EOA`, `...in cooldown
+period`, and `...insufficient token balance`.
+
+Scanning its outbound ERC-20 `Transfer` logs over the last 40,000 blocks (in
+100-block windows — this RPC caps `eth_getLogs` ranges at 100) revealed the three
+tokens it hands out:
+
+| Address | `name()` | `symbol()` | Decimals | Total supply |
+|---|---|---|---|---|
+| `0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c` | `USD₮0` | `USD₮0` | 6 | 1,000,000,000,000 |
+| `0xcb8bf24c6ce16ad21d707c9505421a17f2bec79d` | `USDC_TEST` | `USDC_TEST` | 6 | 2,000,000,000,100 |
+| `0xa78e2baabaf5c4f36b7fc394725deb68d332eec1` | `Global Dollar` | `USDG` | 6 | 10,101,000 |
+
+USD₮0 was chosen as the testnet analogue of the USDT used on the other three
+targets. All four targets therefore settle in a 6-decimal USD stablecoin, which
+keeps `pricePerUnit` arithmetic identical everywhere.
+
+**Lesson worth keeping:** the faucet contract is the authoritative source for
+which testnet tokens are obtainable. A token that exists but cannot be acquired —
+like the zero-supply USDC above — is useless for a demo, and that is not visible
+from an address listing alone.
 
 For completeness, on X Layer **mainnet** there is a token named `TestUSDT`
 (symbol `USDT`, 6 dp, 1,000,000 supply) at
 `0x83bf0bacd31f9c2ae93da3a863a4f210f7b9bce1`. It is somebody's test token
-deployed to mainnet, not an official bridged asset, and it is not on testnet.
-
-The X Layer faucet advertises "OKB, USDG, and more", but the USDG it dispenses is
-not at the mainnet USDG address, so its testnet address is still unknown.
-
-Two acceptable resolutions before the testnet deploy:
-
-1. Claim from the faucet, read the **actual token contract address** out of the
-   receiving wallet or the transaction on OKLink, and configure that.
-2. Deploy a RouteLock test ERC-20 and state plainly in the README that testnet
-   settlement uses a project-deployed test token with no value.
-
-Either is honest. Guessing an address is not — and as the table above shows, the
-addresses circulating in search results for "X Layer testnet USDT" belong to a
-different chain entirely.
+deployed to mainnet, not an official bridged asset.
 
 ## Other network facts confirmed
 

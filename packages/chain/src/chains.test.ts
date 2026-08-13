@@ -99,12 +99,40 @@ describe("requireSettlementToken", () => {
     );
   });
 
-  // No placeholder address, no zero address, no silent default.
-  test("REFUSES an unresolved settlement rather than returning a placeholder", () => {
-    assert.throws(
-      () => requireSettlementToken(CHAINS.xlayer_testnet),
-      /no confirmed settlement token/
+  test("returns the faucet-dispensed USD₮0 for X Layer testnet", () => {
+    assert.equal(
+      requireSettlementToken(CHAINS.xlayer_testnet),
+      "0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c"
     );
+  });
+
+  // No placeholder address, no zero address, no silent default. Kept as a live
+  // test against a synthetic config so the refusal path stays covered now that
+  // all four real targets resolve.
+  test("REFUSES an unresolved settlement rather than returning a placeholder", () => {
+    const unresolved = {
+      ...CHAINS.xlayer_testnet,
+      settlement: { kind: "unresolved", reason: "not yet chosen" },
+    } as unknown as ChainConfig;
+    assert.throws(() => requireSettlementToken(unresolved), /no confirmed settlement token/);
+  });
+
+  test("REFUSES to hand a native settlement back as an ERC-20 address", () => {
+    const native = {
+      ...CHAINS.botchain_mainnet,
+      settlement: { kind: "native", symbol: "BOT", decimals: 18 },
+    } as unknown as ChainConfig;
+    assert.throws(() => requireSettlementToken(native), /settles in native BOT/);
+  });
+
+  test("every settlement token is 6 decimals, so pricing arithmetic is uniform", () => {
+    for (const chain of Object.values(CHAINS)) {
+      assert.equal(
+        chain.settlement.kind === "erc20" ? chain.settlement.decimals : 6,
+        6,
+        `${chain.name} settlement is not 6 decimals`
+      );
+    }
   });
 });
 

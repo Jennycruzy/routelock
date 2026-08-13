@@ -34,22 +34,23 @@ listed as not existing rather than demonstrated with fake data.
 Contracts, compliance engine, carrier adapter, attestation and replay endpoint,
 frontend, and the classification benchmark. See [`PROGRESS.md`](PROGRESS.md).
 
-## Known unresolved
-
-**X Layer testnet has no confirmed settlement token.** `pnpm verify:chains`
-reports this as a failing check and `requireSettlementToken()` throws when asked
-for it. That is intended: a placeholder or zero address would let an unverified
-value reach a deployment. It will be resolved — with a real token, or with a
-project-deployed test ERC-20 labelled as such — before the testnet deploy.
-
 ## Verified networks
+
+All four targets settle in a 6-decimal USD stablecoin, so pricing arithmetic is
+identical everywhere. Every row below is confirmed by live RPC, not copied from
+a docs page.
 
 | Target | Chain ID | Settlement |
 |---|---|---|
-| X Layer testnet | 1952 | unresolved (see above) |
+| X Layer testnet | 1952 | USD₮0 `0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c` |
 | X Layer mainnet | 196 | USDT `0x1E4a5963aBFD975d8c9021ce480b42188849D41d` |
 | BOT Chain testnet | 968 | USDT `0x75edC9335175Fc0552D51D48439F229c10420fe3` |
 | BOT Chain mainnet | 677 | USDT `0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C` |
+
+Note that X Layer testnet is chain ID **1952**, not the 195 still listed by
+several third-party chain directories — that value predates X Layer's migration
+to the OP Stack. Both of OKX's own testnet RPCs report 1952, and
+`verify:chains` asserts it on every run so a stale value cannot reach a deploy.
 
 ## Development
 

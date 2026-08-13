@@ -110,7 +110,7 @@ Day 1 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 
 | Target | Chain ID | RPC | Settlement |
 |---|---|---|---|
-| X Layer testnet | 1952 (`0x7a0`) | `https://testrpc.xlayer.tech` | **UNRESOLVED** — see §4 |
+| X Layer testnet | 1952 (`0x7a0`) | `https://testrpc.xlayer.tech` | USD₮0 `0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c` (6 dp) |
 | X Layer mainnet | 196 (`0xc4`) | `https://rpc.xlayer.tech` | USDT `0x1E4a5963aBFD975d8c9021ce480b42188849D41d` (6 dp) |
 | BOT Chain testnet | 968 (`0x3c8`) | `https://rpc.bohr.life` | USDT `0x75edC9335175Fc0552D51D48439F229c10420fe3` (6 dp) |
 | BOT Chain mainnet | 677 (`0x2a5`) | `https://rpc.botchain.ai` | USDT `0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C` (6 dp) |
@@ -140,9 +140,9 @@ An **unrecognised** key prefix throws rather than guessing which environment it
 belongs to.
 
 `requireSettlementToken()` throws on an unresolved settlement rather than
-returning a zero or placeholder address. This is why X Layer testnet currently
-fails `verify:chains` — that failure is correct and should stay until a real
-token is chosen.
+returning a zero or placeholder address. All four targets now resolve, so
+`verify:chains` passes clean — but keep that refusal path intact. It is what
+stops an unverified token address reaching a deployment.
 
 ---
 
@@ -176,13 +176,10 @@ These cannot be resolved from this box and are listed in the order they block wo
 5. **BOT Chain gas support form** (1 BOT per eligible project) and their project
    submission form — both to be filed day 1.
 
-6. **X Layer testnet settlement token** is unresolved. Either locate an
-   OKX-published test USDT, or deploy a RouteLock test ERC-20 and label it
-   plainly as such in the README. Must be settled before the day-2 testnet
-   deploy. Do not guess an address.
-
-7. **Deployer keys and a funded wallet** for each of the four targets. X Layer
+6. **Deployer keys and a funded wallet** for each of the four targets. X Layer
    gas is OKB; BOT Chain gas is BOT with testnet tBOT from the faucet above.
+   For X Layer testnet, the faucet at `0xf6d088123a3c17e6047ae9338b8cf072ad448907`
+   dispenses USD₮0, USDC_TEST and USDG — fund the demo buyer wallet from it.
 
 ---
 
@@ -199,5 +196,6 @@ pnpm test                                   # everything
 git log --format='%an <%ae>' -20            # identity check before any push
 ```
 
-`pnpm verify:chains` currently exits non-zero on the single unresolved X Layer
-testnet settlement token. That is the intended behaviour, not a broken build.
+`pnpm verify:chains` passes clean on all four targets as of 2026-08-13. If it
+starts failing, trust it over the config — it is asking the chain, and the config
+is only a record of a previous answer.

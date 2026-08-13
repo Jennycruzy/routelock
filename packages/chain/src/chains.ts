@@ -45,15 +45,15 @@ export const CHAINS = {
     defaultRpc: "https://testrpc.xlayer.tech",
     explorer: "https://www.oklink.com/xlayer-test",
     settlement: {
-      kind: "unresolved",
-      reason:
-        "No spendable stablecoin found on X Layer testnet as of 2026-08-13. A USD Coin " +
-        "(USDC, 6dp) contract does exist at 0x74b7F16337b8972027F6196A17a631aC6dE26d22, " +
-        "but its totalSupply is 0 — nothing has ever been minted, so no account can hold " +
-        "or pay with it. No USDT contract was found at any address that resolves on this " +
-        "chain. Resolve before the testnet deploy: either obtain a faucet token and " +
-        "configure its real address, or deploy a RouteLock test ERC-20 and label it " +
-        "plainly as such in the README. See docs/chain-verification.md.",
+      kind: "erc20",
+      // USD₮0 — the omnichain USDT deployment, and the token the X Layer testnet
+      // faucet actually dispenses. Verified on-chain: symbol() -> "USD₮0",
+      // decimals() -> 6, non-zero totalSupply. Chosen over the other two faucet
+      // tokens (USDC_TEST, USDG) because it is the testnet analogue of the USDT
+      // used for settlement on all three other targets.
+      token: "0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c",
+      symbol: "USD₮0",
+      decimals: 6,
     },
     env: "test",
     carrierMode: "sandbox",

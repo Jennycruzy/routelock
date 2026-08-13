@@ -18,7 +18,7 @@ reflects reality — including what is broken and what is untouched.
 
   | Target | Chain ID | Head block at verification | Settlement |
   |---|---|---|---|
-  | X Layer testnet | 1952 | 38,167,907 | unresolved |
+  | X Layer testnet | 1952 | 38,167,907 | USD₮0, 6 dp |
   | X Layer mainnet | 196 | 67,857,709 | USDT, 6 dp |
   | BOT Chain testnet | 968 | 19,721,998 | USDT, 6 dp |
   | BOT Chain mainnet | 677 | 19,524,042 | USDT, 6 dp |
@@ -39,22 +39,33 @@ reflects reality — including what is broken and what is untouched.
 - **`pnpm verify:chains`** re-verifies every configured value against the live
   networks. Intended to run before every deploy and in CI.
 
-- **13 tests passing** in `@routelock/chain`, covering every branch of the pairing
-  guard including all four refusal paths.
+- **X Layer testnet settlement resolved: USD₮0** at
+  `0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c`, 6 dp, non-zero supply, and
+  **dispensed by the testnet faucet** so demo wallets can actually be funded.
 
-### Known non-passing check (intended)
+  Worth recording how this was found, because the obvious approach fails: none of
+  the mainnet token addresses carry over to testnet, and the addresses circulating
+  in search results for "X Layer testnet USDT" belong to other chains. The
+  authoritative source is the faucet contract at
+  `0xf6d088123a3c17e6047ae9338b8cf072ad448907` — itself not a token but an
+  EIP-1967 proxy, which is why every ERC-20 call on it reverts. Scanning its
+  outbound `Transfer` logs gave the three real tokens it dispenses: USD₮0,
+  USDC_TEST, and USDG. A token that exists but cannot be acquired — such as the
+  zero-supply USDC on that chain — is useless for a demo, and an address listing
+  alone will not tell you that.
 
-`pnpm verify:chains` exits 1 on X Layer testnet settlement: `UNRESOLVED`. No
-stablecoin has been confirmed on that network. `requireSettlementToken()` throws
-rather than returning a placeholder. This stays failing until a real token is
-chosen — a guessed address would be worse than a red check.
+- **All four targets settle in a 6-decimal USD stablecoin**, so `pricePerUnit`
+  arithmetic is identical across every deployment. Asserted by a test.
+
+- **16 tests passing** in `@routelock/chain`; `pnpm verify:chains` passes clean on
+  all four networks.
 
 ### Blocked on a human
 
 Full list with detail in `HANDOFF.md` §4. In short: GitHub push credential is
-**dead (HTTP 401)**, no Shipbubble account or keys yet, X account not created,
-BOT Chain forms not filed, X Layer testnet token undecided, no funded deployer
-wallets.
+**dead (HTTP 401)** and the repo will be supplied by the owner, no Shipbubble
+account or keys yet, X account not created, BOT Chain forms not filed, no funded
+deployer wallets.
 
 ### Next
 
@@ -64,4 +75,3 @@ wallets.
    only — address validation and rate quotes, PHC→LOS. Blocked on a sandbox key.
 3. Locate and document the Shipbubble cancellation endpoint and its refund
    behaviour **before** any live purchase.
-4. Resolve the X Layer testnet settlement token ahead of the day-2 deploy.
