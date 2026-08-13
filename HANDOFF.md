@@ -118,10 +118,30 @@ Day 1 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 BOT Chain testnet faucet: `https://faucet.botchain.ai/basic` — 10 tBOT per address
 per 24h. Testnet explorer `https://scan.bohr.life`, mainnet `https://scan.botchain.ai`.
 
+### Contracts — written, compiling, 71 tests passing
+
+All five contracts from spec §4 exist under `packages/contracts/src`. Solidity
+0.8.28, OpenZeppelin 5.6.1 via pnpm rather than git submodules, so a clone needs
+only `pnpm install` and `forge build`.
+
+**Coverage is honestly incomplete.** `ActivationRegistry` sits at 20% branch
+coverage and `FulfilmentReceipt` at 0% — neither has a dedicated test file yet.
+The other three are at 71–91%. The spec's 100%-on-state-transitions target is
+**not met**; `PROGRESS.md` lists the exact cases to write, in order.
+
+Two things not to undo when picking this back up:
+
+- `SettlementEscrow._grantRole` **reverts** on `COMPLIANCE_ROLE`. The compliance
+  service cannot be granted authority over funds by any admin at any point. This
+  is deliberate and is the structural form of "the AI never moves money".
+- `Verdict` is a three-way enum (`Approved` / `NeedsInformation` / `Refused`),
+  not a bool, so refusals are committed on-chain with the same treatment as
+  approvals.
+
 ### Not started
 
-Contracts, compliance engine, carrier adapter, attestation package, frontend,
-benchmark. See `PROGRESS.md` for the running state.
+Compliance engine, carrier adapter, attestation package, frontend, benchmark,
+deployment script. See `PROGRESS.md` for the running state.
 
 ---
 
@@ -191,7 +211,11 @@ cd /root/routelock
 pnpm install
 pnpm verify:chains                          # re-check all four chains against live RPC
 pnpm --filter @routelock/chain test         # environment-pairing + config tests
-pnpm test                                   # everything
+
+cd packages/contracts
+forge build
+forge test                                  # 71 passing
+forge coverage --report summary             # shows the two untested contracts
 
 git log --format='%an <%ae>' -20            # identity check before any push
 ```

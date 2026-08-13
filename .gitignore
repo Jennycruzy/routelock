@@ -22,3 +22,7 @@ artifacts/carrier/
 *.pdf
 
 .DS_Store
+
+# Foundry libraries are fetched on install (see packages/contracts prepare
+# script) rather than vendored, so the repo contains only RouteLock's own code.
+packages/contracts/lib/

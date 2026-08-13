@@ -60,6 +60,47 @@ reflects reality — including what is broken and what is untouched.
 - **16 tests passing** in `@routelock/chain`; `pnpm verify:chains` passes clean on
   all four networks.
 
+### Contracts — written and compiling, partially tested
+
+All five contracts from spec §4 exist and compile under Solidity 0.8.28 with
+OpenZeppelin 5.6.1 (pulled through pnpm, so there are no git submodules to
+clone).
+
+| Contract | What it does |
+|---|---|
+| `RouteLockTypes.sol` | `EntitlementState`, `ServiceSpec`, `Roles`, `IEntitlementClasses` |
+| `ServiceEntitlement.sol` | ERC-721, the lifecycle state machine, the transfer lock |
+| `EntitlementFactory.sol` | issuer registry, classes, purchase, supply invariants |
+| `SettlementEscrow.sol` | collateral, buyer deposits, release, refund, claim |
+| `ActivationRegistry.sol` | parcel/decision/carrier hashes, the `Verdict` record |
+| `FulfilmentReceipt.sol` | soulbound proof of delivery, issuer-only, no counterparty |
+
+Two design decisions worth not re-litigating:
+
+- **`SettlementEscrow._grantRole` reverts on `COMPLIANCE_ROLE`.** The compliance
+  service is not merely ungranted authority over funds — the role cannot be
+  granted in that contract at all, by any admin, ever. This is the structural
+  form of "the AI never moves money", and it is asserted by
+  `test_escrowRefusesToGrantComplianceRole`.
+- **`Verdict` is an enum, not a bool.** `Approved` / `NeedsInformation` /
+  `Refused` are all committed on-chain with the same decision hash treatment, so
+  the on-chain record is not a biased log of successes.
+
+**71 tests passing, 0 failing.** Coverage as measured, not as hoped:
+
+| File | % Branches | % Lines |
+|---|---|---|
+| `ServiceEntitlement.sol` | 90.91% | 96.83% |
+| `EntitlementFactory.sol` | 88.89% | 93.75% |
+| `SettlementEscrow.sol` | 70.59% | 98.72% |
+| `ActivationRegistry.sol` | **20.00%** | 58.00% |
+| `FulfilmentReceipt.sol` | **0.00%** | 21.05% |
+
+The spec's target is 100% branch coverage on state transitions and access
+control, so this is **not yet met**. `ActivationRegistry` and `FulfilmentReceipt`
+have no dedicated test files — they are currently exercised only indirectly
+through the shared fixture's helpers.
+
 ### Blocked on a human
 
 Full list with detail in `HANDOFF.md` §4. In short: GitHub push credential is
@@ -67,11 +108,28 @@ Full list with detail in `HANDOFF.md` §4. In short: GitHub push credential is
 account or keys yet, X account not created, BOT Chain forms not filed, no funded
 deployer wallets.
 
-### Next
+### Next — resume here
 
-1. Contracts skeleton: `ServiceEntitlement` written generic from the start, not
-   `DeliveryEntitlementNFT` (spec §4.1).
-2. `CarrierAdapter` interface + `ShipbubbleAdapter` against the **free** endpoints
+1. **Write `test/ActivationRegistry.t.sol`.** The largest coverage gap and the
+   most important untested surface, since it is where refusal is recorded. Cases
+   to cover: only the token holder may `submitParcel`; only `COMPLIANCE_ROLE` may
+   `recordDecision`; `Verdict.None` and an empty `engineVersion` both revert; a
+   decision on a token that is not `PendingReview` reverts; resubmission after a
+   refusal increments `attempt` and clears the stale `decisionHash`; a refusal
+   still stores its decision hash; `recordCarrier` is oracle-only and
+   state-gated; `publishTracking` only succeeds once `Delivered`.
+
+2. **Write `test/FulfilmentReceipt.t.sol`** — soulbound transfer reverts, minting
+   is oracle-only, a second receipt for the same entitlement reverts.
+
+3. **Close the remaining escrow branches** (70.59%) — the untaken paths are
+   mostly zero-amount and already-settled edges.
+
+4. **Deployment script** `script/Deploy.s.sol` performing the exact wiring in
+   `test/RouteLockBase.t.sol`, writing addresses to `deployments/<chain>.json`.
+
+5. `CarrierAdapter` interface + `ShipbubbleAdapter` against the **free** endpoints
    only — address validation and rate quotes, PHC→LOS. Blocked on a sandbox key.
-3. Locate and document the Shipbubble cancellation endpoint and its refund
+
+6. Locate and document the Shipbubble cancellation endpoint and its refund
    behaviour **before** any live purchase.

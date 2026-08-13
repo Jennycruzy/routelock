@@ -29,10 +29,31 @@ listed as not existing rather than demonstrated with fake data.
 | X Layer / BOT Chain **testnet** | Shipbubble **sandbox** key | none |
 | X Layer / BOT Chain **mainnet** | Shipbubble **live** key | real |
 
-## What is not built yet
+- **The contract set, compiling with 71 passing tests.** `ServiceEntitlement`
+  (ERC-721 lifecycle plus the transfer lock), `EntitlementFactory` (issuers,
+  classes, collateral-backed purchase), `SettlementEscrow`, `ActivationRegistry`,
+  and a soulbound `FulfilmentReceipt`.
 
-Contracts, compliance engine, carrier adapter, attestation and replay endpoint,
-frontend, and the classification benchmark. See [`PROGRESS.md`](PROGRESS.md).
+  Two properties are enforced structurally rather than by convention:
+
+  - `SettlementEscrow` **rejects** any attempt to grant `COMPLIANCE_ROLE`, so the
+    compliance service cannot be given authority over funds by any admin at any
+    point. The AI opening the activation gate and money being released are two
+    separate events with two separate triggers.
+  - Entitlements stop being transferable the moment parcel data is bound to
+    them, because transferring afterwards would either leak the consignee's
+    details or let an accepted shipment be redirected.
+
+## Not finished yet
+
+**Contract test coverage is incomplete and the README will say so until it is
+not.** `ActivationRegistry` is at 20% branch coverage and `FulfilmentReceipt` at
+0% — neither has a dedicated test file. The spec's target of 100% on state
+transitions and access control is not yet met.
+
+Also not built: the compliance engine, carrier adapter, attestation and replay
+endpoint, frontend, deployment scripts, and the classification benchmark. See
+[`PROGRESS.md`](PROGRESS.md).
 
 ## Verified networks
 
