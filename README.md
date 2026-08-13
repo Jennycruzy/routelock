@@ -51,13 +51,36 @@ listed as not existing rather than demonstrated with fake data.
   verified, and asserts the whole role graph — including that the escrow still
   rejects `COMPLIANCE_ROLE` — before recording a single address. A dry run
   verifies everything and writes nothing, so a simulation cannot leave behind a
-  file that reads as a real deployment. Simulated clean against X Layer testnet
-  and BOT Chain testnet.
+  file that reads as a real deployment.
+
+- **A live deployment on X Layer testnet**, 13 August 2026, block 38195716:
+
+  | Contract | Address |
+  |---|---|
+  | `ServiceEntitlement` | `0x8A9A92a5Cd3c1eF2D2F0b5cD67E33e73949C992b` |
+  | `SettlementEscrow` | `0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83` |
+  | `EntitlementFactory` | `0x366544F805e10e7320779d138Cca57FA0E4c5cdf` |
+  | `ActivationRegistry` | `0x38D8a1e9bC45378E4019320ECa4fc5431BeF40Bb` |
+  | `FulfilmentReceipt` | `0x83Ee9a4d2A3f0851DDD022A114663524694571C4` |
+
+  The central guarantee is checkable on that deployment right now, without
+  trusting this README. Simulating a grant of `COMPLIANCE_ROLE` on the escrow
+  **as the contract's own admin** reverts with `ComplianceRoleForbiddenHere()`,
+  while the same call for `ORACLE_ROLE` succeeds:
+
+  ```bash
+  cast call --rpc-url https://testrpc.xlayer.tech \
+    --from 0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6 \
+    0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83 \
+    'grantRole(bytes32,address)' \
+    $(cast keccak COMPLIANCE_ROLE) \
+    0xA30D83117470c884fB3C35532d2a49Bc65B0922a
+  # reverts: 0xa3dd6e91 == ComplianceRoleForbiddenHere()
+  ```
 
 ## Not finished yet
 
-**Nothing has been deployed.** The script above has never been broadcast; there
-is no funded deployer key yet, so there are no live contract addresses to show.
+**Not deployed to BOT Chain testnet or either mainnet.**
 
 **Not built at all:** the compliance engine, the carrier adapter, the attestation
 and replay endpoint, the frontend, and the classification benchmark. These are

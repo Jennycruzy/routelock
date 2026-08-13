@@ -1,0 +1,16 @@
+{
+  "activationRegistry": "0x38D8a1e9bC45378E4019320ECa4fc5431BeF40Bb",
+  "admin": "0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6",
+  "chain": "xlayer_testnet",
+  "chainId": 1952,
+  "compliance": "0xA30D83117470c884fB3C35532d2a49Bc65B0922a",
+  "deployedAt": 1786654530,
+  "deployedAtBlock": 38195693,
+  "entitlementFactory": "0x366544F805e10e7320779d138Cca57FA0E4c5cdf",
+  "fulfilmentReceipt": "0x83Ee9a4d2A3f0851DDD022A114663524694571C4",
+  "oracle": "0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6",
+  "serviceEntitlement": "0x8A9A92a5Cd3c1eF2D2F0b5cD67E33e73949C992b",
+  "settlementEscrow": "0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83",
+  "settlementSymbol": "USD₮0",
+  "settlementToken": "0x9e29b3AaDa05Bf2D2c827Af80Bd28Dc0b9b4FB0c"
+}

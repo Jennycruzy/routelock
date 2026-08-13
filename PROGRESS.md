@@ -178,6 +178,43 @@ The compliance key is plaintext because the compliance cron runs unattended and
 cannot answer a keystore password prompt. It needs no gas until it starts
 calling `recordDecision`.
 
+### DEPLOYED — X Layer testnet, 13 August 2026
+
+**Live at chain 1952, block 38195716.** First of the two required deployments;
+X Layer's eligibility gate is testnet **before** mainnet, and the broadcast
+record under `packages/contracts/broadcast/Deploy.s.sol/1952/` is the timestamp
+evidence, so it is tracked in git rather than ignored.
+
+| Contract | Address |
+|---|---|
+| `ServiceEntitlement` | `0x8A9A92a5Cd3c1eF2D2F0b5cD67E33e73949C992b` |
+| `SettlementEscrow` | `0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83` |
+| `EntitlementFactory` | `0x366544F805e10e7320779d138Cca57FA0E4c5cdf` |
+| `ActivationRegistry` | `0x38D8a1e9bC45378E4019320ECa4fc5431BeF40Bb` |
+| `FulfilmentReceipt` | `0x83Ee9a4d2A3f0851DDD022A114663524694571C4` |
+
+14 transactions, 7,178,201 gas, **0.0001436 OKB** at 0.02 gwei — well under the
+0.000376 estimate, which assumed 0.04. Deployer balance after: 0.39978 OKB.
+Explorer: `https://www.oklink.com/xlayer-test`.
+
+Verified **from the chain, not from the script's own output**:
+
+- Bytecode present at all five addresses (4,615–7,222 bytes); `name()`/`symbol()`
+  answer as `RouteLock Entitlement`/`RLE` and `RouteLock Fulfilment Receipt`/`RLFR`.
+- Cross-references resolve: `entitlement.classes()`, `factory.entitlement()`,
+  `factory.escrow()`, `registry.entitlement()` all point where they should.
+- Full role graph reads `true` for the nine intended grants.
+- The negative half reads `false` for all five: compliance holds no role on the
+  escrow, and no registry role on the entitlement.
+- **The live guarantee holds.** Simulating `escrow.grantRole(COMPLIANCE_ROLE,
+  compliance)` *as the admin* reverts with `0xa3dd6e91`, which is exactly
+  `ComplianceRoleForbiddenHere()`. A control granting `ORACLE_ROLE` on the same
+  contract from the same caller succeeds — so the revert is specific to the
+  compliance role, not a malformed call. The AI cannot be given power over money
+  on this deployment by anyone, including its own admin.
+- Settlement token reads `USD₮0`, 6 decimals, at
+  `0x9e29b3AaDa05Bf2D2c827Af80Bd28Dc0b9b4FB0c`.
+
 ### Blocked on a human
 
 Full list with detail in `HANDOFF.md` §4. In short: GitHub push credential is

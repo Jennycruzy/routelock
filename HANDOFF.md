@@ -147,26 +147,45 @@ Three things not to undo when picking this back up:
   re-attempts the forbidden `COMPLIANCE_ROLE` grant on every deployment. That
   assertion failing means the central guarantee has been lost; it is not noise.
 
-### Deployment script — ready, never broadcast
+### Deployed — X Layer testnet (1952), 13 August 2026
 
-`packages/contracts/script/Deploy.s.sol`, with `test/Deploy.t.sol` exercising it
-under `forge test` so the deploy path is not first tried against a real chain.
-Simulated clean against X Layer testnet (1952) and BOT Chain testnet (968) on
-2026-08-13. **No broadcast has been made — there is no funded deployer key here.**
+Live at block 38195716. Addresses in `deployments/xlayer_testnet.json`; the
+broadcast record with tx hashes and timestamps is tracked at
+`packages/contracts/broadcast/Deploy.s.sol/1952/` and is the evidence for X
+Layer's testnet-before-mainnet requirement. Do not delete or rewrite it.
+
+Verified independently from the chain, not from the deploy script's own output —
+including a live simulation proving `SettlementEscrow` still reverts
+`grantRole(COMPLIANCE_ROLE, …)` with `ComplianceRoleForbiddenHere()` when called
+by the admin, while the same call for `ORACLE_ROLE` succeeds. Re-run that check
+after any redeploy; it is the one assertion the whole pitch rests on.
+
+Remaining: BOT Chain testnet (needs tBOT), then both mainnets.
+
+### Deploy again with
+
+`packages/contracts/script/Deploy.s.sol`, driven by `scripts/deploy.sh`, with
+`test/Deploy.t.sol` exercising it under `forge test` so the deploy path is not
+first tried against a real chain.
 
 ```bash
-cd /root/routelock/packages/contracts
-export ROUTELOCK_ADMIN=0x…       # ends up holding ADMIN_ROLE
-export ROUTELOCK_ORACLE=0x…      # backend signer; writes carrier-sourced facts
-export ROUTELOCK_COMPLIANCE=0x…  # records decisions, moves no money
-
-# Verify without deploying — writes nothing:
-forge script script/Deploy.s.sol:Deploy --rpc-url $XLAYER_TESTNET_RPC
-
-# Deploy for real, and record deployments/<chain>.json:
-forge script script/Deploy.s.sol:Deploy --rpc-url $XLAYER_TESTNET_RPC \
-  --broadcast --private-key $DEPLOYER_KEY
+cd /root/routelock
+./scripts/deploy.sh xlayer_testnet               # simulate, writes nothing
+./scripts/deploy.sh botchain_testnet --broadcast # deploy for real
 ```
+
+Use the wrapper rather than calling `forge script` directly. The raw invocation
+is long enough to wrap in a terminal, and a wrapped command becomes a different
+command — that is how the first attempt at this failed. It also verifies over RPC
+that the endpoint really is the chain named before anything is signed, refuses
+when `ORACLE` and `COMPLIANCE` share an address, and makes a mainnet deploy
+require typing the chain name by hand. Roles and RPCs come from `.env`; anything
+already in the environment overrides it.
+
+The deployer key is read from the Foundry keystore (`--account
+routelock-deployer`) and prompts for its password, so it never appears in shell
+history or a process listing. **The password prompt is interactive, so the
+broadcast must be run by a human in a terminal.**
 
 The settlement token is chosen by `block.chainid` from the four verified
 addresses, never read from the environment — a shell typo cannot repoint a
