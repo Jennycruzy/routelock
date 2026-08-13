@@ -117,7 +117,7 @@ deployed to mainnet, not an official bridged asset.
 
 ## Other network facts confirmed
 
-- **BOT Chain testnet faucet:** `https://faucet.botchain.ai/basic` — 10 tBOT per
+- **BOT Chain testnet faucet:** `https://faucet.bohr.life/en/basic` — 10 tBOT per
   address per 24 hours, tBOT has no real-world value.
 - **BOT Chain explorers:** testnet `https://scan.bohr.life`, mainnet
   `https://scan.botchain.ai`.

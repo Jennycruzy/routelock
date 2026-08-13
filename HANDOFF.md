@@ -115,8 +115,13 @@ Day 1 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 | BOT Chain testnet | 968 (`0x3c8`) | `https://rpc.bohr.life` | USDT `0x75edC9335175Fc0552D51D48439F229c10420fe3` (6 dp) |
 | BOT Chain mainnet | 677 (`0x2a5`) | `https://rpc.botchain.ai` | USDT `0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C` (6 dp) |
 
-BOT Chain testnet faucet: `https://faucet.botchain.ai/basic` — 10 tBOT per address
+BOT Chain testnet faucet: `https://faucet.bohr.life/en/basic` — 10 tBOT per address
 per 24h. Testnet explorer `https://scan.bohr.life`, mainnet `https://scan.botchain.ai`.
+
+The URL BOT Chain's own docs give, `https://faucet.botchain.ai/basic`, returns
+**503** as of 2026-08-13 — the whole `faucet.botchain.ai` host is down. The
+working mirror is on the testnet domain (`bohr.life`, same as the RPC and the
+explorer). It is CAPTCHA-gated, so claiming cannot be scripted.
 
 ### Contracts — complete, 159 tests passing, 100% branch coverage
 

@@ -29,7 +29,7 @@ reflects reality — including what is broken and what is untouched.
   is not required.** Settlement is still modelled as a discriminated union so
   that switching to native BOT stays a config change rather than a rewrite.
 
-- **BOT Chain faucet located:** `https://faucet.botchain.ai/basic`, 10 tBOT per
+- **BOT Chain faucet located:** `https://faucet.bohr.life/en/basic`, 10 tBOT per
   address per 24 hours. Testnet explorer `https://scan.bohr.life`.
 
 - **Environment pairing guard implemented** (`packages/chain/src/chains.ts`) —
