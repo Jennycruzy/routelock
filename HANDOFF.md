@@ -1,6 +1,6 @@
 # RouteLock — Handoff
 
-**Last updated: 13 August 2026**
+**Last updated: 14 August 2026**
 
 Read this before touching anything. It covers the rules that are not negotiable,
 where the build actually stands, and what is blocked on a human.
@@ -90,13 +90,16 @@ From §1.2 of the specification, restated because they get tested under time pre
 
 ## 2. Where the build actually stands
 
-Day 1 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
+Day 2 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 **BOT Chain Aug 22 23:59 UTC+8** (submit Aug 20).
 
 ### Done and verified
 
 - Monorepo scaffolded at `/root/routelock`, pnpm workspaces, git initialised with
   the correct identity.
+- **Pushed and public** at `github.com/Jennycruzy/routelock`. The dead-PAT
+  blocker recorded here on 13 August is resolved; every commit on `main` is
+  authored `Jennycruzy` and carries no AI attribution.
 - **All four chain targets verified live over RPC** — not copied from a docs page.
   `pnpm verify:chains` re-checks every value against the networks themselves.
 - **§7.2's critical unknown is resolved: USDT exists on BOT Chain**, on both
@@ -160,7 +163,17 @@ including a live simulation proving `SettlementEscrow` still reverts
 by the admin, while the same call for `ORACLE_ROLE` succeeds. Re-run that check
 after any redeploy; it is the one assertion the whole pitch rests on.
 
-Remaining: BOT Chain testnet (needs tBOT), then both mainnets.
+Remaining: BOT Chain testnet, then both mainnets.
+
+**BOT Chain testnet is funded and ready to deploy as of 14 August** — the
+deployer holds 10 tBOT from one faucet claim, against a ~0.21 tBOT deploy cost
+(gas there is 20 gwei, 1,000× X Layer's 0.02), so roughly 47 deploys of
+headroom. This is the next action and needs a human only because the keystore
+password prompt is interactive.
+
+Deployer balances, checked live 14 August: X Layer testnet **0.3998 OKB**,
+X Layer mainnet **0.00045 OKB**, BOT Chain testnet **10 tBOT**, BOT Chain
+mainnet **0**.
 
 ### Deploy again with
 
@@ -231,52 +244,43 @@ stops an unverified token address reaching a deployment.
 
 These cannot be resolved from this box and are listed in the order they block work.
 
-1. **GitHub push credential is dead.** The only PAT on this box (embedded in
-   `/root/adversa`'s remote URL) returns **HTTP 401** — expired or revoked. `gh`
-   is not installed. Nothing can be pushed until a fresh credential exists.
-   Needed: a PAT with `repo` scope on the `Jennycruzy` account, or an SSH deploy
-   key added to it. Also confirm the target repo name (assumed `routelock`) and
-   whether it should start private.
-
-2. **No Shipbubble account or API keys.** Both the sandbox and live keys are
+1. **No Shipbubble account or API keys.** Both the sandbox and live keys are
    needed. The sandbox key unblocks ~90% of the carrier adapter — address
    validation and rate quotes are free and do not consume shipment quota. Only
    5 free live shipments exist; the live key should not be used until the
    cancellation endpoint and its refund behaviour are documented.
 
-3. **Ask Shipbubble support, in writing:** is platform / third-party shipment
+2. **Ask Shipbubble support, in writing:** is platform / third-party shipment
    creation via their API permitted, and is there a partner tier? A written yes
    is the closest achievable substitute for an issuer agreement and is the
    foundation of the RWA claim (spec §11). Send this today — reply latency is
    the risk, not the asking.
 
-4. **Dedicated X account** must be created and posting daily from day 1, with the
-   submission post mentioning **@XLayerOfficial**. This is a hard eligibility
-   gate; failing it disqualifies the submission regardless of build quality.
-
-5. **BOT Chain gas support form** (1 BOT per eligible project) and their project
-   submission form — both to be filed day 1.
-
-6. **Deployer keys and a funded wallet** for each of the four targets. X Layer
-   gas is OKB; BOT Chain gas is BOT with testnet tBOT from the faucet above.
-   For X Layer testnet, the faucet at `0xf6d088123a3c17e6047ae9338b8cf072ad448907`
-   dispenses USD₮0, USDC_TEST and USDG — fund the demo buyer wallet from it.
-
-   This is now the top blocker: the deploy script is written, tested and
-   simulated clean against both testnets. A funded key is the only thing between
-   here and a real testnet deployment, which is itself a hard eligibility gate.
-   Budget ~0.00042 OKB per deployment (~10.48M gas at 0.04 gwei) — trivial, but
-   the wallet must exist. Also decide the three role addresses:
-   `ROUTELOCK_ADMIN`, `ROUTELOCK_ORACLE`, `ROUTELOCK_COMPLIANCE`. The oracle key
-   is the backend signer and will be used unattended by the cron, so it should
-   not be the same key as admin.
-
-7. **An inference credential for the compliance engine.** There is no LLM API key
+3. **An inference credential for the compliance engine.** There is no LLM API key
    on this box and none in the repo, so `packages/compliance` cannot be started —
    the engine is the one component that cannot be written against anything but a
    real model, and the benchmark depends on it. This blocks the project's stated
-   differentiator, so it is worth resolving early even though it sits behind the
-   carrier work in the plan.
+   differentiator, and with the chain work finished it is now the single largest
+   piece of unbuilt scope.
+
+4. **Dedicated X account** must be created and posting daily from day 1, with the
+   submission post mentioning **@XLayerOfficial**. This is a hard eligibility
+   gate; failing it disqualifies the submission regardless of build quality.
+   Day 1 has already passed without a post.
+
+5. **BOT Chain gas support form** (1 BOT per eligible project) and their project
+   submission form — both were to be filed day 1 and have not been.
+
+6. **Mainnet gas, for both mainnets.** Testnet funding is done (see §2). What
+   remains is X Layer mainnet, which holds 0.00045 OKB, and BOT Chain mainnet,
+   which holds 0. Neither is needed until the mainnet deploys, but X Layer's
+   eligibility gate requires mainnet *after* testnet, so this cannot be left to
+   the final day.
+
+   Also still open from the original setup: `ADMIN` and `ORACLE` currently share
+   one key as a testnet shortcut. **Re-point them before mainnet.** The oracle
+   signs unattended from this box, so as configured a box compromise also reaches
+   role administration.
 
 ---
 

@@ -222,34 +222,93 @@ Full list with detail in `HANDOFF.md` §4. In short: GitHub push credential is
 account or keys yet, X account not created, BOT Chain forms not filed, no funded
 deployer wallets.
 
+*Superseded — see day 2. The push credential and the testnet wallets are
+resolved.*
+
+---
+
+## Day 2 — 14 August 2026
+
+### Resolved since day 1
+
+- **The repo is pushed and public** at `github.com/Jennycruzy/routelock`. The
+  HTTP 401 blocker is gone. `main` and `origin/main` are level, the working tree
+  is clean, every commit is authored `Jennycruzy`, and a grep of the last 20
+  messages for AI-attribution strings returns nothing.
+- **BOT Chain testnet is funded** — 10 tBOT from one faucet claim, against a
+  ~0.21 tBOT deploy. Day 1's "both BOT Chain networks 0" no longer holds, and
+  the BOT Chain testnet deploy is unblocked.
+
+Deployer balances, live 14 August:
+
+| Target | Balance | Enough to deploy? |
+|---|---|---|
+| X Layer testnet | 0.3998 OKB | yes — already deployed |
+| X Layer mainnet | 0.00045 OKB | no |
+| BOT Chain testnet | 10 tBOT | yes, ~47× over |
+| BOT Chain mainnet | 0 | no |
+
+### Re-verified, not taken on trust
+
+- All five X Layer testnet contracts still hold bytecode at their recorded
+  addresses (4,615–14,447 bytes).
+- `totalMinted()` and `totalReceipts()` both return **0**, which is what the
+  README claims and invites a reader to check.
+- The README's published `cast call` challenge reproduces exactly: granting
+  `COMPLIANCE_ROLE` on the escrow *as its own admin* reverts `0xa3dd6e91`
+  (`ComplianceRoleForbiddenHere()`), while `ORACLE_ROLE` from the same caller
+  succeeds. The guarantee the pitch rests on holds on the live deployment.
+- **159 tests passing, 0 failing.**
+
+### README rewritten
+
+The asset section opened by defining RouteLock as a Port Harcourt → Lagos
+parcel, which framed a general primitive as one domestic lane and read as
+provincial. The contracts were never that narrow: `ServiceSpec` has no origin,
+destination, weight, carrier, or parcel field — a class is an opaque `classId`
+plus commercial terms.
+
+It now leads with the primitive, states that the contracts do not know what the
+service is, and introduces delivery as a chosen first adapter with its reasoning
+(the carrier genuinely serves the lane; the lane has a real classification
+problem to measure the engine against; being domestic means the model's failures
+are ours to measure rather than absorbed by a customs broker).
+
+Two factual defects fixed while in there:
+
+- The README gave the deployment block as 38195716 while the address file it
+  links to says 38195693. Both are real — the receipts mined at the former, the
+  latter was the head when the script began — so both are now stated, with the
+  receipts named as authoritative.
+- A drafted claim that the lane appears "in exactly one place" was **false**: it
+  is in four test files as well as the one source comment. Corrected before
+  commit. Worth noting as a pattern — a checkable claim in a README that invites
+  checking has to actually be checked.
+
 ### Next — resume here
 
-The on-chain half is finished and tested. **Everything remaining is blocked on a
-credential this box does not have** — see `HANDOFF.md` §4. Listed in the order
-they unblock work:
+1. **Deploy to BOT Chain testnet.** `./scripts/deploy.sh botchain_testnet
+   --broadcast`. Funded and ready; needs a human at the terminal only because
+   the keystore password prompt is interactive. Afterwards re-run the
+   `COMPLIANCE_ROLE` revert check against the new deployment — it is the one
+   assertion worth repeating on every chain.
 
-1. **Deploy to X Layer testnet, then BOT Chain testnet** — the script is ready
-   and simulated; it needs a funded deployer key. X Layer's eligibility gate
-   requires testnet **before** mainnet with provable timestamps, so the broadcast
-   records under `packages/contracts/broadcast/` are evidence and stay tracked in
-   git (only `dry-run/` is ignored).
-
-2. `CarrierAdapter` interface + `ShipbubbleAdapter` against the **free**
-   endpoints only — address validation and rate quotes, PHC→LOS. Blocked on a
-   sandbox key.
-
-3. Locate and document the Shipbubble cancellation endpoint and its refund
-   behaviour **before** any live purchase.
-
-4. **Compliance engine** (`packages/compliance`) — blocked on an inference
+2. **Compliance engine** (`packages/compliance`) — blocked on an inference
    credential. There is no LLM API key on this box and none in the repo. The
    package is empty; nothing has been stubbed, because a compliance engine that
    cannot perform real inference is exactly the kind of simulated feature §1.2
-   forbids.
+   forbids. With the chain work done this is the largest piece of unbuilt scope.
+
+3. `CarrierAdapter` interface + `ShipbubbleAdapter` against the **free**
+   endpoints only — address validation and rate quotes, PHC→LOS. Blocked on a
+   sandbox key.
+
+4. Locate and document the Shipbubble cancellation endpoint and its refund
+   behaviour **before** any live purchase.
 
 5. **Benchmark** (`bench/`) — 200–300 real product descriptions with ground-truth
    HS codes, reporting top-1 accuracy, refusal precision, and a calibration
-   curve. Depends on (4). This is the differentiator; the contingency order is to
+   curve. Depends on (2). This is the differentiator; the contingency order is to
    shrink it, never drop it.
 
 Empty and untouched: `packages/{compliance,carrier,attest}`, `apps/{web,api}`,
