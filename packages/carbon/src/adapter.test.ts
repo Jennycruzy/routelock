@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { getChain } from "@routelock/chain";
 import { CarbonmarkAdapter } from "./adapter.ts";
-import { registryOf } from "./types.ts";
+import { isPlaceholderRetirement, registryOf } from "./types.ts";
 
 const testnet = getChain("xlayer_testnet");
 const mainnet = getChain("xlayer_mainnet");
@@ -64,4 +64,21 @@ test("registry is read from the project id, and unknown when it cannot be", () =
   assert.equal(registryOf("vcs-1529"), "VCS");
   assert.equal(registryOf(""), "UNKNOWN");
   assert.equal(registryOf("SOMETHING-ELSE"), "UNKNOWN");
+});
+
+test("a receipt that names someone else is not evidence for this order", () => {
+  // Carbonmark's test mode does not retire anything. It completes the order and
+  // returns a shared placeholder from April 2024 whose beneficiary is
+  // "Developer Tester" — and whose own record says it must not be delivered to
+  // customers, because the environmental benefit was already claimed.
+  //
+  // The check is deliberately general rather than a match on that one page: a
+  // receipt describing something other than what was asked for cannot support
+  // the claim made of it, whatever the provider called it.
+  assert.equal(isPlaceholderRetirement("RouteLock", "Developer Tester"), true);
+  assert.equal(isPlaceholderRetirement("RouteLock", "RouteLock"), false);
+  assert.equal(isPlaceholderRetirement("RouteLock", "  routelock "), false);
+  assert.equal(isPlaceholderRetirement("RouteLock", ""), true);
+  assert.equal(isPlaceholderRetirement("RouteLock", null), true);
+  assert.equal(isPlaceholderRetirement("RouteLock", undefined), true);
 });

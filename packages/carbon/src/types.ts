@@ -65,6 +65,16 @@ export interface RetirementRequest {
 /// A completed retirement.
 export interface Retirement {
   readonly orderId: string;
+  /// True when Carbonmark answered with its shared **test-mode placeholder**
+  /// rather than a retirement performed for this order.
+  ///
+  /// A test-mode credential does not retire anything. Every test order links to
+  /// one pre-existing retirement from April 2024, beneficiary "Developer
+  /// Tester", and Carbonmark's own record on that page says: *"Do not deliver
+  /// this to customers, as the environmental benefit has already been
+  /// claimed."* Publishing it as proof of a RouteLock retirement would be the
+  /// fabricated evidence rule §1.2.1 forbids.
+  readonly placeholder: boolean;
   /// The Polygon transaction that retired the credit. Hashed on-chain as
   /// `carrierRefHash`.
   readonly retirementTxHash: string;
@@ -94,6 +104,25 @@ export class CarbonmarkError extends Error {
 /// 25 of 723 live listings carried no usable project id, and a credit whose
 /// registry cannot be established is one the compliance engine should be told
 /// about rather than one silently assigned a registry.
+/// Did Carbonmark actually retire what was asked for?
+///
+/// A retirement performed for this order carries back the beneficiary that was
+/// requested. The test-mode placeholder always carries "Developer Tester"
+/// instead, because it is one shared pre-existing retirement that every test
+/// order points at.
+///
+/// Comparing what was asked against what came back is the general form of the
+/// check, and it does not depend on recognising any particular placeholder: a
+/// receipt that does not describe the request is not evidence for the request.
+export function isPlaceholderRetirement(
+  requestedBeneficiary: string,
+  returnedBeneficiary: string | null | undefined,
+): boolean {
+  const returned = (returnedBeneficiary ?? "").trim().toLowerCase();
+  if (returned === "") return true;
+  return returned !== requestedBeneficiary.trim().toLowerCase();
+}
+
 export function registryOf(projectId: string): Registry {
   const prefix = projectId.split("-")[0]?.toUpperCase();
   switch (prefix) {

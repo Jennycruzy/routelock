@@ -144,6 +144,27 @@ export class CarbonmarkAdapter
       true,
     );
 
+    // A test-mode credential does not retire anything. It completes the order
+    // and hands back a shared placeholder from April 2024, beneficiary
+    // "Developer Tester", which Carbonmark's own record says must not be
+    // delivered to customers because the benefit was already claimed.
+    //
+    // Refusing here is the whole point: a Receipt is what gets hashed into
+    // `carrierRefHash` and published as proof. Committing a placeholder
+    // on-chain and presenting it as a RouteLock retirement would be fabricated
+    // evidence, which is disqualifying — so this throws rather than returning
+    // a receipt that cannot support the claim made of it.
+    if (retirement.placeholder) {
+      throw new CarbonmarkError(
+        `test-mode credential returned Carbonmark's shared placeholder retirement ` +
+          `instead of retiring for "${order.beneficiaryName}". Nothing was retired ` +
+          `and no proof exists. A production key is required for a real retirement — ` +
+          `see docs/carbonmark-verification.md`,
+        200,
+        "/orders",
+      );
+    }
+
     return {
       ref: retirement.retirementTxHash,
       rawResponse: JSON.stringify(retirement),

@@ -17,6 +17,7 @@ import {
 } from "@routelock/chain";
 import {
   CarbonmarkError,
+  isPlaceholderRetirement,
   registryOf,
   type Listing,
   type Retirement,
@@ -119,16 +120,18 @@ export class CarbonmarkClient {
     };
   }
 
-  /// **Retire a credit. Spends money and cannot be undone.**
+  /// **Retire a credit. With a production key this spends money and cannot be
+  /// undone.**
   ///
   /// A retirement is permanent by design — that is the whole point of retiring
   /// a credit — so there is no cancellation to offer and no way to recover the
-  /// cost. `confirmSpend` exists because this call is reachable from a sandbox
-  /// key and it has not been established that a sandbox key is billed
-  /// differently from a production one: Carbonmark serves both from the same
-  /// host, and a quote made with the sandbox key returned a real credential id
-  /// against real market inventory. Until that question is answered in writing,
-  /// treat every call here as real money.
+  /// cost. `confirmSpend` marks the call site as deliberate.
+  ///
+  /// **A test-mode key retires nothing.** Established by calling it on
+  /// 14 August 2026: the order completes, but the transaction hash returned
+  /// belongs to a pre-existing retirement from April 2024 and every test order
+  /// links to that same page. The returned `placeholder` flag says which
+  /// happened, and callers must not publish a placeholder as proof.
   async retire(
     quote: CarbonQuote,
     request: Omit<RetirementRequest, "sourceId" | "quantity">,
@@ -156,6 +159,10 @@ export class CarbonmarkClient {
 
     return {
       orderId: quote.uuid,
+      placeholder: isPlaceholderRetirement(
+        request.beneficiaryName,
+        settled.beneficiary_name,
+      ),
       retirementTxHash: String(settled.transaction_hash ?? ""),
       certificateUrl: String(settled.view_retirement_url ?? ""),
       amountCharged: quote.costUsd,

@@ -68,38 +68,65 @@ calls an API and the registry custodies the asset. It does mean neither the code
 nor the README may state that credits are ERC-1155, because for 94% of what is
 listed that is false.
 
-## The sandbox key performs real, on-chain retirements
+## The test-mode key retires nothing — spec §4.3 was right
 
-**Settled 14 August 2026.** The build spec worried that a sandbox key would
-return a synthetic certificate, and that presenting one as real would be
-disqualifying. The opposite is true, and it was established by retiring 0.01 t
-and then verifying the result **independently of Carbonmark**.
+**Established 14 August 2026 by submitting a real order and then checking what
+came back.** The order completed. It retired nothing.
 
-| | |
-|---|---|
-| Credit | `VCS-817` (Verra), vintage 2016, `C3T-VCS-817-2016` |
-| Quantity | 0.01 t |
-| Cost | **$0.10**, on the monthly invoice |
-| Polygon transaction | `0xa36425668718644597fbae4e525426937e5179dd7ed7d8ee7619fc3c129594a9` |
-| Block | 55,853,988, status **SUCCESS**, 34 logs |
-| Certificate | `app.carbonmark.com/retirements/id/137-0xab5b7b5849784279280188b556af3c179f31dc5b-50` |
-| Beneficiary | `RouteLock`, retirement index 50 |
+| Field | Returned | What it actually is |
+|---|---|---|
+| `status` | `COMPLETED` | the *order* completed |
+| `transaction_hash` | `0xa36425…94a9` | a real Polygon tx in block **55,853,988** |
+| block timestamp | **2024-04-15** | over two years before the order |
+| `beneficiary_name` | **`Developer Tester`** | not the requested `RouteLock` |
+| amount on that retirement | 0.123 t | not the 0.01 t ordered |
 
-The transaction was confirmed by calling `eth_getTransactionReceipt` on a public
-Polygon RPC with no credentials, and the certificate page returns `200` with no
-authentication. Neither check goes through Carbonmark, which is the point: the
-proof does not depend on trusting the party that issued it.
+Carbonmark states it plainly in the retirement record itself:
 
-**Consequence: the X Layer demo does not depend on production access.** A real
-retirement with a real public certificate is already achievable with the key in
-hand. Production access remains worth pursuing, but it is no longer the gate it
-was assumed to be.
+> *"This is a placeholder retirement for TEST MODE API retirements. This is a
+> real retirement, but was already pre-retired at the time you submitted your
+> test order to the Carbonmark API. **Every retirement using a TEST MODE
+> credential will link to this same placeholder retirement page. Do not deliver
+> this to customers, as the environmental benefit has already been claimed.**"*
 
-**Not all public RPCs will confirm it.** Of four tried, one returned the
-transaction, one returned "not found", and two rejected the request for
-credentials. A single synced node returning the transaction is proof it exists;
-absence from a lagging or pruning node is not evidence against it. `drpc.org`
-answered; `publicnode` and `1rpc` did not.
+**The certificate URL must never be shown to a judge.** It is one shared page
+that every test-mode user in the world links to, describing someone else's 2024
+retirement.
+
+Nothing was charged and no credit was retired, so the experiment cost nothing
+but is not evidence of a working retirement.
+
+### How this was nearly missed
+
+The order returned `status: COMPLETED`, a real transaction hash, a real
+certificate URL, and an on-chain receipt reading `SUCCESS` with 34 logs. Every
+individual signal looked like success, and the transaction is genuinely on
+Polygon mainnet — it simply is not *this* order's transaction.
+
+**The block number was the tell.** The chain head was ~92,017,000 while the
+transaction sat in block 55,853,988; a transaction created minutes ago cannot be
+36 million blocks old. **Check that a transaction's block is recent, not merely
+that the transaction exists.**
+
+The general form of the check is stronger and is what the code now enforces:
+compare what came back against what was asked for. The placeholder names a
+different beneficiary and a different quantity, so a receipt that does not
+describe the request is not evidence for the request — whatever else about it
+looks real.
+
+`CarbonmarkAdapter.fulfil()` throws when the beneficiary does not match, because
+a `Receipt` is what gets hashed into `carrierRefHash` and published as proof.
+
+**Consequence: production access is the gate for a real retirement**, as
+originally assumed. Everything upstream of it — listings, supply, assessment,
+quoting — is fully exercised against real data with the test key.
+
+### A note on verifying Polygon transactions
+
+Of four public RPCs tried, one returned the transaction, one returned "not
+found", and two rejected the request for credentials. A single synced node
+returning it proves existence; absence from a lagging or pruning node proves
+nothing. `drpc.org` answered; `publicnode` and `1rpc` did not.
 
 ### Retirement is asynchronous
 
