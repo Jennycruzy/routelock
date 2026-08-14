@@ -1,0 +1,572 @@
+[
+ {
+  "hs6": "850110",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Motors of an output not exceeding 37.5 W"
+ },
+ {
+  "hs6": "850120",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Universal AC/DC motors of an output exceeding 37.5 W"
+ },
+ {
+  "hs6": "850131",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output not exceeding 750 W"
+ },
+ {
+  "hs6": "850132",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output exceeding 750 W but not exceeding 75 kW"
+ },
+ {
+  "hs6": "850133",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output exceeding 75 kW but not exceeding 375 kW"
+ },
+ {
+  "hs6": "850134",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output exceeding 375 kW"
+ },
+ {
+  "hs6": "850140",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Other AC motors, single-phase"
+ },
+ {
+  "hs6": "850151",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output not exceeding 750 W"
+ },
+ {
+  "hs6": "850152",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output exceeding 750 W but not exceeding 75 kW"
+ },
+ {
+  "hs6": "850153",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output exceeding 75 kW"
+ },
+ {
+  "hs6": "850172",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Of an output exceeding 50 W"
+ },
+ {
+  "hs6": "850180",
+  "heading": "Electric motors and generators (excluding generating sets)",
+  "text": "Photovoltaic AC generators"
+ },
+ {
+  "hs6": "850300",
+  "heading": "Electric generating sets and rotary converters",
+  "text": "Parts suitable for use solely or principally with the machines of heading 8501 or 8502"
+ },
+ {
+  "hs6": "850431",
+  "heading": "Electrical transformers, static converters (for example, rectifiers) and inductors; parts thereof",
+  "text": "Having a power handling capacity not exceeding 1 kVA"
+ },
+ {
+  "hs6": "850440",
+  "heading": "Electrical transformers, static converters (for example, rectifiers) and inductors; parts thereof",
+  "text": "Static converters"
+ },
+ {
+  "hs6": "850450",
+  "heading": "Electrical transformers, static converters (for example, rectifiers) and inductors; parts thereof",
+  "text": "Other inductors"
+ },
+ {
+  "hs6": "850490",
+  "heading": "Electrical transformers, static converters (for example, rectifiers) and inductors; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "850519",
+  "heading": "Electromagnets; permanent magnets and articles intended to become permanent magnets after magnetization; electromagnetic or permanent magnet chucks, clamps and similar holding devices; electromagnetic couplings, clutches and brakes; electromagnetic lifting heads; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "850590",
+  "heading": "Electromagnets; permanent magnets and articles intended to become permanent magnets after magnetization; electromagnetic or permanent magnet chucks, clamps and similar holding devices; electromagnetic couplings, clutches and brakes; electromagnetic lifting heads; parts thereof",
+  "text": "Other, including parts"
+ },
+ {
+  "hs6": "850630",
+  "heading": "Primary cells and primary batteries; parts thereof",
+  "text": "Mercuric oxide"
+ },
+ {
+  "hs6": "850640",
+  "heading": "Primary cells and primary batteries; parts thereof",
+  "text": "Silver oxide"
+ },
+ {
+  "hs6": "850720",
+  "heading": "Electric storage batteries, including separators therefor, whether or not rectangular (including square); parts thereof",
+  "text": "Other lead-acid storage batteries"
+ },
+ {
+  "hs6": "850730",
+  "heading": "Electric storage batteries, including separators therefor, whether or not rectangular (including square); parts thereof",
+  "text": "Nickel-cadmium storage batteries"
+ },
+ {
+  "hs6": "850780",
+  "heading": "Electric storage batteries, including separators therefor, whether or not rectangular (including square); parts thereof",
+  "text": "Other storage batteries"
+ },
+ {
+  "hs6": "850790",
+  "heading": "Electric storage batteries, including separators therefor, whether or not rectangular (including square); parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "850980",
+  "heading": "Electromechanical domestic appliances, with self-contained electric motor, other than vacuum cleaners of heading 8508; parts thereof",
+  "text": "Other appliances"
+ },
+ {
+  "hs6": "850990",
+  "heading": "Electromechanical domestic appliances, with self-contained electric motor, other than vacuum cleaners of heading 8508; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851020",
+  "heading": "Shavers, hair clippers and hair-removing appliances, with self-contained electric motor; parts thereof",
+  "text": "Hair clippers"
+ },
+ {
+  "hs6": "851090",
+  "heading": "Shavers, hair clippers and hair-removing appliances, with self-contained electric motor; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851180",
+  "heading": "Electrical ignition or starting equipment of a kind used for spark-ignition or compression-ignition internal combustion engines (for example, ignition magnetos, magneto-dynamos, ignition coils, spark plugs and glow plugs, starter motors); generators (for example, dynamos, alternators) and cut-outs of a kind used in conjunction with such engines; parts thereof",
+  "text": "Other equipment"
+ },
+ {
+  "hs6": "851190",
+  "heading": "Electrical ignition or starting equipment of a kind used for spark-ignition or compression-ignition internal combustion engines (for example, ignition magnetos, magneto-dynamos, ignition coils, spark plugs and glow plugs, starter motors); generators (for example, dynamos, alternators) and cut-outs of a kind used in conjunction with such engines; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851210",
+  "heading": "Electrical lighting or signaling equipment (excluding articles of heading 8539), windshield wipers, defrosters and demisters, of a kind used for cycles or motor vehicles; parts thereof",
+  "text": "Lighting or visual signaling equipment of a kind used on bicycles"
+ },
+ {
+  "hs6": "851220",
+  "heading": "Electrical lighting or signaling equipment (excluding articles of heading 8539), windshield wipers, defrosters and demisters, of a kind used for cycles or motor vehicles; parts thereof",
+  "text": "Other lighting or visual signaling equipment"
+ },
+ {
+  "hs6": "851240",
+  "heading": "Electrical lighting or signaling equipment (excluding articles of heading 8539), windshield wipers, defrosters and demisters, of a kind used for cycles or motor vehicles; parts thereof",
+  "text": "Windshield wipers, defrosters and demisters"
+ },
+ {
+  "hs6": "851290",
+  "heading": "Electrical lighting or signaling equipment (excluding articles of heading 8539), windshield wipers, defrosters and demisters, of a kind used for cycles or motor vehicles; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851310",
+  "heading": "Portable electric lamps designed to function by their own source of energy (for example, dry batteries, storage batteries, magnetos), other than lighting equipment of heading 8512; parts thereof",
+  "text": "Lamps"
+ },
+ {
+  "hs6": "851390",
+  "heading": "Portable electric lamps designed to function by their own source of energy (for example, dry batteries, storage batteries, magnetos), other than lighting equipment of heading 8512; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851420",
+  "heading": "Industrial or laboratory electric furnaces and ovens (including those functioning by induction or dielectric loss); other industrial or laboratory equipment for the heat treatment of materials by induction or dielectric loss; parts thereof",
+  "text": "Furnaces and ovens functioning by induction or dielectric loss"
+ },
+ {
+  "hs6": "851431",
+  "heading": "Industrial or laboratory electric furnaces and ovens (including those functioning by induction or dielectric loss); other industrial or laboratory equipment for the heat treatment of materials by induction or dielectric loss; parts thereof",
+  "text": "Electron beam furnaces"
+ },
+ {
+  "hs6": "851432",
+  "heading": "Industrial or laboratory electric furnaces and ovens (including those functioning by induction or dielectric loss); other industrial or laboratory equipment for the heat treatment of materials by induction or dielectric loss; parts thereof",
+  "text": "Plasma and vacuum arc furnaces"
+ },
+ {
+  "hs6": "851439",
+  "heading": "Industrial or laboratory electric furnaces and ovens (including those functioning by induction or dielectric loss); other industrial or laboratory equipment for the heat treatment of materials by induction or dielectric loss; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "851490",
+  "heading": "Industrial or laboratory electric furnaces and ovens (including those functioning by induction or dielectric loss); other industrial or laboratory equipment for the heat treatment of materials by induction or dielectric loss; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851590",
+  "heading": "Electric (including electrically heated gas), laser or other light or photon beam, ultrasonic, electron beam, magnetic pulse or plasma arc soldering, brazing or welding machines and apparatus, whether or not capable of cutting; electric machines and apparatus for hot spraying of metals or cermets; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851640",
+  "heading": "Electric instantaneous or storage water heaters and immersion heaters; electric space heating apparatus and soil heating apparatus; electrothermic hairdressing apparatus (for example, hair dryers, hair curlers, curling tong heaters) and hand dryers; electric flatirons; other electrothermic appliances of a kind used for domestic purposes; electric heating resistors, other than those of heading 8545; parts thereof",
+  "text": "Electric flatirons"
+ },
+ {
+  "hs6": "851660",
+  "heading": "Electric instantaneous or storage water heaters and immersion heaters; electric space heating apparatus and soil heating apparatus; electrothermic hairdressing apparatus (for example, hair dryers, hair curlers, curling tong heaters) and hand dryers; electric flatirons; other electrothermic appliances of a kind used for domestic purposes; electric heating resistors, other than those of heading 8545; parts thereof",
+  "text": "Other ovens; cooking stoves, ranges, cooking plates, boiling rings, grillers and roasters"
+ },
+ {
+  "hs6": "851680",
+  "heading": "Electric instantaneous or storage water heaters and immersion heaters; electric space heating apparatus and soil heating apparatus; electrothermic hairdressing apparatus (for example, hair dryers, hair curlers, curling tong heaters) and hand dryers; electric flatirons; other electrothermic appliances of a kind used for domestic purposes; electric heating resistors, other than those of heading 8545; parts thereof",
+  "text": "Electric heating resistors"
+ },
+ {
+  "hs6": "851690",
+  "heading": "Electric instantaneous or storage water heaters and immersion heaters; electric space heating apparatus and soil heating apparatus; electrothermic hairdressing apparatus (for example, hair dryers, hair curlers, curling tong heaters) and hand dryers; electric flatirons; other electrothermic appliances of a kind used for domestic purposes; electric heating resistors, other than those of heading 8545; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851810",
+  "heading": "Microphones and stands therefor; loudspeakers, whether or not mounted in their enclosures; headphones and earphones, whether or not combined with a microphone, and sets consisting of a microphone and one or more loudspeakers; audio-frequency electric amplifiers; electric sound amplifier sets; parts thereof",
+  "text": "Microphones and stands therefor"
+ },
+ {
+  "hs6": "851829",
+  "heading": "Microphones and stands therefor; loudspeakers, whether or not mounted in their enclosures; headphones and earphones, whether or not combined with a microphone, and sets consisting of a microphone and one or more loudspeakers; audio-frequency electric amplifiers; electric sound amplifier sets; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "851830",
+  "heading": "Microphones and stands therefor; loudspeakers, whether or not mounted in their enclosures; headphones and earphones, whether or not combined with a microphone, and sets consisting of a microphone and one or more loudspeakers; audio-frequency electric amplifiers; electric sound amplifier sets; parts thereof",
+  "text": "Headphones and earphones, whether or not combined with a microphone, and sets consisting of a microphone and one or more loudspeakers"
+ },
+ {
+  "hs6": "851840",
+  "heading": "Microphones and stands therefor; loudspeakers, whether or not mounted in their enclosures; headphones and earphones, whether or not combined with a microphone, and sets consisting of a microphone and one or more loudspeakers; audio-frequency electric amplifiers; electric sound amplifier sets; parts thereof",
+  "text": "Audio-frequency electric amplifiers"
+ },
+ {
+  "hs6": "851890",
+  "heading": "Microphones and stands therefor; loudspeakers, whether or not mounted in their enclosures; headphones and earphones, whether or not combined with a microphone, and sets consisting of a microphone and one or more loudspeakers; audio-frequency electric amplifiers; electric sound amplifier sets; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "851930",
+  "heading": "Sound recording or reproducing apparatus",
+  "text": "Turntables (record-decks)"
+ },
+ {
+  "hs6": "851981",
+  "heading": "Sound recording or reproducing apparatus",
+  "text": "Using magnetic, optical or semiconductor media"
+ },
+ {
+  "hs6": "851989",
+  "heading": "Sound recording or reproducing apparatus",
+  "text": "Other"
+ },
+ {
+  "hs6": "852110",
+  "heading": "Video recording or reproducing apparatus, whether or not incorporating a video tuner",
+  "text": "Magnetic tape-type"
+ },
+ {
+  "hs6": "852290",
+  "heading": "Parts and accessories suitable for use solely or principally with the apparatus of heading 8519 or 8521",
+  "text": "Other"
+ },
+ {
+  "hs6": "852329",
+  "heading": "Discs, tapes, solid-state non-volatile storage devices, \"smart cards\" and other media for the recording of sound or of other phenomena, whether or not recorded, including matrices and masters for the production of discs, but excluding products of Chapter 37",
+  "text": "Other"
+ },
+ {
+  "hs6": "852349",
+  "heading": "Discs, tapes, solid-state non-volatile storage devices, \"smart cards\" and other media for the recording of sound or of other phenomena, whether or not recorded, including matrices and masters for the production of discs, but excluding products of Chapter 37",
+  "text": "Other"
+ },
+ {
+  "hs6": "852380",
+  "heading": "Discs, tapes, solid-state non-volatile storage devices, \"smart cards\" and other media for the recording of sound or of other phenomena, whether or not recorded, including matrices and masters for the production of discs, but excluding products of Chapter 37",
+  "text": "Other"
+ },
+ {
+  "hs6": "852411",
+  "heading": "Flat panel display modules, whether or not incorporating touch-sensitive screens",
+  "text": "Of liquid crystals"
+ },
+ {
+  "hs6": "852491",
+  "heading": "Flat panel display modules, whether or not incorporating touch-sensitive screens",
+  "text": "Of liquid crystals"
+ },
+ {
+  "hs6": "852550",
+  "heading": "Transmission apparatus for radio-broadcasting or television, whether or not incorporating reception apparatus or sound recording or reproducing apparatus; television cameras, digital cameras and video camera recorders",
+  "text": "Transmission apparatus"
+ },
+ {
+  "hs6": "852560",
+  "heading": "Transmission apparatus for radio-broadcasting or television, whether or not incorporating reception apparatus or sound recording or reproducing apparatus; television cameras, digital cameras and video camera recorders",
+  "text": "Transmission apparatus incorporating reception apparatus"
+ },
+ {
+  "hs6": "852589",
+  "heading": "Transmission apparatus for radio-broadcasting or television, whether or not incorporating reception apparatus or sound recording or reproducing apparatus; television cameras, digital cameras and video camera recorders",
+  "text": "Other"
+ },
+ {
+  "hs6": "852692",
+  "heading": "Radar apparatus, radio navigational aid apparatus and radio remote control apparatus",
+  "text": "Radio remote control apparatus"
+ },
+ {
+  "hs6": "852713",
+  "heading": "Reception apparatus for radiobroadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock",
+  "text": "Other apparatus combined with sound recording or reproducing apparatus"
+ },
+ {
+  "hs6": "852719",
+  "heading": "Reception apparatus for radiobroadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock",
+  "text": "Other"
+ },
+ {
+  "hs6": "852721",
+  "heading": "Reception apparatus for radiobroadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock",
+  "text": "Combined with sound recording or reproducing apparatus"
+ },
+ {
+  "hs6": "852729",
+  "heading": "Reception apparatus for radiobroadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock",
+  "text": "Other"
+ },
+ {
+  "hs6": "852791",
+  "heading": "Reception apparatus for radiobroadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock",
+  "text": "Combined with sound recording or reproducing apparatus"
+ },
+ {
+  "hs6": "852792",
+  "heading": "Reception apparatus for radiobroadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock",
+  "text": "Not combined with sound recording or reproducing apparatus but combined with a clock"
+ },
+ {
+  "hs6": "852799",
+  "heading": "Reception apparatus for radiobroadcasting, whether or not combined, in the same housing, with sound recording or reproducing apparatus or a clock",
+  "text": "Other"
+ },
+ {
+  "hs6": "852849",
+  "heading": "Monitors and projectors, not incorporating television reception apparatus; reception apparatus for television, whether or not incorporating radio-broadcast receivers or sound or video recording or reproducing apparatus",
+  "text": "Other"
+ },
+ {
+  "hs6": "852859",
+  "heading": "Monitors and projectors, not incorporating television reception apparatus; reception apparatus for television, whether or not incorporating radio-broadcast receivers or sound or video recording or reproducing apparatus",
+  "text": "Other"
+ },
+ {
+  "hs6": "852869",
+  "heading": "Monitors and projectors, not incorporating television reception apparatus; reception apparatus for television, whether or not incorporating radio-broadcast receivers or sound or video recording or reproducing apparatus",
+  "text": "Other"
+ },
+ {
+  "hs6": "852871",
+  "heading": "Monitors and projectors, not incorporating television reception apparatus; reception apparatus for television, whether or not incorporating radio-broadcast receivers or sound or video recording or reproducing apparatus",
+  "text": "Not designed to incorporate a video display or screen"
+ },
+ {
+  "hs6": "852872",
+  "heading": "Monitors and projectors, not incorporating television reception apparatus; reception apparatus for television, whether or not incorporating radio-broadcast receivers or sound or video recording or reproducing apparatus",
+  "text": "Other, color"
+ },
+ {
+  "hs6": "852910",
+  "heading": "Parts suitable for use solely or principally with the apparatus of headings 8524 to 8528",
+  "text": "Antennas and antenna reflectors of all kinds; parts suitable for use therewith"
+ },
+ {
+  "hs6": "852990",
+  "heading": "Parts suitable for use solely or principally with the apparatus of headings 8524 to 8528",
+  "text": "Other"
+ },
+ {
+  "hs6": "853180",
+  "heading": "Electric sound or visual signaling apparatus (for example, bells, sirens, indicator panels, burglar or fire alarms), other than those of heading 8512 or 8530; parts thereof",
+  "text": "Other apparatus"
+ },
+ {
+  "hs6": "853190",
+  "heading": "Electric sound or visual signaling apparatus (for example, bells, sirens, indicator panels, burglar or fire alarms), other than those of heading 8512 or 8530; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "853340",
+  "heading": "Electrical resistors (including rheostats and potentiometers), other than heating resistors; parts thereof",
+  "text": "Other variable resistors, including rheostats and potentiometers"
+ },
+ {
+  "hs6": "853390",
+  "heading": "Electrical resistors (including rheostats and potentiometers), other than heating resistors; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "853590",
+  "heading": "Electrical apparatus for switching or protecting electrical circuits, or for making connections to or in electrical circuits (for example, switches, fuses, lightning arresters, voltage limiters, surge suppressors, plugs and other connectors, junction boxes), for a voltage exceeding 1,000 V",
+  "text": "Other"
+ },
+ {
+  "hs6": "853630",
+  "heading": "Electrical apparatus for switching or protecting electrical circuits, or for making connections to or in electrical circuits (for example, switches, relays, fuses, surge suppressors, plugs, sockets, lamp-holders and other connectors, junction boxes), for a voltage not exceeding 1,000 V; connectors for optical fibers, optical fiber bundles or cables",
+  "text": "Other apparatus for protecting electrical circuits"
+ },
+ {
+  "hs6": "853650",
+  "heading": "Electrical apparatus for switching or protecting electrical circuits, or for making connections to or in electrical circuits (for example, switches, relays, fuses, surge suppressors, plugs, sockets, lamp-holders and other connectors, junction boxes), for a voltage not exceeding 1,000 V; connectors for optical fibers, optical fiber bundles or cables",
+  "text": "Other switches"
+ },
+ {
+  "hs6": "853669",
+  "heading": "Electrical apparatus for switching or protecting electrical circuits, or for making connections to or in electrical circuits (for example, switches, relays, fuses, surge suppressors, plugs, sockets, lamp-holders and other connectors, junction boxes), for a voltage not exceeding 1,000 V; connectors for optical fibers, optical fiber bundles or cables",
+  "text": "Other"
+ },
+ {
+  "hs6": "853690",
+  "heading": "Electrical apparatus for switching or protecting electrical circuits, or for making connections to or in electrical circuits (for example, switches, relays, fuses, surge suppressors, plugs, sockets, lamp-holders and other connectors, junction boxes), for a voltage not exceeding 1,000 V; connectors for optical fibers, optical fiber bundles or cables",
+  "text": "Other apparatus"
+ },
+ {
+  "hs6": "853710",
+  "heading": "Boards, panels, consoles, desks, cabinets and other bases, equipped with two or more apparatus of heading 8535 or 8536, for electric control or the distribution of electricity, including those incorporating instruments or apparatus of chapter 90, and numerical control apparatus, other than switching apparatus of heading 8517",
+  "text": "For a voltage not exceeding 1,000 V"
+ },
+ {
+  "hs6": "853890",
+  "heading": "Parts suitable for use solely or principally with the apparatus of heading 8535, 8536 or 8537",
+  "text": "Other"
+ },
+ {
+  "hs6": "853921",
+  "heading": "Electrical filament or discharge lamps, including sealed beam lamp units and ultraviolet or infrared lamps; arc lamps; light-emitting diode (LED) light sources; parts thereof",
+  "text": "Tungsten halogen"
+ },
+ {
+  "hs6": "853922",
+  "heading": "Electrical filament or discharge lamps, including sealed beam lamp units and ultraviolet or infrared lamps; arc lamps; light-emitting diode (LED) light sources; parts thereof",
+  "text": "Other, of a power not exceeding 200 W and for a voltage exceeding 100 V"
+ },
+ {
+  "hs6": "853929",
+  "heading": "Electrical filament or discharge lamps, including sealed beam lamp units and ultraviolet or infrared lamps; arc lamps; light-emitting diode (LED) light sources; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "853939",
+  "heading": "Electrical filament or discharge lamps, including sealed beam lamp units and ultraviolet or infrared lamps; arc lamps; light-emitting diode (LED) light sources; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "854011",
+  "heading": "Thermionic, cold cathode or photocathode tubes (for example, vacuum or vapor or gas filled tubes, mercury arc rectifying tubes, cathode-ray tubes, television camera tubes); parts thereof",
+  "text": "Color"
+ },
+ {
+  "hs6": "854012",
+  "heading": "Thermionic, cold cathode or photocathode tubes (for example, vacuum or vapor or gas filled tubes, mercury arc rectifying tubes, cathode-ray tubes, television camera tubes); parts thereof",
+  "text": "Monochrome"
+ },
+ {
+  "hs6": "854020",
+  "heading": "Thermionic, cold cathode or photocathode tubes (for example, vacuum or vapor or gas filled tubes, mercury arc rectifying tubes, cathode-ray tubes, television camera tubes); parts thereof",
+  "text": "Television camera tubes; image converters and intensifiers; other photocathode tubes"
+ },
+ {
+  "hs6": "854071",
+  "heading": "Thermionic, cold cathode or photocathode tubes (for example, vacuum or vapor or gas filled tubes, mercury arc rectifying tubes, cathode-ray tubes, television camera tubes); parts thereof",
+  "text": "Magnetrons"
+ },
+ {
+  "hs6": "854079",
+  "heading": "Thermionic, cold cathode or photocathode tubes (for example, vacuum or vapor or gas filled tubes, mercury arc rectifying tubes, cathode-ray tubes, television camera tubes); parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "854091",
+  "heading": "Thermionic, cold cathode or photocathode tubes (for example, vacuum or vapor or gas filled tubes, mercury arc rectifying tubes, cathode-ray tubes, television camera tubes); parts thereof",
+  "text": "Of cathode-ray tubes"
+ },
+ {
+  "hs6": "854099",
+  "heading": "Thermionic, cold cathode or photocathode tubes (for example, vacuum or vapor or gas filled tubes, mercury arc rectifying tubes, cathode-ray tubes, television camera tubes); parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "854149",
+  "heading": "Semiconductor devices (for example, diodes, transistors, semiconductor-based transducers); photosensitive semiconductor devices, including photovoltaic cells whether or not assembled in modules or made up into panels; light-emitting diodes (LED), whether or not assembled with other light-emitting diodes (LED); mounted piezo-electric crystals; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "854330",
+  "heading": "Electrical machines and apparatus, having individual functions, not specified or included elsewhere in this chapter; parts thereof",
+  "text": "Machines and apparatus for electroplating, electrolysis or electrophoresis"
+ },
+ {
+  "hs6": "854370",
+  "heading": "Electrical machines and apparatus, having individual functions, not specified or included elsewhere in this chapter; parts thereof",
+  "text": "Other machines and apparatus"
+ },
+ {
+  "hs6": "854390",
+  "heading": "Electrical machines and apparatus, having individual functions, not specified or included elsewhere in this chapter; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "854442",
+  "heading": "Insulated (including enameled or anodized) wire, cable (including coaxial cable) and other insulated electric conductors, whether or not fitted with connectors; optical fiber cables, made up of individually sheathed fibers, whether or not assembled with electric conductors or fitted with connectors",
+  "text": "Fitted with connectors"
+ },
+ {
+  "hs6": "854449",
+  "heading": "Insulated (including enameled or anodized) wire, cable (including coaxial cable) and other insulated electric conductors, whether or not fitted with connectors; optical fiber cables, made up of individually sheathed fibers, whether or not assembled with electric conductors or fitted with connectors",
+  "text": "Other"
+ },
+ {
+  "hs6": "854460",
+  "heading": "Insulated (including enameled or anodized) wire, cable (including coaxial cable) and other insulated electric conductors, whether or not fitted with connectors; optical fiber cables, made up of individually sheathed fibers, whether or not assembled with electric conductors or fitted with connectors",
+  "text": "Other electric conductors, for a voltage exceeding 1,000 V"
+ },
+ {
+  "hs6": "854519",
+  "heading": "Carbon electrodes, carbon brushes, lamp carbons, battery carbons and other articles of graphite or other carbon, with or without metal, of a kind used for electrical purposes",
+  "text": "Other"
+ },
+ {
+  "hs6": "854590",
+  "heading": "Carbon electrodes, carbon brushes, lamp carbons, battery carbons and other articles of graphite or other carbon, with or without metal, of a kind used for electrical purposes",
+  "text": "Other"
+ },
+ {
+  "hs6": "854710",
+  "heading": "Insulating fittings for electrical machines, appliances or equipment, being fittings wholly of insulating material apart from any minor components of metal (for example, threaded sockets) incorporated during molding solely for the purposes of assembly, other than insulators of heading 8546; electrical conduit tubing and joints therefor, of base metal lined with insulating material",
+  "text": "Insulating fittings of ceramics"
+ },
+ {
+  "hs6": "854911",
+  "heading": "Electrical and electronic waste and scrap",
+  "text": "Waste and scrap of lead-acid accumulators; spent lead-acid accumulators"
+ },
+ {
+  "hs6": "854912",
+  "heading": "Electrical and electronic waste and scrap",
+  "text": "Other, containing lead, cadmium or mercury"
+ }
+]

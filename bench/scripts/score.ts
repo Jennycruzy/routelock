@@ -14,12 +14,13 @@
 /// authority — Nigeria to the country whose customs service issued the ruling —
 /// so every row is scored as the cross-border decision it would really be.
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { createWriteStream, existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   ComplianceEngine,
   configFromEnv,
   VERDICT_NAMES,
+  ENGINE_VERSION,
 } from "@routelock/compliance";
 import { computeMetrics, scoreRow, type ScoredRow } from "../src/metrics.ts";
 import type { CorpusRow } from "../src/index.ts";
@@ -54,19 +55,50 @@ async function main(): Promise<void> {
       ? corpus
       : corpus.filter((_, i) => i % Math.ceil(corpus.length / limit) === 0);
 
-  const engine = new ComplianceEngine(configFromEnv());
-  process.stdout.write(
-    `Scoring ${rows.length} of ${corpus.length} rows against ${engine.model}\n\n`,
+  const grounding = arg("grounding") !== "false";
+  const engine = new ComplianceEngine(configFromEnv(), { grounding });
+
+  // Each configuration writes its own file. Overwriting a single results file
+  // destroys the baseline a before-and-after comparison needs, and re-earning
+  // it costs another full run.
+  const suffix = grounding ? "grounded" : "ungrounded";
+  const out = join(dataDir, `results-${engine.model}-${suffix}.json`);
+  const checkpoint = join(dataDir, `.checkpoint-${engine.model}-${suffix}.jsonl`);
+
+  // Resume from a checkpoint rather than re-paying for rows already scored.
+  const alreadyScored = new Map<string, ScoredRow>();
+  if (existsSync(checkpoint)) {
+    for (const line of readFileSync(checkpoint, "utf8").split("\n")) {
+      if (line.trim() === "") continue;
+      const row = JSON.parse(line) as ScoredRow;
+      alreadyScored.set(`${row.jurisdiction}:${row.reference}`, row);
+    }
+    process.stdout.write(
+      `resuming: ${alreadyScored.size} rows already scored in ${checkpoint}\n`,
+    );
+  }
+
+  const pending = rows.filter(
+    (r) => !alreadyScored.has(`${r.jurisdiction}:${r.reference}`),
   );
 
-  const scored: ScoredRow[] = [];
+  process.stdout.write(
+    `Scoring ${pending.length} of ${rows.length} rows against ${engine.model}` +
+      ` (grounding ${grounding ? "on" : "off"})\n\n`,
+  );
+
+  const scored: ScoredRow[] = [...alreadyScored.values()];
   const failures: string[] = [];
   let cursor = 0;
   let done = 0;
 
+  // Append each row as it lands. A crash, a credit exhaustion, or a lost
+  // connection then costs only the rows not yet reached.
+  const checkpointStream = createWriteStream(checkpoint, { flags: "a" });
+
   async function worker(): Promise<void> {
-    while (cursor < rows.length) {
-      const row = rows[cursor++];
+    while (cursor < pending.length) {
+      const row = pending[cursor++];
       if (row === undefined) return;
       try {
         const { decision } = await engine.classify({
@@ -75,13 +107,17 @@ async function main(): Promise<void> {
           destinationCountry: DESTINATION[row.jurisdiction] ?? "GB",
           ...HELD_CONSTANT,
         });
-        scored.push(scoreRow(decision, row.hs6, row.reference, row.jurisdiction));
+        const result = scoreRow(decision, row.hs6, row.reference, row.jurisdiction);
+        scored.push(result);
+        checkpointStream.write(JSON.stringify(result) + "\n");
       } catch (error) {
         failures.push(`${row.reference}: ${String(error).slice(0, 120)}`);
       }
       done++;
       if (done % 25 === 0) {
-        process.stdout.write(`  ${done}/${rows.length}\n`);
+        process.stdout.write(
+          `  ${done}/${pending.length}  (${failures.length} failed)\n`,
+        );
       }
     }
   }
@@ -129,16 +165,37 @@ async function main(): Promise<void> {
     verdicts[name] = (verdicts[name] ?? 0) + 1;
   }
 
-  const out = join(dataDir, `results-${engine.model}.json`);
+  checkpointStream.end();
   writeFileSync(
     out,
     JSON.stringify(
-      { scoredAt: new Date().toISOString(), model: engine.model, heldConstant: HELD_CONSTANT, metrics, verdicts, failures, rows: scored },
+      {
+        scoredAt: new Date().toISOString(),
+        model: engine.model,
+        grounding,
+        engineVersion: ENGINE_VERSION,
+        heldConstant: HELD_CONSTANT,
+        metrics,
+        verdicts,
+        failures,
+        rows: scored,
+      },
       null,
       2,
     ) + "\n",
   );
   process.stdout.write(`\nwritten to ${out}\n`);
+
+  // The checkpoint has served its purpose once the results file is complete.
+  // Left behind, it would silently suppress a later re-run of the same config.
+  if (failures.length === 0) {
+    unlinkSync(checkpoint);
+    process.stdout.write("checkpoint cleared — run completed with no failures\n");
+  } else {
+    process.stdout.write(
+      `checkpoint kept at ${checkpoint} — re-run to retry ${failures.length} failed rows\n`,
+    );
+  }
 }
 
 await main();

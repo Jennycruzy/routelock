@@ -1,0 +1,197 @@
+[
+ {
+  "hs6": "870130",
+  "heading": "Tractors (other than tractors of heading 8709)",
+  "text": "Track-laying tractors"
+ },
+ {
+  "hs6": "870191",
+  "heading": "Tractors (other than tractors of heading 8709)",
+  "text": "Not exceeding 18 kW"
+ },
+ {
+  "hs6": "870192",
+  "heading": "Tractors (other than tractors of heading 8709)",
+  "text": "Exceeding 18 kW but not exceeding 37 kW"
+ },
+ {
+  "hs6": "870193",
+  "heading": "Tractors (other than tractors of heading 8709)",
+  "text": "Exceeding 37 kW but not exceeding 75 kW"
+ },
+ {
+  "hs6": "870194",
+  "heading": "Tractors (other than tractors of heading 8709)",
+  "text": "Exceeding 75 kW but not exceeding 130 kW"
+ },
+ {
+  "hs6": "870195",
+  "heading": "Tractors (other than tractors of heading 8709)",
+  "text": "Exceeding 130 kW"
+ },
+ {
+  "hs6": "870210",
+  "heading": "Motor vehicles for the transport of ten or more persons, including the driver",
+  "text": "With only compression-ignition internal combustion piston engine (diesel or semi-diesel)"
+ },
+ {
+  "hs6": "870220",
+  "heading": "Motor vehicles for the transport of ten or more persons, including the driver",
+  "text": "With both compression-ignition internal combustion piston engine (diesel or semi-diesel) and electric motor as motors for propulsion"
+ },
+ {
+  "hs6": "870230",
+  "heading": "Motor vehicles for the transport of ten or more persons, including the driver",
+  "text": "With both spark-ignition internal combustion piston engine and electric motor as motors for propulsion"
+ },
+ {
+  "hs6": "870240",
+  "heading": "Motor vehicles for the transport of ten or more persons, including the driver",
+  "text": "With only electric motor for propulsion"
+ },
+ {
+  "hs6": "870290",
+  "heading": "Motor vehicles for the transport of ten or more persons, including the driver",
+  "text": "Other"
+ },
+ {
+  "hs6": "870310",
+  "heading": "Motor cars and other motor vehicles principally designed for the transport of persons (other than those of heading 8702), including station wagons and racing cars",
+  "text": "Vehicles specially designed for traveling on snow; golf carts and similar vehicles"
+ },
+ {
+  "hs6": "870410",
+  "heading": "Motor vehicles for the transport of goods",
+  "text": "Dumpers designed for off-highway use"
+ },
+ {
+  "hs6": "870422",
+  "heading": "Motor vehicles for the transport of goods",
+  "text": "G.V.W. exceeding 5 metric tons but not exceeding 20 metric tons"
+ },
+ {
+  "hs6": "870600",
+  "heading": "Special purpose motor vehicles, other than those principally designed for the transport of persons or goods (for example, wreckers, mobile cranes, fire fighting vehicles, concrete mixers, road sweepers, spraying vehicles, mobile workshops, mobile radiological units)",
+  "text": "Chassis fitted with engines, for the motor vehicles of headings 8701 to 8705"
+ },
+ {
+  "hs6": "870790",
+  "heading": "Bodies (including cabs), for the motor vehicles of headings 8701 to 8705",
+  "text": "Other"
+ },
+ {
+  "hs6": "870810",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Bumpers and parts thereof"
+ },
+ {
+  "hs6": "870829",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Other"
+ },
+ {
+  "hs6": "870830",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Brakes and servo-brakes; parts thereof"
+ },
+ {
+  "hs6": "870840",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Gear boxes and parts thereof"
+ },
+ {
+  "hs6": "870850",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Drive-axles with differential, whether or not provided with other transmission components, and non-driving axles; parts thereof"
+ },
+ {
+  "hs6": "870870",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Road wheels and parts and accessories thereof"
+ },
+ {
+  "hs6": "870880",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Suspension systems and parts thereof (including shock absorbers)"
+ },
+ {
+  "hs6": "870891",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Radiators and parts thereof"
+ },
+ {
+  "hs6": "870892",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Mufflers and exhaust pipes; parts thereof"
+ },
+ {
+  "hs6": "870893",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Clutches and parts thereof"
+ },
+ {
+  "hs6": "870894",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Steering wheels, steering columns and steering boxes; parts thereof"
+ },
+ {
+  "hs6": "870895",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Safety airbags with inflater system; parts thereof"
+ },
+ {
+  "hs6": "870899",
+  "heading": "Parts and accessories of the motor vehicles of headings 8701 to 8705",
+  "text": "Other"
+ },
+ {
+  "hs6": "871140",
+  "heading": "Motorcycles (including mopeds) and cycles fitted with an auxiliary motor, with or without side-cars; side-cars",
+  "text": "With internal combustion piston engine of a cylinder capacity exceeding 500 cc but not exceeding 800 cc"
+ },
+ {
+  "hs6": "871200",
+  "heading": "Motorcycles (including mopeds) and cycles fitted with an auxiliary motor, with or without side-cars; side-cars",
+  "text": "Bicycles and other cycles (including delivery tricycles), not motorized"
+ },
+ {
+  "hs6": "871491",
+  "heading": "Parts and accessories of vehicles of headings 8711 to 8713",
+  "text": "Frames and forks, and parts thereof"
+ },
+ {
+  "hs6": "871492",
+  "heading": "Parts and accessories of vehicles of headings 8711 to 8713",
+  "text": "Wheel rims and spokes"
+ },
+ {
+  "hs6": "871493",
+  "heading": "Parts and accessories of vehicles of headings 8711 to 8713",
+  "text": "Hubs, other than coaster braking hubs and hub brakes, and free-wheel sprocket-wheels"
+ },
+ {
+  "hs6": "871494",
+  "heading": "Parts and accessories of vehicles of headings 8711 to 8713",
+  "text": "Brakes, including coaster braking hubs and hub brakes, and parts thereof"
+ },
+ {
+  "hs6": "871496",
+  "heading": "Parts and accessories of vehicles of headings 8711 to 8713",
+  "text": "Pedals and crank-gear, and parts thereof"
+ },
+ {
+  "hs6": "871499",
+  "heading": "Parts and accessories of vehicles of headings 8711 to 8713",
+  "text": "Other"
+ },
+ {
+  "hs6": "871680",
+  "heading": "Trailers and semi-trailers; other vehicles, not mechanically propelled; and parts thereof",
+  "text": "Other vehicles"
+ },
+ {
+  "hs6": "871690",
+  "heading": "Trailers and semi-trailers; other vehicles, not mechanically propelled; and parts thereof",
+  "text": "Parts"
+ }
+]

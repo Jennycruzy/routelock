@@ -23,6 +23,10 @@ packages/contracts/broadcast/**/dry-run/
 artifacts/carrier/
 *.pdf
 
+# Scoring-run checkpoints. Transient: they let an interrupted run resume
+# without paying for the same rows twice, and are removed on a clean finish.
+bench/data/.checkpoint-*.jsonl
+
 .DS_Store
 
 # Foundry libraries are fetched on install (see packages/contracts prepare

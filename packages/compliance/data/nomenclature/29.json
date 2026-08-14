@@ -1,0 +1,747 @@
+[
+ {
+  "hs6": "290110",
+  "heading": "Acyclic hydrocarbons",
+  "text": "Saturated"
+ },
+ {
+  "hs6": "290124",
+  "heading": "Acyclic hydrocarbons",
+  "text": "Buta-1,3-diene and isoprene"
+ },
+ {
+  "hs6": "290129",
+  "heading": "Acyclic hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290290",
+  "heading": "Cyclic hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290319",
+  "heading": "Halogenated derivatives of hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290359",
+  "heading": "Halogenated derivatives of hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290369",
+  "heading": "Halogenated derivatives of hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290379",
+  "heading": "Halogenated derivatives of hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290389",
+  "heading": "Halogenated derivatives of hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290391",
+  "heading": "Halogenated derivatives of hydrocarbons",
+  "text": "Chlorobenzene, o-dichlorobenzene and p-dichlorobenzene"
+ },
+ {
+  "hs6": "290399",
+  "heading": "Halogenated derivatives of hydrocarbons",
+  "text": "Other"
+ },
+ {
+  "hs6": "290410",
+  "heading": "Sulfonated, nitrated or nitrosated derivatives of hydrocarbons, whether or not halogenated",
+  "text": "Derivatives containing only sulfo groups, their salts and ethyl esters"
+ },
+ {
+  "hs6": "290420",
+  "heading": "Sulfonated, nitrated or nitrosated derivatives of hydrocarbons, whether or not halogenated",
+  "text": "Derivatives containing only nitro or only nitroso groups"
+ },
+ {
+  "hs6": "290499",
+  "heading": "Sulfonated, nitrated or nitrosated derivatives of hydrocarbons, whether or not halogenated",
+  "text": "Other"
+ },
+ {
+  "hs6": "290511",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Methanol (Methyl alcohol)"
+ },
+ {
+  "hs6": "290514",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other butanols"
+ },
+ {
+  "hs6": "290519",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290522",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Acyclic terpene alcohols"
+ },
+ {
+  "hs6": "290529",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290539",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290549",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290559",
+  "heading": "Acyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290613",
+  "heading": "Cyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Sterols and inositols"
+ },
+ {
+  "hs6": "290619",
+  "heading": "Cyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290629",
+  "heading": "Cyclic alcohols and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290715",
+  "heading": "Phenols; phenol-alcohols",
+  "text": "Naphthols and their salts"
+ },
+ {
+  "hs6": "290719",
+  "heading": "Phenols; phenol-alcohols",
+  "text": "Other"
+ },
+ {
+  "hs6": "290722",
+  "heading": "Phenols; phenol-alcohols",
+  "text": "Hydroquinone (Quinol) and its salts"
+ },
+ {
+  "hs6": "290729",
+  "heading": "Phenols; phenol-alcohols",
+  "text": "Other"
+ },
+ {
+  "hs6": "290819",
+  "heading": "Halogenated, sulfonated, nitrated or nitrosated derivatives of phenols or phenol-alcohols",
+  "text": "Other"
+ },
+ {
+  "hs6": "290899",
+  "heading": "Halogenated, sulfonated, nitrated or nitrosated derivatives of phenols or phenol-alcohols",
+  "text": "Other"
+ },
+ {
+  "hs6": "290919",
+  "heading": "Ethers, ether-alcohols, ether-phenols, ether-alcohol- phenols, alcohol peroxides, ether peroxides, acetal and hemiacetal peroxides, ketone peroxides (whether or not chemically defined), and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290930",
+  "heading": "Ethers, ether-alcohols, ether-phenols, ether-alcohol- phenols, alcohol peroxides, ether peroxides, acetal and hemiacetal peroxides, ketone peroxides (whether or not chemically defined), and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Aromatic ethers and their halogenated, sulfonated, nitrated or nitrosated derivatives"
+ },
+ {
+  "hs6": "290949",
+  "heading": "Ethers, ether-alcohols, ether-phenols, ether-alcohol- phenols, alcohol peroxides, ether peroxides, acetal and hemiacetal peroxides, ketone peroxides (whether or not chemically defined), and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "290950",
+  "heading": "Ethers, ether-alcohols, ether-phenols, ether-alcohol- phenols, alcohol peroxides, ether peroxides, acetal and hemiacetal peroxides, ketone peroxides (whether or not chemically defined), and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Ether-phenols, ether-alcohol-phenols and their halogenated, sulfonated, nitrated or nitrosated derivatives"
+ },
+ {
+  "hs6": "290960",
+  "heading": "Ethers, ether-alcohols, ether-phenols, ether-alcohol- phenols, alcohol peroxides, ether peroxides, acetal and hemiacetal peroxides, ketone peroxides (whether or not chemically defined), and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Alcohol peroxides, ether peroxides, acetal and hemiacetal peroxides, ketone peroxides and their halogenated, sulfonated, nitrated or nitrosated derivatives"
+ },
+ {
+  "hs6": "291090",
+  "heading": "Epoxides, epoxyalcohols, epoxyphenols and epoxyethers, with a three-membered ring, and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291100",
+  "heading": "Epoxides, epoxyalcohols, epoxyphenols and epoxyethers, with a three-membered ring, and their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Acetals and hemiacetals, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated or nitrosated derivatives"
+ },
+ {
+  "hs6": "291219",
+  "heading": "Aldehydes, whether or not with other oxygen function; cyclic polymers of aldehydes; paraformaldehyde",
+  "text": "Other"
+ },
+ {
+  "hs6": "291229",
+  "heading": "Aldehydes, whether or not with other oxygen function; cyclic polymers of aldehydes; paraformaldehyde",
+  "text": "Other"
+ },
+ {
+  "hs6": "291249",
+  "heading": "Aldehydes, whether or not with other oxygen function; cyclic polymers of aldehydes; paraformaldehyde",
+  "text": "Other"
+ },
+ {
+  "hs6": "291250",
+  "heading": "Aldehydes, whether or not with other oxygen function; cyclic polymers of aldehydes; paraformaldehyde",
+  "text": "Cyclic polymers of aldehydes"
+ },
+ {
+  "hs6": "291300",
+  "heading": "Aldehydes, whether or not with other oxygen function; cyclic polymers of aldehydes; paraformaldehyde",
+  "text": "Halogenated, sulfonated, nitrated or nitrosated derivatives of products of heading 2912"
+ },
+ {
+  "hs6": "291411",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Acetone"
+ },
+ {
+  "hs6": "291422",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Cyclohexanone and methylcyclohexanones"
+ },
+ {
+  "hs6": "291429",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291439",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291440",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Ketone-alcohols and ketone-aldehydes"
+ },
+ {
+  "hs6": "291450",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Ketone-phenols and ketones with other oxygen function"
+ },
+ {
+  "hs6": "291469",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291479",
+  "heading": "Ketones and quinones, whether or not with other oxygen function, and their halogenated, sulfonated, nitrated, or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291513",
+  "heading": "Saturated acyclic monocarboxylic acids and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Esters of formic acid"
+ },
+ {
+  "hs6": "291529",
+  "heading": "Saturated acyclic monocarboxylic acids and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291539",
+  "heading": "Saturated acyclic monocarboxylic acids and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291540",
+  "heading": "Saturated acyclic monocarboxylic acids and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Mono-, di- or trichloroacetic acids, their salts and esters"
+ },
+ {
+  "hs6": "291550",
+  "heading": "Saturated acyclic monocarboxylic acids and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Propionic acid, its salts and esters"
+ },
+ {
+  "hs6": "291560",
+  "heading": "Saturated acyclic monocarboxylic acids and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Butanoic acids, pentanoic acids, their salts and esters"
+ },
+ {
+  "hs6": "291590",
+  "heading": "Saturated acyclic monocarboxylic acids and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291612",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Esters of acrylic acid"
+ },
+ {
+  "hs6": "291614",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Esters of methacrylic acid"
+ },
+ {
+  "hs6": "291615",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Oleic, linoleic or linolenic acids, their salts and esters"
+ },
+ {
+  "hs6": "291619",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291620",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Cyclanic, cyclenic or cycloterpenic monocarboxylic acids, their anhydrides, halides, peroxides, peroxyacids and their derivatives"
+ },
+ {
+  "hs6": "291631",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Benzoic acid, its salts and esters"
+ },
+ {
+  "hs6": "291632",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Benzoyl peroxide and benzoyl chloride"
+ },
+ {
+  "hs6": "291634",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Phenylacetic acid and its salts"
+ },
+ {
+  "hs6": "291639",
+  "heading": "Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291712",
+  "heading": "Polycarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Adipic acid, its salts and esters"
+ },
+ {
+  "hs6": "291714",
+  "heading": "Polycarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Maleic anhydride"
+ },
+ {
+  "hs6": "291719",
+  "heading": "Polycarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291739",
+  "heading": "Polycarboxylic acids, their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291811",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Lactic acid, its salts and esters"
+ },
+ {
+  "hs6": "291813",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Salts and esters of tartaric acid"
+ },
+ {
+  "hs6": "291815",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Salts and esters of citric acid"
+ },
+ {
+  "hs6": "291816",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Gluconic acid, its salts and esters"
+ },
+ {
+  "hs6": "291819",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291821",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Salicylic acid and its salts"
+ },
+ {
+  "hs6": "291822",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "O-Acetylsalicylic acid, its salts and esters"
+ },
+ {
+  "hs6": "291823",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other esters of salicylic acid and their salts"
+ },
+ {
+  "hs6": "291829",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291830",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Carboxylic acids with aldehyde or ketone function but without other oxygen function, their anhydrides, halides, peroxides, peroxyacids and their derivatives"
+ },
+ {
+  "hs6": "291899",
+  "heading": "Carboxylic acids with additional oxygen function and their anhydrides, halides, peroxides and peroxyacids; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "291990",
+  "heading": "Phosphoric esters and their salts, including lactophosphates; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "292019",
+  "heading": "Esters of other inorganic acids of nonmetals (excluding esters of hydrogen halides) and their salts; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "292090",
+  "heading": "Esters of other inorganic acids of nonmetals (excluding esters of hydrogen halides) and their salts; their halogenated, sulfonated, nitrated or nitrosated derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "292119",
+  "heading": "Amine-function compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292122",
+  "heading": "Amine-function compounds",
+  "text": "Hexamethylenediamine and its salts"
+ },
+ {
+  "hs6": "292130",
+  "heading": "Amine-function compounds",
+  "text": "Cyclanic, cyclenic or cycloterpenic mono- or polyamines, and their derivatives; salts thereof"
+ },
+ {
+  "hs6": "292141",
+  "heading": "Amine-function compounds",
+  "text": "Aniline and its salts"
+ },
+ {
+  "hs6": "292142",
+  "heading": "Amine-function compounds",
+  "text": "Aniline derivatives and their salts"
+ },
+ {
+  "hs6": "292143",
+  "heading": "Amine-function compounds",
+  "text": "Toluidines and their derivatives; salts thereof"
+ },
+ {
+  "hs6": "292144",
+  "heading": "Amine-function compounds",
+  "text": "Diphenylamine and its derivatives; salts thereof"
+ },
+ {
+  "hs6": "292145",
+  "heading": "Amine-function compounds",
+  "text": "1-Naphthylamine (α-Naphthylamine), 2-Naphthylamine (β-Naphthylamine), and their derivatives; salts thereof"
+ },
+ {
+  "hs6": "292149",
+  "heading": "Amine-function compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292151",
+  "heading": "Amine-function compounds",
+  "text": "o-, m-, p-Phenylenediamine, diaminotoluenes, and their derivatives; salts thereof"
+ },
+ {
+  "hs6": "292159",
+  "heading": "Amine-function compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292219",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292221",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Aminohydroxynaphthalenesulfonic acids and their salts"
+ },
+ {
+  "hs6": "292229",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292239",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292242",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Glutamic acid and its salts"
+ },
+ {
+  "hs6": "292243",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Anthranilic acid and its salts"
+ },
+ {
+  "hs6": "292249",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292250",
+  "heading": "Oxygen-function amino-compounds",
+  "text": "Amino-alcohol-phenols, amino-acid-phenols and other amino-compounds with oxygen function"
+ },
+ {
+  "hs6": "292320",
+  "heading": "Quaternary ammonium salts and hydroxides; lecithins and other phosphoaminolipids, whether or not chemically defined",
+  "text": "Lecithins and other phosphoaminolipids"
+ },
+ {
+  "hs6": "292419",
+  "heading": "Carboxyamide-function compounds; amide-function compounds of carbonic acid",
+  "text": "Other"
+ },
+ {
+  "hs6": "292421",
+  "heading": "Carboxyamide-function compounds; amide-function compounds of carbonic acid",
+  "text": "Ureines and their derivatives; salts thereof"
+ },
+ {
+  "hs6": "292423",
+  "heading": "Carboxyamide-function compounds; amide-function compounds of carbonic acid",
+  "text": "2-Acetamidobenzoic acid (N-acetylanthranilic acid) and its salts"
+ },
+ {
+  "hs6": "292429",
+  "heading": "Carboxyamide-function compounds; amide-function compounds of carbonic acid",
+  "text": "Other"
+ },
+ {
+  "hs6": "292519",
+  "heading": "Carboxyimide-function compounds (including saccharin and its salts) and imine-function compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292529",
+  "heading": "Carboxyimide-function compounds (including saccharin and its salts) and imine-function compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292630",
+  "heading": "Nitrile-function compounds",
+  "text": "Fenproporex (INN) and its salts; Methadone (INN) intermediate (4-cyano-2-dimethylamino-4,4- diphenylbutane)"
+ },
+ {
+  "hs6": "292690",
+  "heading": "Nitrile-function compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "292700",
+  "heading": "Nitrile-function compounds",
+  "text": "Diazo-, azo- or azoxy-compounds"
+ },
+ {
+  "hs6": "292800",
+  "heading": "Nitrile-function compounds",
+  "text": "Organic derivatives of hydrazine or of hydroxylamine"
+ },
+ {
+  "hs6": "292910",
+  "heading": "Compounds with other nitrogen function",
+  "text": "Isocyanates"
+ },
+ {
+  "hs6": "292990",
+  "heading": "Compounds with other nitrogen function",
+  "text": "Other"
+ },
+ {
+  "hs6": "293020",
+  "heading": "Organo-sulfur compounds",
+  "text": "Thiocarbamates and dithiocarbamates"
+ },
+ {
+  "hs6": "293030",
+  "heading": "Organo-sulfur compounds",
+  "text": "Thiuram mono-, di- or tetrasulfides"
+ },
+ {
+  "hs6": "293090",
+  "heading": "Organo-sulfur compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "293190",
+  "heading": "Other organo-inorganic compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "293219",
+  "heading": "Heterocyclic compounds with oxygen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293220",
+  "heading": "Heterocyclic compounds with oxygen hetero-atom(s) only",
+  "text": "Lactones"
+ },
+ {
+  "hs6": "293299",
+  "heading": "Heterocyclic compounds with oxygen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293319",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293329",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293332",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Piperidine and its salts"
+ },
+ {
+  "hs6": "293339",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293349",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293352",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Malonylurea (Barbituric acid) and its salts"
+ },
+ {
+  "hs6": "293359",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293369",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293379",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other lactams"
+ },
+ {
+  "hs6": "293399",
+  "heading": "Heterocyclic compounds with nitrogen hetero-atom(s) only",
+  "text": "Other"
+ },
+ {
+  "hs6": "293410",
+  "heading": "Nucleic acids and their salts, whether or not chemically defined; other heterocyclic compounds",
+  "text": "Compounds containing an unfused thiazole ring (whether or not hydrogenated) in the structure"
+ },
+ {
+  "hs6": "293420",
+  "heading": "Nucleic acids and their salts, whether or not chemically defined; other heterocyclic compounds",
+  "text": "Compounds containing in the structure a benzothiazole ring-system (whether or not hydrogenated), not further fused"
+ },
+ {
+  "hs6": "293430",
+  "heading": "Nucleic acids and their salts, whether or not chemically defined; other heterocyclic compounds",
+  "text": "Compounds containing in the structure a phenothiazine ring-system (whether or not hydrogenated), not further fused"
+ },
+ {
+  "hs6": "293499",
+  "heading": "Nucleic acids and their salts, whether or not chemically defined; other heterocyclic compounds",
+  "text": "Other"
+ },
+ {
+  "hs6": "293590",
+  "heading": "Sulfonamides",
+  "text": "Other"
+ },
+ {
+  "hs6": "293629",
+  "heading": "Provitamins and vitamins, natural or reproduced by synthesis (including natural concentrates), derivatives thereof used primarily as vitamins, and intermixtures of the foregoing, whether or not in any solvent",
+  "text": "Other vitamins and their derivatives"
+ },
+ {
+  "hs6": "293723",
+  "heading": "Hormones, prostaglandins, thromboxanes and leukotrienes, natural or reproduced by synthesis; derivatives and structural analogues thereof, including chain modified polypeptides, used primarily as hormones",
+  "text": "Estrogens and progestins"
+ },
+ {
+  "hs6": "293729",
+  "heading": "Hormones, prostaglandins, thromboxanes and leukotrienes, natural or reproduced by synthesis; derivatives and structural analogues thereof, including chain modified polypeptides, used primarily as hormones",
+  "text": "Other"
+ },
+ {
+  "hs6": "293790",
+  "heading": "Hormones, prostaglandins, thromboxanes and leukotrienes, natural or reproduced by synthesis; derivatives and structural analogues thereof, including chain modified polypeptides, used primarily as hormones",
+  "text": "Other"
+ },
+ {
+  "hs6": "293919",
+  "heading": "Alkaloids, natural or reproduced by synthesis, and their salts, ethers, esters and other derivatives",
+  "text": "Other"
+ },
+ {
+  "hs6": "294000",
+  "heading": "Alkaloids, natural or reproduced by synthesis, and their salts, ethers, esters and other derivatives",
+  "text": "Sugars, chemically pure, other than sucrose, lactose, maltose, glucose and fructose; sugar ethers, sugar acetals and sugar esters, and their salts, other than products of heading 2937, 2938 or 2939"
+ },
+ {
+  "hs6": "294110",
+  "heading": "Antibiotics",
+  "text": "Penicillins and their derivatives with a penicillanic acid structure; salts thereof"
+ },
+ {
+  "hs6": "294120",
+  "heading": "Antibiotics",
+  "text": "Streptomycins and their derivatives; salts thereof"
+ },
+ {
+  "hs6": "294190",
+  "heading": "Antibiotics",
+  "text": "Other"
+ },
+ {
+  "hs6": "294200",
+  "heading": "Antibiotics",
+  "text": "Other organic compounds"
+ }
+]

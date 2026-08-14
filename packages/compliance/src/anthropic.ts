@@ -65,6 +65,15 @@ const CLASSIFY_TOOL = {
           "they are. Empty for ordinary goods. Do not flag an item merely " +
           "because it is regulated or requires a licence.",
       },
+      alternative_chapters: {
+        type: "array",
+        items: { type: "string" },
+        description:
+          "Up to three two-digit HS chapters the goods could plausibly fall " +
+          "in, most likely first, including the chapter of hs6. Used to " +
+          "shortlist the real nomenclature for a second look, so err toward " +
+          "including a chapter you are unsure about.",
+      },
       rationale: {
         type: "string",
         description:
@@ -77,6 +86,7 @@ const CLASSIFY_TOOL = {
       "confidence",
       "missing_information",
       "purpose_flags",
+      "alternative_chapters",
       "rationale",
     ],
   },
@@ -116,7 +126,53 @@ interface AnthropicContentBlock {
   readonly input?: Record<string, unknown>;
 }
 
-export class ComplianceModelError extends Error {}
+export class ComplianceModelError extends Error {
+  constructor(
+    message: string,
+    /// True when the failure is worth retrying — a rate limit, an overload, or
+    /// a network fault. False for a refusal, a malformed request, or an
+    /// exhausted account, where retrying only burns time.
+    readonly retryable = false,
+  ) {
+    super(message);
+    this.name = "ComplianceModelError";
+  }
+}
+
+/// Statuses that mean "try again shortly" rather than "this will never work".
+///
+/// 529 is Anthropic's overloaded signal; 429 is rate limiting; 5xx is a
+/// server-side fault. A 400 is not retryable — an exhausted credit balance
+/// arrives as one, and hammering it wastes the remaining run.
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status === 529 || (status >= 500 && status < 600);
+}
+
+/// Retry with exponential backoff and jitter.
+///
+/// Exists so a long scoring run survives a transient blip rather than losing
+/// the row — and, more importantly, so the run does not have to be paid for
+/// twice.
+export async function withRetry<T>(
+  operation: () => Promise<T>,
+  attempts = 4,
+): Promise<T> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      const retryable =
+        error instanceof ComplianceModelError ? error.retryable : true;
+      if (!retryable || attempt === attempts - 1) break;
+
+      const backoffMs = 1000 * 2 ** attempt + Math.random() * 500;
+      await new Promise((resolve) => setTimeout(resolve, backoffMs));
+    }
+  }
+  throw lastError;
+}
 
 export interface ModelClientOptions {
   readonly apiKey: string;
@@ -150,6 +206,7 @@ export async function propose(
   if (!response.ok) {
     throw new ComplianceModelError(
       `model returned ${response.status}: ${(await response.text()).slice(0, 300)}`,
+      isRetryableStatus(response.status),
     );
   }
 
@@ -198,7 +255,19 @@ export function parseProposal(input: Record<string, unknown>): Proposal {
   const rationale =
     typeof input["rationale"] === "string" ? input["rationale"] : "";
 
+  const chapters = new Set<string>();
+  if (hs6 !== null) chapters.add(hs6.slice(0, 2));
+  if (Array.isArray(input["alternative_chapters"])) {
+    for (const c of input["alternative_chapters"]) {
+      const digits = String(c).replace(/\D/g, "").slice(0, 2).padStart(2, "0");
+      if (/^\d{2}$/.test(digits) && digits !== "00" && digits !== "77") {
+        chapters.add(digits);
+      }
+    }
+  }
+
   return {
+    candidateChapters: [...chapters].slice(0, 4),
     hs6,
     // A classification the engine could not read is not a classification, so
     // its confidence cannot be carried over.

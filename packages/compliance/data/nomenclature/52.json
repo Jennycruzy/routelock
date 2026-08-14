@@ -1,0 +1,237 @@
+[
+ {
+  "hs6": "520100",
+  "heading": "",
+  "text": "Cotton, not carded or combed"
+ },
+ {
+  "hs6": "520299",
+  "heading": "Cotton waste (including yarn waste and garnetted stock)",
+  "text": "Other"
+ },
+ {
+  "hs6": "520300",
+  "heading": "Cotton waste (including yarn waste and garnetted stock)",
+  "text": "Cotton, carded or combed"
+ },
+ {
+  "hs6": "520511",
+  "heading": "Cotton yarn (other than sewing thread), containing 85 percent or more by weight of cotton, not put up for retail sale",
+  "text": "Not exceeding 14 nm"
+ },
+ {
+  "hs6": "520512",
+  "heading": "Cotton yarn (other than sewing thread), containing 85 percent or more by weight of cotton, not put up for retail sale",
+  "text": "Exceeding 14 nm but not exceeding 43 nm"
+ },
+ {
+  "hs6": "520513",
+  "heading": "Cotton yarn (other than sewing thread), containing 85 percent or more by weight of cotton, not put up for retail sale",
+  "text": "Exceeding 43 nm but not exceeding 52 nm"
+ },
+ {
+  "hs6": "520514",
+  "heading": "Cotton yarn (other than sewing thread), containing 85 percent or more by weight of cotton, not put up for retail sale",
+  "text": "Exceeding 52 nm but not exceeding 80 nm"
+ },
+ {
+  "hs6": "520515",
+  "heading": "Cotton yarn (other than sewing thread), containing 85 percent or more by weight of cotton, not put up for retail sale",
+  "text": "Exceeding 80 nm"
+ },
+ {
+  "hs6": "520811",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing not more than 100 g/m²"
+ },
+ {
+  "hs6": "520812",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing more than 100 g/m²"
+ },
+ {
+  "hs6": "520819",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "520821",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing not more than 100 g/m²"
+ },
+ {
+  "hs6": "520822",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing more than 100 g/m²"
+ },
+ {
+  "hs6": "520829",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "520831",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing not more than 100 g/m²"
+ },
+ {
+  "hs6": "520832",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing more than 100 g/m²"
+ },
+ {
+  "hs6": "520839",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "520841",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing not more than 100 g/m²"
+ },
+ {
+  "hs6": "520842",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing more than 100 g/m²"
+ },
+ {
+  "hs6": "520849",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "520851",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing not more than 100 g/m²"
+ },
+ {
+  "hs6": "520852",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Plain weave, weighing more than 100 g/m²"
+ },
+ {
+  "hs6": "520859",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "520931",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "520941",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "520951",
+  "heading": "Woven fabrics of cotton, containing 85 percent or more by weight of cotton, weighing more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "521011",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "521019",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "521021",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "521029",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "521031",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "521039",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "521041",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "521049",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "521051",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Plain weave"
+ },
+ {
+  "hs6": "521059",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing not more than 200 g/m²",
+  "text": "Other fabrics"
+ },
+ {
+  "hs6": "521120",
+  "heading": "Woven fabrics of cotton, containing less than 85 percent by weight of cotton, mixed mainly or solely with man-made fibers, weighing more than 200 g/m²",
+  "text": "Bleached"
+ },
+ {
+  "hs6": "521211",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Unbleached"
+ },
+ {
+  "hs6": "521212",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Bleached"
+ },
+ {
+  "hs6": "521213",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Dyed"
+ },
+ {
+  "hs6": "521214",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Of yarns of different colors"
+ },
+ {
+  "hs6": "521215",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Printed"
+ },
+ {
+  "hs6": "521221",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Unbleached"
+ },
+ {
+  "hs6": "521222",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Bleached"
+ },
+ {
+  "hs6": "521223",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Dyed"
+ },
+ {
+  "hs6": "521224",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Of yarns of different colors"
+ },
+ {
+  "hs6": "521225",
+  "heading": "Other woven fabrics of cotton",
+  "text": "Printed"
+ }
+]

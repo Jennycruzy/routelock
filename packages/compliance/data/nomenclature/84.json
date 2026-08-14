@@ -1,0 +1,787 @@
+[
+ {
+  "hs6": "840610",
+  "heading": "Steam turbines and other vapor turbines, and parts thereof",
+  "text": "Turbines for marine propulsion"
+ },
+ {
+  "hs6": "840681",
+  "heading": "Steam turbines and other vapor turbines, and parts thereof",
+  "text": "Of an output exceeding 40 MW"
+ },
+ {
+  "hs6": "840682",
+  "heading": "Steam turbines and other vapor turbines, and parts thereof",
+  "text": "Of an output not exceeding 40 MW"
+ },
+ {
+  "hs6": "840690",
+  "heading": "Steam turbines and other vapor turbines, and parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "840732",
+  "heading": "Spark-ignition reciprocating or rotary internal combustion piston engines",
+  "text": "Of a cylinder capacity exceeding 50 cc but not exceeding 250 cc"
+ },
+ {
+  "hs6": "840733",
+  "heading": "Spark-ignition reciprocating or rotary internal combustion piston engines",
+  "text": "Of a cylinder capacity exceeding 250 cc but not exceeding 1,000 cc"
+ },
+ {
+  "hs6": "840734",
+  "heading": "Spark-ignition reciprocating or rotary internal combustion piston engines",
+  "text": "Of a cylinder capacity exceeding 1,000 cc"
+ },
+ {
+  "hs6": "840790",
+  "heading": "Spark-ignition reciprocating or rotary internal combustion piston engines",
+  "text": "Other engines"
+ },
+ {
+  "hs6": "840820",
+  "heading": "Compression-ignition internal combustion piston engines (diesel or semi-diesel engines)",
+  "text": "Engines of a kind used for the propulsion of vehicles of chapter 87"
+ },
+ {
+  "hs6": "840890",
+  "heading": "Compression-ignition internal combustion piston engines (diesel or semi-diesel engines)",
+  "text": "Other engines"
+ },
+ {
+  "hs6": "840991",
+  "heading": "Parts suitable for use solely or principally with the engines of heading 8407 or 8408",
+  "text": "Suitable for use solely or principally with spark-ignition internal combustion piston engines (including rotary engines)"
+ },
+ {
+  "hs6": "840999",
+  "heading": "Parts suitable for use solely or principally with the engines of heading 8407 or 8408",
+  "text": "Other"
+ },
+ {
+  "hs6": "841111",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Of a thrust not exceeding 25 kN"
+ },
+ {
+  "hs6": "841112",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Of a thrust exceeding 25 kN"
+ },
+ {
+  "hs6": "841121",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Of a power not exceeding 1,100 kW"
+ },
+ {
+  "hs6": "841122",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Of a power exceeding 1,100 kW"
+ },
+ {
+  "hs6": "841181",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Of a power not exceeding 5,000 kW"
+ },
+ {
+  "hs6": "841182",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Of a power exceeding 5,000 kW"
+ },
+ {
+  "hs6": "841191",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Of turbojets or turbopropellers"
+ },
+ {
+  "hs6": "841199",
+  "heading": "Turbojets, turbopropellers and other gas turbines, and parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "841229",
+  "heading": "Other engines and motors, and parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "841280",
+  "heading": "Other engines and motors, and parts thereof",
+  "text": "Other engines and motors"
+ },
+ {
+  "hs6": "841290",
+  "heading": "Other engines and motors, and parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "841330",
+  "heading": "Pumps for liquids, whether or not fitted with a measuring device; liquid elevators; part thereof",
+  "text": "Fuel, lubricating or cooling medium pumps for internal combustion piston engines"
+ },
+ {
+  "hs6": "841370",
+  "heading": "Pumps for liquids, whether or not fitted with a measuring device; liquid elevators; part thereof",
+  "text": "Other centrifugal pumps"
+ },
+ {
+  "hs6": "841391",
+  "heading": "Pumps for liquids, whether or not fitted with a measuring device; liquid elevators; part thereof",
+  "text": "Of pumps"
+ },
+ {
+  "hs6": "841430",
+  "heading": "Air or vacuum pumps, air or other gas compressors and fans; ventilating or recycling hoods incorporating a fan, whether or not fitted with filters; gas-tight biological safety cabinets, whether or not fitted with filters; parts thereof",
+  "text": "Compressors of a kind used in refrigerating equipment (including air conditioning)"
+ },
+ {
+  "hs6": "841451",
+  "heading": "Air or vacuum pumps, air or other gas compressors and fans; ventilating or recycling hoods incorporating a fan, whether or not fitted with filters; gas-tight biological safety cabinets, whether or not fitted with filters; parts thereof",
+  "text": "Table, floor, wall, window, ceiling or roof fans, with a self-contained electric motor of an output not exceeding 125 W"
+ },
+ {
+  "hs6": "841459",
+  "heading": "Air or vacuum pumps, air or other gas compressors and fans; ventilating or recycling hoods incorporating a fan, whether or not fitted with filters; gas-tight biological safety cabinets, whether or not fitted with filters; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "841480",
+  "heading": "Air or vacuum pumps, air or other gas compressors and fans; ventilating or recycling hoods incorporating a fan, whether or not fitted with filters; gas-tight biological safety cabinets, whether or not fitted with filters; parts thereof",
+  "text": "Other, except parts"
+ },
+ {
+  "hs6": "841490",
+  "heading": "Air or vacuum pumps, air or other gas compressors and fans; ventilating or recycling hoods incorporating a fan, whether or not fitted with filters; gas-tight biological safety cabinets, whether or not fitted with filters; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "841510",
+  "heading": "Air conditioning machines, comprising a motor-driven fan and elements for changing the temperature and humidity, including those machines in which the humidity cannot be separately regulated; parts thereof",
+  "text": "Of a kind designed to be fixed to a window, wall, ceiling or floor, self-contained or “split system”"
+ },
+ {
+  "hs6": "841590",
+  "heading": "Air conditioning machines, comprising a motor-driven fan and elements for changing the temperature and humidity, including those machines in which the humidity cannot be separately regulated; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "841829",
+  "heading": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps, other than the air conditioning machines of heading 8415; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "841899",
+  "heading": "Refrigerators, freezers and other refrigerating or freezing equipment, electric or other; heat pumps, other than the air conditioning machines of heading 8415; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "841933",
+  "heading": "Machinery, plant or laboratory equipment, whether or not electrically heated (excluding furnaces, ovens and other equipment of heading 8514), for the treatment of materials by a process involving a change of temperature such as heating, cooking, roasting, distilling, rectifying, sterilizing, pasteurizing, steaming, drying, evaporating, vaporizing, condensing or cooling, other than machinery or plant of a kind used for domestic purposes; instantaneous or storage water heaters, nonelectric; parts thereof",
+  "text": "Lyophilisation apparatus, freeze drying units and spray dryers"
+ },
+ {
+  "hs6": "841935",
+  "heading": "Machinery, plant or laboratory equipment, whether or not electrically heated (excluding furnaces, ovens and other equipment of heading 8514), for the treatment of materials by a process involving a change of temperature such as heating, cooking, roasting, distilling, rectifying, sterilizing, pasteurizing, steaming, drying, evaporating, vaporizing, condensing or cooling, other than machinery or plant of a kind used for domestic purposes; instantaneous or storage water heaters, nonelectric; parts thereof",
+  "text": "Other, for wood, paper pulp, paper or paperboard"
+ },
+ {
+  "hs6": "841950",
+  "heading": "Machinery, plant or laboratory equipment, whether or not electrically heated (excluding furnaces, ovens and other equipment of heading 8514), for the treatment of materials by a process involving a change of temperature such as heating, cooking, roasting, distilling, rectifying, sterilizing, pasteurizing, steaming, drying, evaporating, vaporizing, condensing or cooling, other than machinery or plant of a kind used for domestic purposes; instantaneous or storage water heaters, nonelectric; parts thereof",
+  "text": "Heat exchange units"
+ },
+ {
+  "hs6": "841960",
+  "heading": "Machinery, plant or laboratory equipment, whether or not electrically heated (excluding furnaces, ovens and other equipment of heading 8514), for the treatment of materials by a process involving a change of temperature such as heating, cooking, roasting, distilling, rectifying, sterilizing, pasteurizing, steaming, drying, evaporating, vaporizing, condensing or cooling, other than machinery or plant of a kind used for domestic purposes; instantaneous or storage water heaters, nonelectric; parts thereof",
+  "text": "Machinery for liquefying air or other gases"
+ },
+ {
+  "hs6": "841981",
+  "heading": "Machinery, plant or laboratory equipment, whether or not electrically heated (excluding furnaces, ovens and other equipment of heading 8514), for the treatment of materials by a process involving a change of temperature such as heating, cooking, roasting, distilling, rectifying, sterilizing, pasteurizing, steaming, drying, evaporating, vaporizing, condensing or cooling, other than machinery or plant of a kind used for domestic purposes; instantaneous or storage water heaters, nonelectric; parts thereof",
+  "text": "For making hot drinks or for cooking or heating food"
+ },
+ {
+  "hs6": "841989",
+  "heading": "Machinery, plant or laboratory equipment, whether or not electrically heated (excluding furnaces, ovens and other equipment of heading 8514), for the treatment of materials by a process involving a change of temperature such as heating, cooking, roasting, distilling, rectifying, sterilizing, pasteurizing, steaming, drying, evaporating, vaporizing, condensing or cooling, other than machinery or plant of a kind used for domestic purposes; instantaneous or storage water heaters, nonelectric; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "841990",
+  "heading": "Machinery, plant or laboratory equipment, whether or not electrically heated (excluding furnaces, ovens and other equipment of heading 8514), for the treatment of materials by a process involving a change of temperature such as heating, cooking, roasting, distilling, rectifying, sterilizing, pasteurizing, steaming, drying, evaporating, vaporizing, condensing or cooling, other than machinery or plant of a kind used for domestic purposes; instantaneous or storage water heaters, nonelectric; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "842010",
+  "heading": "Calendering or other rolling machines, other than for metals or glass, and cylinders therefor; parts thereof",
+  "text": "Calendering or other rolling machines"
+ },
+ {
+  "hs6": "842091",
+  "heading": "Calendering or other rolling machines, other than for metals or glass, and cylinders therefor; parts thereof",
+  "text": "Cylinders"
+ },
+ {
+  "hs6": "842099",
+  "heading": "Calendering or other rolling machines, other than for metals or glass, and cylinders therefor; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "842191",
+  "heading": "Centrifuges, including centrifugal dryers; filtering or purifying machinery and apparatus, for liquids or gases; parts thereof",
+  "text": "Of centrifuges, including centrifugal dryers"
+ },
+ {
+  "hs6": "842230",
+  "heading": "Dishwashing machines; machinery for cleaning or drying bottles or other containers; machinery for filling, closing, sealing or labeling bottles, cans, boxes, bags or other containers; machinery for capsuling bottles, jars, tubes and similar containers; other packing or wrapping machinery (including heat-shrink wrapping machinery); machinery for aerating beverages; parts thereof",
+  "text": "Machinery for filling, closing, sealing or labeling bottles, cans, boxes, bags or other containers; machinery for capsuling bottles, jars, tubes and similar containers; machinery for aerating beverages"
+ },
+ {
+  "hs6": "842240",
+  "heading": "Dishwashing machines; machinery for cleaning or drying bottles or other containers; machinery for filling, closing, sealing or labeling bottles, cans, boxes, bags or other containers; machinery for capsuling bottles, jars, tubes and similar containers; other packing or wrapping machinery (including heat-shrink wrapping machinery); machinery for aerating beverages; parts thereof",
+  "text": "Other packing or wrapping machinery (including heat-shrink wrapping machinery)"
+ },
+ {
+  "hs6": "842290",
+  "heading": "Dishwashing machines; machinery for cleaning or drying bottles or other containers; machinery for filling, closing, sealing or labeling bottles, cans, boxes, bags or other containers; machinery for capsuling bottles, jars, tubes and similar containers; other packing or wrapping machinery (including heat-shrink wrapping machinery); machinery for aerating beverages; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "842320",
+  "heading": "Weighing machinery (excluding balances of a sensitivity of 5 cg or better), including weight-operated counting or checking machines; weighing machine weights of all kinds; parts of weighing machinery",
+  "text": "Scales for continuous weighing of goods on conveyors"
+ },
+ {
+  "hs6": "842389",
+  "heading": "Weighing machinery (excluding balances of a sensitivity of 5 cg or better), including weight-operated counting or checking machines; weighing machine weights of all kinds; parts of weighing machinery",
+  "text": "Other"
+ },
+ {
+  "hs6": "842390",
+  "heading": "Weighing machinery (excluding balances of a sensitivity of 5 cg or better), including weight-operated counting or checking machines; weighing machine weights of all kinds; parts of weighing machinery",
+  "text": "Weighing machine weights of all kinds; parts of weighing machinery"
+ },
+ {
+  "hs6": "842420",
+  "heading": "Mechanical appliances (whether or not hand operated) for projecting, dispersing or spraying liquids or powders; fire extinguishers, whether or not charged; spray guns and similar appliances; steam or sand blasting machines and similar jet projecting machines; parts thereof",
+  "text": "Spray guns and similar appliances"
+ },
+ {
+  "hs6": "842430",
+  "heading": "Mechanical appliances (whether or not hand operated) for projecting, dispersing or spraying liquids or powders; fire extinguishers, whether or not charged; spray guns and similar appliances; steam or sand blasting machines and similar jet projecting machines; parts thereof",
+  "text": "Steam or sand blasting machines and similar jet projecting machines"
+ },
+ {
+  "hs6": "842441",
+  "heading": "Mechanical appliances (whether or not hand operated) for projecting, dispersing or spraying liquids or powders; fire extinguishers, whether or not charged; spray guns and similar appliances; steam or sand blasting machines and similar jet projecting machines; parts thereof",
+  "text": "Portable sprayers"
+ },
+ {
+  "hs6": "842490",
+  "heading": "Mechanical appliances (whether or not hand operated) for projecting, dispersing or spraying liquids or powders; fire extinguishers, whether or not charged; spray guns and similar appliances; steam or sand blasting machines and similar jet projecting machines; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "842710",
+  "heading": "Fork-lift trucks; other works trucks fitted with lifting or handling equipment",
+  "text": "Self-propelled trucks powered by an electric motor"
+ },
+ {
+  "hs6": "842720",
+  "heading": "Fork-lift trucks; other works trucks fitted with lifting or handling equipment",
+  "text": "Other self-propelled trucks"
+ },
+ {
+  "hs6": "842951",
+  "heading": "Self-propelled bulldozers, angledozers, graders, levelers, scrapers, mechanical shovels, excavators, shovel loaders, tamping machines and road rollers",
+  "text": "Front-end shovel loaders"
+ },
+ {
+  "hs6": "842952",
+  "heading": "Self-propelled bulldozers, angledozers, graders, levelers, scrapers, mechanical shovels, excavators, shovel loaders, tamping machines and road rollers",
+  "text": "Machinery with a 360˚ revolving superstructure"
+ },
+ {
+  "hs6": "842959",
+  "heading": "Self-propelled bulldozers, angledozers, graders, levelers, scrapers, mechanical shovels, excavators, shovel loaders, tamping machines and road rollers",
+  "text": "Other"
+ },
+ {
+  "hs6": "843049",
+  "heading": "Other moving, grading, leveling, scraping, excavating, tamping, compacting, extracting or boring machinery, for earth, minerals or ores; pile-drivers and pile-extractors; snowplows and snowblowers",
+  "text": "Other"
+ },
+ {
+  "hs6": "843050",
+  "heading": "Other moving, grading, leveling, scraping, excavating, tamping, compacting, extracting or boring machinery, for earth, minerals or ores; pile-drivers and pile-extractors; snowplows and snowblowers",
+  "text": "Other machinery, self-propelled"
+ },
+ {
+  "hs6": "843143",
+  "heading": "Parts suitable for use solely or principally with the machinery of headings 8425 to 8430",
+  "text": "Parts for boring or sinking machinery of subheading 8430.41 or 8430.49"
+ },
+ {
+  "hs6": "843149",
+  "heading": "Parts suitable for use solely or principally with the machinery of headings 8425 to 8430",
+  "text": "Other"
+ },
+ {
+  "hs6": "843390",
+  "heading": "Harvesting or threshing machinery, including straw or fodder balers; grass or hay mowers; machines for cleaning, sorting or grading eggs, fruit or other agricultural produce, other than machinery of heading 8437; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "843890",
+  "heading": "Machinery, not specified or included elsewhere in this chapter, for the industrial preparation or manufacture of food or drink, other than machinery for the extraction or preparation of animal or fixed vegetable or microbial fats or oils; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "843991",
+  "heading": "Machinery for making pulp of fibrous cellulosic material or for making or finishing paper or paperboard (other than the machinery of heading 8419); parts thereof",
+  "text": "Of machinery for making pulp of fibrous cellulosic materials"
+ },
+ {
+  "hs6": "843999",
+  "heading": "Machinery for making pulp of fibrous cellulosic material or for making or finishing paper or paperboard (other than the machinery of heading 8419); parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "844250",
+  "heading": "Machinery, apparatus and equipment (other than the machines of headings 8456 to 8465), for preparing or making plates, cylinders or other printing components; plates, cylinders and other printing components; plates, cylinders and lithographic stones, prepared for printing purposes (for example, planed, grained or polished); parts thereof",
+  "text": "Plates, cylinders and other printing components; plates, cylinders and lithographic stones, prepared for printing purposes (for example, planed, grained or polished)"
+ },
+ {
+  "hs6": "844311",
+  "heading": "Printing machinery used for printing by means of plates, cylinders and other printing components of heading 8442; other printers, copying machines and facsimile machines, whether or not combined; parts and accessories thereof",
+  "text": "Offset printing machinery, reel-fed"
+ },
+ {
+  "hs6": "844319",
+  "heading": "Printing machinery used for printing by means of plates, cylinders and other printing components of heading 8442; other printers, copying machines and facsimile machines, whether or not combined; parts and accessories thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "844332",
+  "heading": "Printing machinery used for printing by means of plates, cylinders and other printing components of heading 8442; other printers, copying machines and facsimile machines, whether or not combined; parts and accessories thereof",
+  "text": "Other, capable of connecting to an automatic data processing machine or to a network"
+ },
+ {
+  "hs6": "844339",
+  "heading": "Printing machinery used for printing by means of plates, cylinders and other printing components of heading 8442; other printers, copying machines and facsimile machines, whether or not combined; parts and accessories thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "844391",
+  "heading": "Printing machinery used for printing by means of plates, cylinders and other printing components of heading 8442; other printers, copying machines and facsimile machines, whether or not combined; parts and accessories thereof",
+  "text": "Parts and accessories of printing machinery used for printing by means of plates, cylinders and other printing components of heading 8442"
+ },
+ {
+  "hs6": "844399",
+  "heading": "Printing machinery used for printing by means of plates, cylinders and other printing components of heading 8442; other printers, copying machines and facsimile machines, whether or not combined; parts and accessories thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "844621",
+  "heading": "Weaving machines (looms)",
+  "text": "Power looms"
+ },
+ {
+  "hs6": "844630",
+  "heading": "Weaving machines (looms)",
+  "text": "For weaving fabrics of a width exceeding 30 cm, shuttleless type"
+ },
+ {
+  "hs6": "844711",
+  "heading": "Knitting machines, stitch-bonding machines and machines for making gimped yarn, tulle, lace, embroidery, trimmings, braid or net and machines for tufting",
+  "text": "With cylinder diameter not exceeding 165 mm"
+ },
+ {
+  "hs6": "844712",
+  "heading": "Knitting machines, stitch-bonding machines and machines for making gimped yarn, tulle, lace, embroidery, trimmings, braid or net and machines for tufting",
+  "text": "With cylinder diameter exceeding 165 mm"
+ },
+ {
+  "hs6": "844720",
+  "heading": "Knitting machines, stitch-bonding machines and machines for making gimped yarn, tulle, lace, embroidery, trimmings, braid or net and machines for tufting",
+  "text": "Flat knitting machines; stitch-bonding machines"
+ },
+ {
+  "hs6": "844790",
+  "heading": "Knitting machines, stitch-bonding machines and machines for making gimped yarn, tulle, lace, embroidery, trimmings, braid or net and machines for tufting",
+  "text": "Other"
+ },
+ {
+  "hs6": "844820",
+  "heading": "Auxiliary machinery for use with machines of heading 8444, 8445, 8446 or 8447 (for example, dobbies, Jacquards, automatic stop motions and shuttle changing mechanisms); parts and accessories suitable for use solely or principally with the machines of this heading or of heading 8444, 8445, 8446 or 8447 (for example, spindles and spindle flyers, card clothing, combs, extruding nipples, shuttles, healds and heald-frames, hosiery needles)",
+  "text": "Parts and accessories of machines of heading 8444 or of their auxiliary machinery"
+ },
+ {
+  "hs6": "844839",
+  "heading": "Auxiliary machinery for use with machines of heading 8444, 8445, 8446 or 8447 (for example, dobbies, Jacquards, automatic stop motions and shuttle changing mechanisms); parts and accessories suitable for use solely or principally with the machines of this heading or of heading 8444, 8445, 8446 or 8447 (for example, spindles and spindle flyers, card clothing, combs, extruding nipples, shuttles, healds and heald-frames, hosiery needles)",
+  "text": "Other"
+ },
+ {
+  "hs6": "844849",
+  "heading": "Auxiliary machinery for use with machines of heading 8444, 8445, 8446 or 8447 (for example, dobbies, Jacquards, automatic stop motions and shuttle changing mechanisms); parts and accessories suitable for use solely or principally with the machines of this heading or of heading 8444, 8445, 8446 or 8447 (for example, spindles and spindle flyers, card clothing, combs, extruding nipples, shuttles, healds and heald-frames, hosiery needles)",
+  "text": "Other"
+ },
+ {
+  "hs6": "844851",
+  "heading": "Auxiliary machinery for use with machines of heading 8444, 8445, 8446 or 8447 (for example, dobbies, Jacquards, automatic stop motions and shuttle changing mechanisms); parts and accessories suitable for use solely or principally with the machines of this heading or of heading 8444, 8445, 8446 or 8447 (for example, spindles and spindle flyers, card clothing, combs, extruding nipples, shuttles, healds and heald-frames, hosiery needles)",
+  "text": "Sinkers, needles and other articles used in forming stitches"
+ },
+ {
+  "hs6": "844859",
+  "heading": "Auxiliary machinery for use with machines of heading 8444, 8445, 8446 or 8447 (for example, dobbies, Jacquards, automatic stop motions and shuttle changing mechanisms); parts and accessories suitable for use solely or principally with the machines of this heading or of heading 8444, 8445, 8446 or 8447 (for example, spindles and spindle flyers, card clothing, combs, extruding nipples, shuttles, healds and heald-frames, hosiery needles)",
+  "text": "Other"
+ },
+ {
+  "hs6": "844900",
+  "heading": "Auxiliary machinery for use with machines of heading 8444, 8445, 8446 or 8447 (for example, dobbies, Jacquards, automatic stop motions and shuttle changing mechanisms); parts and accessories suitable for use solely or principally with the machines of this heading or of heading 8444, 8445, 8446 or 8447 (for example, spindles and spindle flyers, card clothing, combs, extruding nipples, shuttles, healds and heald-frames, hosiery needles)",
+  "text": "Machinery for the manufacture or finishing of felt or nonwovens in the piece or in shapes, including machinery for making felt hats; blocks for making hats; parts thereof"
+ },
+ {
+  "hs6": "845090",
+  "heading": "Household- or laundry-type washing machines, including machines which both wash and dry; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "845190",
+  "heading": "Machinery (other than machines of heading 8450) for washing, cleaning, wringing, drying, ironing, pressing (including fusing presses), bleaching, dyeing, dressing, finishing, coating or impregnating textile yarns, fabrics or made up textile articles and machines for applying the paste to the base fabric or other support used in the manufacture of floor coverings such as linoleum; machines for reeling, unreeling, folding, cutting or pinking textile fabrics; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "845221",
+  "heading": "Sewing machines, other than book-sewing machines of heading 8440; furniture, bases and covers specially designed for sewing machines; sewing machine needles; parts thereof",
+  "text": "Automatic units"
+ },
+ {
+  "hs6": "845229",
+  "heading": "Sewing machines, other than book-sewing machines of heading 8440; furniture, bases and covers specially designed for sewing machines; sewing machine needles; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "845290",
+  "heading": "Sewing machines, other than book-sewing machines of heading 8440; furniture, bases and covers specially designed for sewing machines; sewing machine needles; parts thereof",
+  "text": "Furniture, bases and covers for sewing machines, and parts thereof; other parts of sewing machines"
+ },
+ {
+  "hs6": "845390",
+  "heading": "Machinery for preparing, tanning or working hides, skins or leather or for making or repairing footwear or other articles of hides, skins or leather, other than sewing machines; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "845590",
+  "heading": "Metal-rolling mills and rolls therefor; parts thereof",
+  "text": "Other parts"
+ },
+ {
+  "hs6": "845611",
+  "heading": "Machine tools for working any material by removal of material, by laser or other light or photon beam, ultrasonic, electro-discharge, electro-chemical, electron-beam, ionic-beam or plasma arc processes; water-jet cutting machines",
+  "text": "Operated by laser"
+ },
+ {
+  "hs6": "845612",
+  "heading": "Machine tools for working any material by removal of material, by laser or other light or photon beam, ultrasonic, electro-discharge, electro-chemical, electron-beam, ionic-beam or plasma arc processes; water-jet cutting machines",
+  "text": "Operated by other light or photon beam processes"
+ },
+ {
+  "hs6": "845620",
+  "heading": "Machine tools for working any material by removal of material, by laser or other light or photon beam, ultrasonic, electro-discharge, electro-chemical, electron-beam, ionic-beam or plasma arc processes; water-jet cutting machines",
+  "text": "Operated by ultrasonic processes"
+ },
+ {
+  "hs6": "845630",
+  "heading": "Machine tools for working any material by removal of material, by laser or other light or photon beam, ultrasonic, electro-discharge, electro-chemical, electron-beam, ionic-beam or plasma arc processes; water-jet cutting machines",
+  "text": "Operated by electro-discharge processes"
+ },
+ {
+  "hs6": "845640",
+  "heading": "Machine tools for working any material by removal of material, by laser or other light or photon beam, ultrasonic, electro-discharge, electro-chemical, electron-beam, ionic-beam or plasma arc processes; water-jet cutting machines",
+  "text": "Operated by plasma arc process"
+ },
+ {
+  "hs6": "845690",
+  "heading": "Machine tools for working any material by removal of material, by laser or other light or photon beam, ultrasonic, electro-discharge, electro-chemical, electron-beam, ionic-beam or plasma arc processes; water-jet cutting machines",
+  "text": "Other"
+ },
+ {
+  "hs6": "845891",
+  "heading": "Lathes (including turning centers) for removing metal",
+  "text": "Numerically controlled"
+ },
+ {
+  "hs6": "845899",
+  "heading": "Lathes (including turning centers) for removing metal",
+  "text": "Other"
+ },
+ {
+  "hs6": "845970",
+  "heading": "Machine tools (including way-type unit head machines) for drilling, boring, milling, threading or tapping by removing metal, other than lathes (including turning centers) of heading 8458",
+  "text": "Other threading or tapping machines"
+ },
+ {
+  "hs6": "846040",
+  "heading": "Machine tools for deburring, sharpening, grinding, honing, lapping, polishing or otherwise finishing metal or cermets by means of grinding stones, abrasives or polishing products, other than gear cutting, gear grinding or gear finishing machines of heading 8461",
+  "text": "Honing or lapping machines"
+ },
+ {
+  "hs6": "846090",
+  "heading": "Machine tools for deburring, sharpening, grinding, honing, lapping, polishing or otherwise finishing metal or cermets by means of grinding stones, abrasives or polishing products, other than gear cutting, gear grinding or gear finishing machines of heading 8461",
+  "text": "Other"
+ },
+ {
+  "hs6": "846120",
+  "heading": "Machine tools for planing, shaping, slotting, broaching, gear cutting, gear grinding or gear finishing, sawing, cutting-off and other machine tools working by removing metal or cermets, not elsewhere specified or included",
+  "text": "Shaping or slotting machines"
+ },
+ {
+  "hs6": "846130",
+  "heading": "Machine tools for planing, shaping, slotting, broaching, gear cutting, gear grinding or gear finishing, sawing, cutting-off and other machine tools working by removing metal or cermets, not elsewhere specified or included",
+  "text": "Broaching machines"
+ },
+ {
+  "hs6": "846140",
+  "heading": "Machine tools for planing, shaping, slotting, broaching, gear cutting, gear grinding or gear finishing, sawing, cutting-off and other machine tools working by removing metal or cermets, not elsewhere specified or included",
+  "text": "Gear cutting, gear grinding or gear finishing machines"
+ },
+ {
+  "hs6": "846150",
+  "heading": "Machine tools for planing, shaping, slotting, broaching, gear cutting, gear grinding or gear finishing, sawing, cutting-off and other machine tools working by removing metal or cermets, not elsewhere specified or included",
+  "text": "Sawing or cutting-off machines"
+ },
+ {
+  "hs6": "846190",
+  "heading": "Machine tools for planing, shaping, slotting, broaching, gear cutting, gear grinding or gear finishing, sawing, cutting-off and other machine tools working by removing metal or cermets, not elsewhere specified or included",
+  "text": "Other"
+ },
+ {
+  "hs6": "846232",
+  "heading": "Machine tools (including presses) for working metal by forging, hammering or die forging (excluding rolling mills); machine tools (including presses, slitting lines and cut-to-length lines) for working metal by bending, folding, straightening, flattening, shearing, punching, notching or nibbling (excluding drawbenches); presses for working metal or metal carbides, not specified above",
+  "text": "Slitting lines and cut-to-length lines"
+ },
+ {
+  "hs6": "846261",
+  "heading": "Machine tools (including presses) for working metal by forging, hammering or die forging (excluding rolling mills); machine tools (including presses, slitting lines and cut-to-length lines) for working metal by bending, folding, straightening, flattening, shearing, punching, notching or nibbling (excluding drawbenches); presses for working metal or metal carbides, not specified above",
+  "text": "Hydraulic presses"
+ },
+ {
+  "hs6": "846262",
+  "heading": "Machine tools (including presses) for working metal by forging, hammering or die forging (excluding rolling mills); machine tools (including presses, slitting lines and cut-to-length lines) for working metal by bending, folding, straightening, flattening, shearing, punching, notching or nibbling (excluding drawbenches); presses for working metal or metal carbides, not specified above",
+  "text": "Mechanical presses"
+ },
+ {
+  "hs6": "846263",
+  "heading": "Machine tools (including presses) for working metal by forging, hammering or die forging (excluding rolling mills); machine tools (including presses, slitting lines and cut-to-length lines) for working metal by bending, folding, straightening, flattening, shearing, punching, notching or nibbling (excluding drawbenches); presses for working metal or metal carbides, not specified above",
+  "text": "Servo-presses"
+ },
+ {
+  "hs6": "846269",
+  "heading": "Machine tools (including presses) for working metal by forging, hammering or die forging (excluding rolling mills); machine tools (including presses, slitting lines and cut-to-length lines) for working metal by bending, folding, straightening, flattening, shearing, punching, notching or nibbling (excluding drawbenches); presses for working metal or metal carbides, not specified above",
+  "text": "Other"
+ },
+ {
+  "hs6": "846290",
+  "heading": "Machine tools (including presses) for working metal by forging, hammering or die forging (excluding rolling mills); machine tools (including presses, slitting lines and cut-to-length lines) for working metal by bending, folding, straightening, flattening, shearing, punching, notching or nibbling (excluding drawbenches); presses for working metal or metal carbides, not specified above",
+  "text": "Other"
+ },
+ {
+  "hs6": "846520",
+  "heading": "Machine tools (including machines for nailing, stapling, glueing or otherwise assembling) for working wood, cork, bone, hard rubber, hard plastics or similar hard materials",
+  "text": "Machining centers"
+ },
+ {
+  "hs6": "846620",
+  "heading": "Parts and accessories suitable for use solely or principally with the machines of headings 8456 to 8465, including work or tool holders, self-opening dieheads, dividing heads and other special attachments for the machines; tool holders for any type of tool for working in the hand",
+  "text": "Work holders"
+ },
+ {
+  "hs6": "846630",
+  "heading": "Parts and accessories suitable for use solely or principally with the machines of headings 8456 to 8465, including work or tool holders, self-opening dieheads, dividing heads and other special attachments for the machines; tool holders for any type of tool for working in the hand",
+  "text": "Dividing heads and other special attachments for machines"
+ },
+ {
+  "hs6": "846691",
+  "heading": "Parts and accessories suitable for use solely or principally with the machines of headings 8456 to 8465, including work or tool holders, self-opening dieheads, dividing heads and other special attachments for the machines; tool holders for any type of tool for working in the hand",
+  "text": "For machines of heading 8464"
+ },
+ {
+  "hs6": "846692",
+  "heading": "Parts and accessories suitable for use solely or principally with the machines of headings 8456 to 8465, including work or tool holders, self-opening dieheads, dividing heads and other special attachments for the machines; tool holders for any type of tool for working in the hand",
+  "text": "For machines of heading 8465"
+ },
+ {
+  "hs6": "846693",
+  "heading": "Parts and accessories suitable for use solely or principally with the machines of headings 8456 to 8465, including work or tool holders, self-opening dieheads, dividing heads and other special attachments for the machines; tool holders for any type of tool for working in the hand",
+  "text": "For machines of headings 8456 to 8461"
+ },
+ {
+  "hs6": "846694",
+  "heading": "Parts and accessories suitable for use solely or principally with the machines of headings 8456 to 8465, including work or tool holders, self-opening dieheads, dividing heads and other special attachments for the machines; tool holders for any type of tool for working in the hand",
+  "text": "For machines of heading 8462 or 8463"
+ },
+ {
+  "hs6": "846711",
+  "heading": "Tools for working in the hand, pneumatic, hydraulic or with self-contained electric or nonelectric motor, and parts thereof",
+  "text": "Rotary type (including combined rotary-percussion)"
+ },
+ {
+  "hs6": "846719",
+  "heading": "Tools for working in the hand, pneumatic, hydraulic or with self-contained electric or nonelectric motor, and parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "846789",
+  "heading": "Tools for working in the hand, pneumatic, hydraulic or with self-contained electric or nonelectric motor, and parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "846820",
+  "heading": "Machinery and apparatus for soldering, brazing or welding, whether or not capable of cutting, other than those of heading 8515; gas-operated surface tempering machines and appliances; parts thereof",
+  "text": "Other gas-operated machinery and apparatus"
+ },
+ {
+  "hs6": "846880",
+  "heading": "Machinery and apparatus for soldering, brazing or welding, whether or not capable of cutting, other than those of heading 8515; gas-operated surface tempering machines and appliances; parts thereof",
+  "text": "Other machinery and apparatus"
+ },
+ {
+  "hs6": "846890",
+  "heading": "Machinery and apparatus for soldering, brazing or welding, whether or not capable of cutting, other than those of heading 8515; gas-operated surface tempering machines and appliances; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "847160",
+  "heading": "Automatic data processing machines and units thereof; magnetic or optical readers, machines for transcribing data onto data media in coded form and machines for processing such data, not elsewhere specified or included",
+  "text": "Input or output units, whether or not containing storage units in the same housing"
+ },
+ {
+  "hs6": "847170",
+  "heading": "Automatic data processing machines and units thereof; magnetic or optical readers, machines for transcribing data onto data media in coded form and machines for processing such data, not elsewhere specified or included",
+  "text": "Storage units"
+ },
+ {
+  "hs6": "847180",
+  "heading": "Automatic data processing machines and units thereof; magnetic or optical readers, machines for transcribing data onto data media in coded form and machines for processing such data, not elsewhere specified or included",
+  "text": "Other units of automatic data processing machines"
+ },
+ {
+  "hs6": "847290",
+  "heading": "Other office machines (for example, hectograph or stencil duplicating machines, addressing machines, automatic banknote dispensers, coin-sorting machines, coin-counting or wrapping machines, pencil-sharpening machines, perforating or stapling machines)",
+  "text": "Other"
+ },
+ {
+  "hs6": "847330",
+  "heading": "Parts and accessories (other than covers, carrying cases and the like) suitable for use solely or principally with machines of headings 8470 to 8472",
+  "text": "Parts and accessories of the machines of heading 8471"
+ },
+ {
+  "hs6": "847340",
+  "heading": "Parts and accessories (other than covers, carrying cases and the like) suitable for use solely or principally with machines of headings 8470 to 8472",
+  "text": "Parts and accessories of the machines of heading 8472"
+ },
+ {
+  "hs6": "847350",
+  "heading": "Parts and accessories (other than covers, carrying cases and the like) suitable for use solely or principally with machines of headings 8470 to 8472",
+  "text": "Parts and accessories equally suitable for use with machines of two or more of the headings 8470 to 8472"
+ },
+ {
+  "hs6": "847590",
+  "heading": "Machines for assembling electric or electronic lamps, tubes or flashbulbs, in glass envelopes; machines for manufacturing or hot working glass or glassware; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "847710",
+  "heading": "Machinery for working rubber or plastics or for the manufacture of products from these materials, not specified or included elsewhere in this chapter; parts thereof",
+  "text": "Injection-molding machines"
+ },
+ {
+  "hs6": "847790",
+  "heading": "Machinery for working rubber or plastics or for the manufacture of products from these materials, not specified or included elsewhere in this chapter; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "847989",
+  "heading": "Machines and mechanical appliances having individual functions, not specified or included elsewhere in this chapter; parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "847990",
+  "heading": "Machines and mechanical appliances having individual functions, not specified or included elsewhere in this chapter; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "848071",
+  "heading": "Molding boxes for metal foundry; mold bases; molding patterns; molds for metal (other than ingot molds), metal carbides, glass, mineral materials, rubber or plastics",
+  "text": "Injection or compression types"
+ },
+ {
+  "hs6": "848079",
+  "heading": "Molding boxes for metal foundry; mold bases; molding patterns; molds for metal (other than ingot molds), metal carbides, glass, mineral materials, rubber or plastics",
+  "text": "Other types"
+ },
+ {
+  "hs6": "848130",
+  "heading": "Taps, cocks, valves and similar appliances, for pipes, boiler shells, tanks, vats or the like, including pressure-reducing valves and thermostatically controlled valves; parts thereof",
+  "text": "Check (nonreturn) valves"
+ },
+ {
+  "hs6": "848180",
+  "heading": "Taps, cocks, valves and similar appliances, for pipes, boiler shells, tanks, vats or the like, including pressure-reducing valves and thermostatically controlled valves; parts thereof",
+  "text": "Other appliances"
+ },
+ {
+  "hs6": "848190",
+  "heading": "Taps, cocks, valves and similar appliances, for pipes, boiler shells, tanks, vats or the like, including pressure-reducing valves and thermostatically controlled valves; parts thereof",
+  "text": "Parts"
+ },
+ {
+  "hs6": "848210",
+  "heading": "Ball or roller bearings, and parts thereof",
+  "text": "Ball bearings"
+ },
+ {
+  "hs6": "848299",
+  "heading": "Ball or roller bearings, and parts thereof",
+  "text": "Other"
+ },
+ {
+  "hs6": "848310",
+  "heading": "Transmission shafts (including camshafts and crankshafts) and cranks; bearing housings, housed bearings and plain shaft bearings; gears and gearing; ball or roller screws; gear boxes and other speed changers, including torque converters; flywheels and pulleys, including pulley blocks; clutches and shaft couplings (including universal joints); parts thereof",
+  "text": "Transmission shafts (including camshafts and crankshafts) and cranks"
+ },
+ {
+  "hs6": "848320",
+  "heading": "Transmission shafts (including camshafts and crankshafts) and cranks; bearing housings, housed bearings and plain shaft bearings; gears and gearing; ball or roller screws; gear boxes and other speed changers, including torque converters; flywheels and pulleys, including pulley blocks; clutches and shaft couplings (including universal joints); parts thereof",
+  "text": "Housed bearings, incorporating ball or roller bearings"
+ },
+ {
+  "hs6": "848330",
+  "heading": "Transmission shafts (including camshafts and crankshafts) and cranks; bearing housings, housed bearings and plain shaft bearings; gears and gearing; ball or roller screws; gear boxes and other speed changers, including torque converters; flywheels and pulleys, including pulley blocks; clutches and shaft couplings (including universal joints); parts thereof",
+  "text": "Bearing housings; plain shaft bearings"
+ },
+ {
+  "hs6": "848340",
+  "heading": "Transmission shafts (including camshafts and crankshafts) and cranks; bearing housings, housed bearings and plain shaft bearings; gears and gearing; ball or roller screws; gear boxes and other speed changers, including torque converters; flywheels and pulleys, including pulley blocks; clutches and shaft couplings (including universal joints); parts thereof",
+  "text": "Gears and gearing, other than toothed wheels, chain sprockets and other transmission elements entered separately; ball or roller screws; gear boxes and other speed changers, including torque converters"
+ },
+ {
+  "hs6": "848350",
+  "heading": "Transmission shafts (including camshafts and crankshafts) and cranks; bearing housings, housed bearings and plain shaft bearings; gears and gearing; ball or roller screws; gear boxes and other speed changers, including torque converters; flywheels and pulleys, including pulley blocks; clutches and shaft couplings (including universal joints); parts thereof",
+  "text": "Flywheels and pulleys, including pulley blocks"
+ },
+ {
+  "hs6": "848360",
+  "heading": "Transmission shafts (including camshafts and crankshafts) and cranks; bearing housings, housed bearings and plain shaft bearings; gears and gearing; ball or roller screws; gear boxes and other speed changers, including torque converters; flywheels and pulleys, including pulley blocks; clutches and shaft couplings (including universal joints); parts thereof",
+  "text": "Clutches and shaft couplings (including universal joints)"
+ },
+ {
+  "hs6": "848390",
+  "heading": "Transmission shafts (including camshafts and crankshafts) and cranks; bearing housings, housed bearings and plain shaft bearings; gears and gearing; ball or roller screws; gear boxes and other speed changers, including torque converters; flywheels and pulleys, including pulley blocks; clutches and shaft couplings (including universal joints); parts thereof",
+  "text": "Toothed wheels, chain sprockets and other transmission elements presented separately; parts"
+ },
+ {
+  "hs6": "848590",
+  "heading": "Machines for additive manufacturing",
+  "text": "Parts"
+ }
+]

@@ -5,7 +5,8 @@
 /// the escrow — its entire authority on-chain is `recordDecision`, and
 /// `SettlementEscrow` refuses to grant it any role at all.
 
-import { propose, type ModelClientOptions } from "./anthropic.ts";
+import { propose, withRetry, type ModelClientOptions } from "./anthropic.ts";
+import { ground } from "./ground.ts";
 import { buildDecision } from "./decide.ts";
 import { canonicalJson, decisionHash } from "./hash.ts";
 import type { ClassificationRequest, Decision } from "./types.ts";
@@ -16,7 +17,7 @@ import type { ClassificationRequest, Decision } from "./types.ts";
 /// are known, so this string names the engine's own version and the HS revision
 /// it classifies against. It changes whenever the threshold, the schema, or the
 /// prompt changes — not only when the code does.
-export const ENGINE_VERSION = "compliance-0.1.0/hs-2022";
+export const ENGINE_VERSION = "compliance-0.2.0/hs-2022+grounded";
 
 export interface EngineConfig {
   readonly apiKey: string;
@@ -66,9 +67,19 @@ export function configFromEnv(env: NodeJS.ProcessEnv = process.env): EngineConfi
 
 export class ComplianceEngine {
   #options: ModelClientOptions;
+  #grounding: boolean;
 
-  constructor(config: EngineConfig) {
+  /// `grounding` is on by default and exists so the two passes can be measured
+  /// against each other on the same corpus. Turning it off is how the
+  /// before-and-after figures in `bench/README.md` were produced; it is not a
+  /// degraded mode for production.
+  constructor(config: EngineConfig, options?: { grounding?: boolean }) {
     this.#options = { apiKey: config.apiKey, model: config.model };
+    this.#grounding = options?.grounding ?? true;
+  }
+
+  get grounding(): boolean {
+    return this.#grounding;
   }
 
   get model(): string {
@@ -76,7 +87,27 @@ export class ComplianceEngine {
   }
 
   async classify(request: ClassificationRequest): Promise<Ruling> {
-    const proposal = await propose(request, this.#options);
+    const first = await withRetry(() => propose(request, this.#options));
+
+    // Second pass: re-decide the subheading against the published nomenclature
+    // for the chapters the first pass named. Skipped when the first pass raised
+    // a purpose flag — those are refusals that no amount of tariff text
+    // changes, and spending a call on them is waste.
+    let proposal = first;
+    if (this.#grounding && first.purposeFlags.length === 0) {
+      const grounded = await withRetry(() =>
+        ground(request, first, this.#options),
+      );
+      if (grounded !== null && grounded.hs6 !== null) {
+        proposal = {
+          ...first,
+          hs6: grounded.hs6,
+          confidence: grounded.confidence,
+          rationale: grounded.rationale,
+        };
+      }
+    }
+
     const decision = buildDecision(
       request,
       proposal,

@@ -1,0 +1,102 @@
+[
+ {
+  "hs6": "040120",
+  "heading": "Milk and cream, not concentrated nor containing added sugar or other sweetening matter",
+  "text": "Of a fat content, by weight, exceeding 1 percent but not exceeding 6 percent"
+ },
+ {
+  "hs6": "040140",
+  "heading": "Milk and cream, not concentrated nor containing added sugar or other sweetening matter",
+  "text": "Of a fat content, by weight, exceeding 6 percent but not exceeding 10 percent"
+ },
+ {
+  "hs6": "040150",
+  "heading": "Milk and cream, not concentrated nor containing added sugar or other sweetening matter",
+  "text": "Of a fat content, by weight, exceeding 10 percent"
+ },
+ {
+  "hs6": "040210",
+  "heading": "Milk and cream, concentrated or containing added sugar or other sweetening matter",
+  "text": "In powder, granules or other solid forms, of a fat content, by weight, not exceeding 1.5 percent"
+ },
+ {
+  "hs6": "040221",
+  "heading": "Milk and cream, concentrated or containing added sugar or other sweetening matter",
+  "text": "Not containing added sugar or other sweetening matter"
+ },
+ {
+  "hs6": "040229",
+  "heading": "Milk and cream, concentrated or containing added sugar or other sweetening matter",
+  "text": "Other"
+ },
+ {
+  "hs6": "040291",
+  "heading": "Milk and cream, concentrated or containing added sugar or other sweetening matter",
+  "text": "Not containing added sugar or other sweetening matter"
+ },
+ {
+  "hs6": "040299",
+  "heading": "Milk and cream, concentrated or containing added sugar or other sweetening matter",
+  "text": "Other"
+ },
+ {
+  "hs6": "040320",
+  "heading": "Yogurt; buttermilk, curdled milk and cream, kephir and other fermented or acidified milk and cream, whether or not concentrated or containing added sugar or other sweetening matter or flavored or containing added fruit, nuts or cocoa",
+  "text": "Yogurt"
+ },
+ {
+  "hs6": "040390",
+  "heading": "Yogurt; buttermilk, curdled milk and cream, kephir and other fermented or acidified milk and cream, whether or not concentrated or containing added sugar or other sweetening matter or flavored or containing added fruit, nuts or cocoa",
+  "text": "Other"
+ },
+ {
+  "hs6": "040410",
+  "heading": "Whey, whether or not concentrated or containing added sugar or other sweetening matter; products consisting of natural milk constituents, whether or not containing added sugar or other sweetening matter, not elsewhere specified or included",
+  "text": "Whey and modified whey, whether or not concentrated or containing added sugar or other sweetening matter"
+ },
+ {
+  "hs6": "040490",
+  "heading": "Whey, whether or not concentrated or containing added sugar or other sweetening matter; products consisting of natural milk constituents, whether or not containing added sugar or other sweetening matter, not elsewhere specified or included",
+  "text": "Other"
+ },
+ {
+  "hs6": "040510",
+  "heading": "Butter and other fats and oils derived from milk; dairy spreads",
+  "text": "Butter"
+ },
+ {
+  "hs6": "040520",
+  "heading": "Butter and other fats and oils derived from milk; dairy spreads",
+  "text": "Dairy spreads"
+ },
+ {
+  "hs6": "040590",
+  "heading": "Butter and other fats and oils derived from milk; dairy spreads",
+  "text": "Other"
+ },
+ {
+  "hs6": "040610",
+  "heading": "Cheese and curd",
+  "text": "Fresh (unripened or uncured) cheese, including whey cheese, and curd"
+ },
+ {
+  "hs6": "040620",
+  "heading": "Cheese and curd",
+  "text": "Grated or powdered cheese, of all kinds"
+ },
+ {
+  "hs6": "040630",
+  "heading": "Cheese and curd",
+  "text": "Processed (process) cheese, not grated or powdered"
+ },
+ {
+  "hs6": "040640",
+  "heading": "Cheese and curd",
+  "text": "Blue-veined cheese and other cheese containing veins produced by Penicillium roqueforti"
+ },
+ {
+  "hs6": "040690",
+  "heading": "Cheese and curd",
+  "text": "Other cheese"
+ }
+]

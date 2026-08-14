@@ -1,0 +1,217 @@
+[
+ {
+  "hs6": "030245",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Jack and horse mackerel (Trachurus spp)"
+ },
+ {
+  "hs6": "030246",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Cobia (Rachycentron canadum)"
+ },
+ {
+  "hs6": "030254",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Hake (Merluccius spp., Urophycis spp.)"
+ },
+ {
+  "hs6": "030255",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Alaska pollock (Theragra chalcogramma)"
+ },
+ {
+  "hs6": "030256",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Blue whitings (Micromesistius poutassou, Micromesistius australis)"
+ },
+ {
+  "hs6": "030259",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Other"
+ },
+ {
+  "hs6": "030271",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Tilapias (Oreochromis spp.)"
+ },
+ {
+  "hs6": "030272",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Catfish (Pangasius spp., Silurus spp., Clarias spp., Ictalurus spp.)"
+ },
+ {
+  "hs6": "030273",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Carp (Cyprinus spp., Carassius spp., Ctenopharyngodon idellus, Hypophthalmichthys spp., Cirrhinus spp., Mylopharyngodon piceus, Catla catla, Labeo spp., Osteochilus hasselti, Leptobarbus hoeveni, Megalobrama spp.)"
+ },
+ {
+  "hs6": "030279",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Other"
+ },
+ {
+  "hs6": "030284",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Seabass (Dicentrarchus spp.)"
+ },
+ {
+  "hs6": "030285",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Seabream (Sparidae)"
+ },
+ {
+  "hs6": "030289",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Other"
+ },
+ {
+  "hs6": "030291",
+  "heading": "Fish, fresh or chilled, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Livers, roes and milt"
+ },
+ {
+  "hs6": "030391",
+  "heading": "Fish, frozen, excluding fish fillets and other fish meat of heading 0304",
+  "text": "Livers, roes and milt"
+ },
+ {
+  "hs6": "030471",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Cod (Gadus morhua, Gadus ogac,Gadus macrocephalus)"
+ },
+ {
+  "hs6": "030472",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Haddock (Melanogrammus aeglefinus)"
+ },
+ {
+  "hs6": "030473",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Coalfish (Pollachius virens)"
+ },
+ {
+  "hs6": "030474",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Hake (Merluccius spp., Urophycis spp.)"
+ },
+ {
+  "hs6": "030475",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Alaska pollock (Theragra chalcogramma)"
+ },
+ {
+  "hs6": "030479",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Other"
+ },
+ {
+  "hs6": "030481",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Pacific salmon (Oncorhynchus nerka, Oncorhynchus gorbuscha, Oncorhynchus keta, Oncorhynchus tschawytscha, Oncorhynchus kisutch, Oncorhynchus masou and Oncorhynchus rhodurus) Atlantic Salmon (Salmo salar) and Danube salmon (Hucho hucho)"
+ },
+ {
+  "hs6": "030482",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Trout (Salmo trutta, Oncorhynchus mykiss, Oncorhynchus clarki, Oncorhynchus aguabonita, Oncorhynchus gilae Oncorhynchus apache and Oncorhynchus chrysogaster)"
+ },
+ {
+  "hs6": "030483",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Flat fish (Pleuronectidae, Bothidae, Cynoglossidae, Soleidae, Scophthalmidae, and Citharidae)"
+ },
+ {
+  "hs6": "030489",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Other"
+ },
+ {
+  "hs6": "030491",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Swordfish (Xiphias gladius)"
+ },
+ {
+  "hs6": "030492",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Toothfish (Dissostichus spp.)"
+ },
+ {
+  "hs6": "030493",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Tilapias (Oreochromis spp.), catfish (Pangasius spp., Silurus spp., Clarias spp., Ictalurus spp.), carp (Cyprinus spp., Carassius spp., Ctenopharyngodon idellus, Hypophthalmichthys spp., Cirrhinus spp., Mylopharyngodon piceus, Catla catla, Labeo spp., Osteochilus hasselti, Leptobarbus hoeveni, Megalobrama spp.), eels (Anguilla spp.), Nile perch (Lates niloticus) and snakeheads (Channa spp.)"
+ },
+ {
+  "hs6": "030494",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Alaska pollock (Theragra chalcogramma)"
+ },
+ {
+  "hs6": "030495",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Fish of the families Bregmacerotidae, Euclichthyidae, Gadidae, Macrouridae, Melanonidae, Merlucciidae, Moridae and Muraenolepididae, other than Alaska Pollock (Theragra chalcogramma)"
+ },
+ {
+  "hs6": "030499",
+  "heading": "Fish fillets and other fish meat (whether or not minced), fresh, chilled or frozen",
+  "text": "Other"
+ },
+ {
+  "hs6": "030520",
+  "heading": "Fish, dried, salted or in brine; smoked fish, whether or not cooked before or during the smoking process",
+  "text": "Livers, roes and milt of fish, dried, smoked, salted or in brine"
+ },
+ {
+  "hs6": "030539",
+  "heading": "Fish, dried, salted or in brine; smoked fish, whether or not cooked before or during the smoking process",
+  "text": "Other"
+ },
+ {
+  "hs6": "030549",
+  "heading": "Fish, dried, salted or in brine; smoked fish, whether or not cooked before or during the smoking process",
+  "text": "Other"
+ },
+ {
+  "hs6": "030561",
+  "heading": "Fish, dried, salted or in brine; smoked fish, whether or not cooked before or during the smoking process",
+  "text": "Herrings (Clupea harengus, Clupea pallasii)"
+ },
+ {
+  "hs6": "030563",
+  "heading": "Fish, dried, salted or in brine; smoked fish, whether or not cooked before or during the smoking process",
+  "text": "Anchovies (Engraulis spp.)"
+ },
+ {
+  "hs6": "030564",
+  "heading": "Fish, dried, salted or in brine; smoked fish, whether or not cooked before or during the smoking process",
+  "text": "Tilapias (Oreochromis spp.), catfish (Pangasius spp., Silurus spp., Clarias spp., Ictalurus spp.), carp (Cyprinus spp., Carassius spp., Ctenopharyngodon idellus, Hypophthalmichthys spp., Cirrhinus spp., Mylopharyngodon piceus, Catla catla, Labeo spp., Osteochilus hasselti, Leptobarbus hoeveni, Megalobrama spp.), eels (Anguilla spp.), Nile perch (Lates niloticus) and snakeheads (Channa spp.)"
+ },
+ {
+  "hs6": "030569",
+  "heading": "Fish, dried, salted or in brine; smoked fish, whether or not cooked before or during the smoking process",
+  "text": "Other"
+ },
+ {
+  "hs6": "030614",
+  "heading": "Crustaceans, whether in shell or not, live, fresh, chilled, frozen, dried, salted or in brine; smoked crustaceans, whether in shell or not, whether or not cooked before or during the smoking process; crustaceans, in shell, cooked by steaming or by boiling in water, whether or not chilled, frozen, dried, salted or in brine",
+  "text": "Crabs"
+ },
+ {
+  "hs6": "030633",
+  "heading": "Crustaceans, whether in shell or not, live, fresh, chilled, frozen, dried, salted or in brine; smoked crustaceans, whether in shell or not, whether or not cooked before or during the smoking process; crustaceans, in shell, cooked by steaming or by boiling in water, whether or not chilled, frozen, dried, salted or in brine",
+  "text": "Crabs"
+ },
+ {
+  "hs6": "030693",
+  "heading": "Crustaceans, whether in shell or not, live, fresh, chilled, frozen, dried, salted or in brine; smoked crustaceans, whether in shell or not, whether or not cooked before or during the smoking process; crustaceans, in shell, cooked by steaming or by boiling in water, whether or not chilled, frozen, dried, salted or in brine",
+  "text": "Crabs"
+ },
+ {
+  "hs6": "030910",
+  "heading": "Flours, meals and pellets of fish, crustaceans, molluscs and other aquatic invertebrates, fit for human consumption",
+  "text": "Of fish"
+ },
+ {
+  "hs6": "030990",
+  "heading": "Flours, meals and pellets of fish, crustaceans, molluscs and other aquatic invertebrates, fit for human consumption",
+  "text": "Other"
+ }
+]

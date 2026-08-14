@@ -78,6 +78,14 @@ export interface Proposal {
   readonly purposeFlags: readonly PurposeFlag[];
   /// One or two sentences, for the audit record. No PII.
   readonly rationale: string;
+  /// Two-digit chapters worth shortlisting the real nomenclature from.
+  ///
+  /// Measured against 330 real rulings, the first pass names the correct
+  /// chapter 80.6% of the time while reaching the correct subheading only
+  /// 36.1% of the time — it knows roughly where goods belong and loses
+  /// precision drilling down. These chapters are what the grounding pass reads
+  /// the published heading text for.
+  readonly candidateChapters?: readonly string[];
 }
 
 /// Why a verdict came out the way it did.
