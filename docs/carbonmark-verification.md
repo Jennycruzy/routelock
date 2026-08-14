@@ -68,6 +68,69 @@ calls an API and the registry custodies the asset. It does mean neither the code
 nor the README may state that credits are ERC-1155, because for 94% of what is
 listed that is false.
 
+## The sandbox key performs real, on-chain retirements
+
+**Settled 14 August 2026.** The build spec worried that a sandbox key would
+return a synthetic certificate, and that presenting one as real would be
+disqualifying. The opposite is true, and it was established by retiring 0.01 t
+and then verifying the result **independently of Carbonmark**.
+
+| | |
+|---|---|
+| Credit | `VCS-817` (Verra), vintage 2016, `C3T-VCS-817-2016` |
+| Quantity | 0.01 t |
+| Cost | **$0.10**, on the monthly invoice |
+| Polygon transaction | `0xa36425668718644597fbae4e525426937e5179dd7ed7d8ee7619fc3c129594a9` |
+| Block | 55,853,988, status **SUCCESS**, 34 logs |
+| Certificate | `app.carbonmark.com/retirements/id/137-0xab5b7b5849784279280188b556af3c179f31dc5b-50` |
+| Beneficiary | `RouteLock`, retirement index 50 |
+
+The transaction was confirmed by calling `eth_getTransactionReceipt` on a public
+Polygon RPC with no credentials, and the certificate page returns `200` with no
+authentication. Neither check goes through Carbonmark, which is the point: the
+proof does not depend on trusting the party that issued it.
+
+**Consequence: the X Layer demo does not depend on production access.** A real
+retirement with a real public certificate is already achievable with the key in
+hand. Production access remains worth pursuing, but it is no longer the gate it
+was assumed to be.
+
+**Not all public RPCs will confirm it.** Of four tried, one returned the
+transaction, one returned "not found", and two rejected the request for
+credentials. A single synced node returning the transaction is proof it exists;
+absence from a lagging or pruning node is not evidence against it. `drpc.org`
+answered; `publicnode` and `1rpc` did not.
+
+### Retirement is asynchronous
+
+`POST /orders` returns as soon as the order is **accepted**, with
+`transaction_hash` and `view_retirement_url` still empty. The on-chain
+retirement lands a second or two later — accepted at 18:10:56, completed at
+18:10:57 on the run above.
+
+Code must poll until the transaction hash appears. Returning the POST response
+directly yields a receipt with no proof in it, which is exactly the
+unverifiable claim this project refuses to publish.
+
+### There is no usable order id
+
+`GET /orders/{id}` takes a **numeric** id, and no order response ever contains
+one. The endpoint therefore cannot be called for an order this code created.
+Orders are matched instead on the `quote.uuid` they consumed, or on the
+retirement transaction hash.
+
+### The production key format, from the spec's own examples
+
+`openapi.json` documents authorisation examples of the form
+`Bearer cm_api_d286bc5a-9980-43b7-9507-7fc013fecca8` — `cm_api_` followed by a
+UUID, with **no environment marker**. The sandbox key in use is
+`cm_api_sandbox…`, so the two are distinguishable, but only by the absence of
+`sandbox` rather than by a positive production prefix.
+
+The pairing guard therefore keeps `livePrefix: null` until a real production key
+exists to read the format from. An example in documentation is not evidence
+about a key that has never been seen, and guessing here would defeat the guard.
+
 ## What this data gives the compliance corpus
 
 `creditId` carries `projectId` and `vintage` on every listing, so two of the five

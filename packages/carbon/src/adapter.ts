@@ -154,13 +154,16 @@ export class CarbonmarkAdapter
     };
   }
 
-  /// Re-check a retirement against Carbonmark.
+  /// Re-check a retirement, keyed by its on-chain transaction hash.
+  ///
+  /// Matched against the order list rather than fetched by id, because
+  /// `GET /orders/{id}` takes a numeric id that no order response contains.
   async verify(ref: string): Promise<VerificationResult> {
-    const order = await this.#client.order(ref);
+    const order = await this.#client.findOrderByTx(ref);
     return {
-      found: true,
-      state: String(order.status ?? "unknown"),
-      proofUrl: String(order.view_retirement_url ?? ""),
+      found: order !== undefined,
+      state: String(order?.status ?? "not found"),
+      proofUrl: String(order?.view_retirement_url ?? ""),
       checkedAt: this.#now().toISOString(),
       live: this.live,
     };

@@ -135,7 +135,7 @@ export class CarbonmarkClient {
     confirmSpend: true,
   ): Promise<Retirement> {
     void confirmSpend;
-    const order = await this.#call<RawOrder>("/orders", {
+    const accepted = await this.#call<RawOrder>("/orders", {
       method: "POST",
       body: {
         quote_uuid: quote.uuid,
@@ -144,19 +144,73 @@ export class CarbonmarkClient {
       },
     });
 
+    // Retirement is asynchronous. The POST returns as soon as the order is
+    // accepted, with `transaction_hash` and `view_retirement_url` still empty;
+    // the on-chain retirement lands a second or two later. Observed on the
+    // first real retirement, 14 August 2026: accepted at 18:10:56, completed at
+    // 18:10:57. Returning the accepted response directly would hand back a
+    // receipt with no proof in it.
+    const settled = accepted.transaction_hash
+      ? accepted
+      : await this.awaitOrder(quote.uuid);
+
     return {
-      orderId: String(order.quote?.uuid ?? quote.uuid),
-      retirementTxHash: String(order.transaction_hash ?? ""),
-      certificateUrl: String(order.view_retirement_url ?? ""),
+      orderId: quote.uuid,
+      retirementTxHash: String(settled.transaction_hash ?? ""),
+      certificateUrl: String(settled.view_retirement_url ?? ""),
       amountCharged: quote.costUsd,
       currency: "USD",
       live: this.live,
     };
   }
 
-  /// Re-read a completed order from Carbonmark.
-  async order(id: string): Promise<RawOrder> {
-    return this.#call<RawOrder>(`/orders/${encodeURIComponent(id)}`);
+  /// Every order on this account.
+  async orders(): Promise<readonly RawOrder[]> {
+    return this.#call<readonly RawOrder[]>("/orders");
+  }
+
+  /// Find an order by the quote it consumed.
+  ///
+  /// Orders are matched this way because **there is no usable order id**:
+  /// `GET /orders/{id}` takes a numeric id that no order response ever
+  /// contains, so the endpoint cannot be called for an order this code created.
+  /// The quote uuid is the only identifier that crosses the boundary.
+  async findOrderByQuote(quoteUuid: string): Promise<RawOrder | undefined> {
+    const all = await this.orders();
+    return all.find((o) => o.quote?.uuid === quoteUuid);
+  }
+
+  /// Find a completed order by its on-chain retirement transaction.
+  async findOrderByTx(txHash: string): Promise<RawOrder | undefined> {
+    const all = await this.orders();
+    const wanted = txHash.toLowerCase();
+    return all.find((o) => (o.transaction_hash ?? "").toLowerCase() === wanted);
+  }
+
+  /// Poll until the retirement settles on-chain.
+  ///
+  /// Throws rather than returning a half-filled receipt: an order that never
+  /// completes has no proof to publish, and a receipt without a certificate URL
+  /// is exactly the kind of unverifiable claim this project refuses to make.
+  async awaitOrder(
+    quoteUuid: string,
+    { timeoutMs = 90_000, intervalMs = 2_000 } = {},
+  ): Promise<RawOrder> {
+    const deadline = Date.now() + timeoutMs;
+    let last: RawOrder | undefined;
+
+    while (Date.now() < deadline) {
+      last = await this.findOrderByQuote(quoteUuid);
+      if (last?.transaction_hash) return last;
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    }
+
+    throw new CarbonmarkError(
+      `order for quote ${quoteUuid} did not settle within ${timeoutMs}ms ` +
+        `(last status ${last?.status ?? "unknown"})`,
+      504,
+      "/orders",
+    );
   }
 }
 
