@@ -223,12 +223,15 @@ in their place, because a simulated feature presented as working would be worse
 than an absent one. See [`PROGRESS.md`](PROGRESS.md).
 
 **Built, but not yet measuring anything:** the classification benchmark corpus —
-258 rulings from CBP's public database, 133 HS-6 subheadings across 35 chapters,
-every row citing the binding customs ruling it came from. Building the corpus
-needs no inference, so it was not blocked. **Scoring it does**, so this
-repository contains no accuracy figures and will contain none until a real model
-has been run against those rows. Method, exclusions and limitations are in
-[`bench/README.md`](bench/README.md).
+**354 rulings from two independent customs authorities**, 176 from US CBP and 178
+from UK HMRC, covering 185 HS-6 subheadings across 57 chapters, every row citing
+the binding ruling it came from. Two authorities rather than one because the
+route is chosen by whoever is shipping: a single-country corpus measures how well
+a model reproduces that country's reading of the nomenclature, not the
+nomenclature. Building it needs no inference, so it was not blocked. **Scoring it
+does**, so this repository contains no accuracy figures and will contain none
+until a real model has been run against those rows. Method, exclusions and
+limitations are in [`bench/README.md`](bench/README.md).
 
 ## Verified networks
 

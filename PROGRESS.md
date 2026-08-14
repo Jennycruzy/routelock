@@ -285,12 +285,31 @@ Two factual defects fixed while in there:
   commit. Worth noting as a pattern — a checkable claim in a README that invites
   checking has to actually be checked.
 
-### Benchmark corpus built
+### Benchmark corpus built — two jurisdictions
 
-`bench/` is now a workspace package, `@routelock/bench`. **258 rows, 133 HS-6
-subheadings, 35 chapters**, sourced from CBP CROSS binding classification
-rulings — an authority's determination with a citable ruling number on every
-row, not annotations written here. 26 tests, typecheck clean.
+`bench/` is now a workspace package, `@routelock/bench`. **354 rows, 185 HS-6
+subheadings, 57 chapters**, from two independent customs authorities: 176 US CBP
+CROSS rulings and 178 UK HMRC Advance Tariff Rulings. Each row is an authority's
+binding determination with a citable reference, not an annotation written here.
+33 tests, typecheck clean.
+
+Two sources because the route is chosen by whoever is shipping — a single-country
+corpus measures how well a model reproduces *that country's* reading of the
+nomenclature rather than the nomenclature. **14 subheadings were reached
+independently by both authorities**, which is the corpus's own evidence that the
+HS-6 label travels.
+
+Two traps in the UK source specifically:
+
+- **ATaR accepts a `searchTerm` parameter and ignores it.** "laptop", "banana"
+  and an empty string return byte-identical first pages. A term-based collector
+  looks like it is sampling by commodity while silently gathering the same 25
+  rulings — the first attempt yielded exactly 25 UK candidates across 52 terms.
+  Paging is real, so the collector strides across the result set instead.
+- **ATaR needs no cut but still needs the leak guard.** HMRC publishes the goods
+  description as its own field, separate from `Justification`, which carries the
+  reasoning and names the heading. Structure does the cutting; the guard still
+  runs because a human-written description can name a heading anyway.
 
 This was buildable because a corpus needs no inference; only scoring it does.
 There are no accuracy numbers anywhere in the repo and there must not be until a

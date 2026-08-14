@@ -1,12 +1,16 @@
-/// Builds the HS classification benchmark corpus from CBP's public rulings.
+/// Builds the HS classification benchmark corpus from two customs authorities.
 ///
-/// Every row is a real customs ruling: a described consignment and the HS
-/// subheading an authority assigned to it. Nothing here is written by hand or
-/// by a model — the script's whole job is to select, cut and cite, and to drop
-/// anything it cannot certify.
+/// Every row is a real ruling: a described consignment and the HS subheading an
+/// authority assigned to it. Nothing here is written by hand or by a model — the
+/// script selects, cuts and cites, and drops anything it cannot certify.
 ///
-/// Rerunning is safe and roughly reproducible: results are keyed by ruling
-/// number and sorted, so the corpus changes only when CROSS does.
+/// Two sources, because RouteLock's route is chosen by whoever is shipping:
+///
+///   US  CBP CROSS  — binding rulings, published as full letters
+///   UK  HMRC ATaR  — advance tariff rulings, published as structured fields
+///
+/// Rerunning is safe and roughly reproducible: rows are keyed by reference and
+/// sorted, so the corpus changes only when the source databases do.
 ///
 ///   pnpm --filter @routelock/bench build:corpus
 
@@ -16,10 +20,15 @@ import {
   search,
   fetchRuling,
   rulingUrl,
+  listAtarReferences,
+  fetchAtarRuling,
+  atarUrl,
   groundTruthHs6,
   formatHs6,
   extractDescription,
+  AUTHORITY,
   type CorpusRow,
+  type Jurisdiction,
 } from "../src/index.ts";
 
 /// Commodity terms, chosen to spread the corpus across the chapters that
@@ -41,107 +50,189 @@ const TERMS = [
   "musical instrument", "camera", "pet food", "garden hose",
 ] as const;
 
-/// How many search hits to consider per term. Kept modest so no single term
-/// dominates the corpus.
 const HITS_PER_TERM = 12;
 
-/// Politeness. CROSS is a public service with no published rate limit; this is
-/// well under what a person clicking through the site would generate.
+/// ATaR holds ~6,350 rulings at 25 per page. Walking a stride across the whole
+/// range samples the database rather than its most recent corner.
+const ATAR_PAGES = 250;
+const ATAR_PAGE_STRIDE = 7;
+
+/// Politeness. Neither database publishes a rate limit; this stays well under
+/// what a person clicking through either site would generate.
 const CONCURRENCY = 4;
 const DELAY_MS = 120;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 interface Rejection {
-  readonly rulingNumber: string;
+  readonly reference: string;
+  readonly jurisdiction: Jurisdiction;
   readonly reason: string;
 }
 
-async function main(): Promise<void> {
-  const target = Number(process.env["CORPUS_TARGET"] ?? 300);
+const rejections: Rejection[] = [];
 
-  // ---- 1. Collect candidate ruling numbers across all terms.
-  const candidates = new Map<string, { tariffs: readonly string[] }>();
+function reject(
+  reference: string,
+  jurisdiction: Jurisdiction,
+  reason: string,
+): void {
+  rejections.push({ reference, jurisdiction, reason });
+}
+
+/// Run `task` over `items` with a bounded number of workers.
+async function pooled<T>(
+  items: readonly T[],
+  task: (item: T) => Promise<void>,
+): Promise<void> {
+  let cursor = 0;
+  async function worker(): Promise<void> {
+    while (cursor < items.length) {
+      const item = items[cursor++];
+      if (item === undefined) return;
+      await task(item);
+      await sleep(DELAY_MS);
+    }
+  }
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+}
+
+/// ---- US: CBP CROSS ---------------------------------------------------------
+async function collectUs(limit: number): Promise<CorpusRow[]> {
+  const candidates = new Map<string, readonly string[]>();
 
   for (const term of TERMS) {
     try {
-      const hits = await search(term, HITS_PER_TERM);
-      for (const hit of hits) {
+      for (const hit of await search(term, HITS_PER_TERM)) {
         if (hit.operationallyRevoked) continue; // no longer good law
         if (!candidates.has(hit.rulingNumber)) {
-          candidates.set(hit.rulingNumber, { tariffs: hit.tariffs });
+          candidates.set(hit.rulingNumber, hit.tariffs);
         }
       }
-      process.stdout.write(
-        `  searched ${term.padEnd(24)} ${String(candidates.size).padStart(4)} candidates\n`,
-      );
     } catch (error) {
-      process.stdout.write(`  searched ${term.padEnd(24)} FAILED: ${String(error)}\n`);
+      process.stdout.write(`  US search "${term}" failed: ${String(error)}\n`);
     }
     await sleep(DELAY_MS);
   }
 
-  // ---- 2. Drop candidates whose ground truth is already unusable, before
-  //         spending a request on their full text.
   const worthFetching = [...candidates.entries()]
-    .filter(([, v]) => groundTruthHs6(v.tariffs) !== null)
-    .map(([rulingNumber]) => rulingNumber)
+    .filter(([, tariffs]) => groundTruthHs6(tariffs) !== null)
+    .map(([reference]) => reference)
     .sort();
 
   process.stdout.write(
-    `\n${candidates.size} candidates, ${worthFetching.length} with a single HS-6 ground truth\n\n`,
+    `US: ${candidates.size} candidates, ${worthFetching.length} with single HS-6 ground truth\n`,
   );
 
-  // ---- 3. Fetch full text and cut the description out of each letter.
   const rows: CorpusRow[] = [];
-  const rejections: Rejection[] = [];
-  let cursor = 0;
+  await pooled(worthFetching.slice(0, limit * 2), async (reference) => {
+    if (rows.length >= limit) return;
+    try {
+      const ruling = await fetchRuling(reference);
+      if (ruling === null) return reject(reference, "US", "no-text");
 
-  async function worker(): Promise<void> {
-    while (cursor < worthFetching.length && rows.length < target) {
-      const rulingNumber = worthFetching[cursor++];
-      if (rulingNumber === undefined) return;
+      const hs6 = groundTruthHs6(ruling.tariffs);
+      if (hs6 === null) return reject(reference, "US", "ambiguous-ground-truth");
 
-      try {
-        const ruling = await fetchRuling(rulingNumber);
-        if (ruling === null) {
-          rejections.push({ rulingNumber, reason: "no-text" });
-          continue;
-        }
+      const extracted = extractDescription(ruling.text, hs6);
+      if (!extracted.ok) return reject(reference, "US", extracted.reason);
 
-        const hs6 = groundTruthHs6(ruling.tariffs);
-        if (hs6 === null) {
-          rejections.push({ rulingNumber, reason: "ambiguous-ground-truth" });
-          continue;
-        }
-
-        const extracted = extractDescription(ruling.text, hs6);
-        if (!extracted.ok) {
-          rejections.push({ rulingNumber, reason: extracted.reason });
-          continue;
-        }
-
-        rows.push({
-          description: extracted.description,
-          hs6,
-          hs6Formatted: formatHs6(hs6),
-          htsCodes: ruling.tariffs,
-          rulingNumber,
-          rulingDate: ruling.rulingDate.slice(0, 10),
-          sourceUrl: rulingUrl(rulingNumber),
-        });
-      } catch (error) {
-        rejections.push({ rulingNumber, reason: `error: ${String(error)}` });
-      }
-      await sleep(DELAY_MS);
+      rows.push({
+        description: extracted.description,
+        hs6,
+        hs6Formatted: formatHs6(hs6),
+        nationalCodes: ruling.tariffs,
+        jurisdiction: "US",
+        reference,
+        rulingDate: ruling.rulingDate.slice(0, 10),
+        sourceUrl: rulingUrl(reference),
+      });
+    } catch (error) {
+      reject(reference, "US", `error: ${String(error)}`);
     }
+  });
+
+  return rows;
+}
+
+/// ---- UK: HMRC ATaR ---------------------------------------------------------
+///
+/// HMRC publishes the goods description as its own field, separate from the
+/// `Justification` that carries the legal reasoning, so there is no letter to
+/// cut apart. The leak guard still runs: a description written by a person can
+/// still name a heading, and that would be just as fatal.
+async function collectUk(limit: number): Promise<CorpusRow[]> {
+  const references = new Set<string>();
+
+  // Sampled across the whole result set rather than taken from the front.
+  // ATaR's list is ordered, so consecutive pages cluster by issue date and
+  // therefore by commodity; a stride spreads the sample across the database.
+  // (Searching by term is not an option — the service accepts `searchTerm` and
+  // ignores it, so every term returns page 1 of the same list.)
+  for (let page = 1; page <= ATAR_PAGES; page += ATAR_PAGE_STRIDE) {
+    try {
+      for (const reference of await listAtarReferences(page)) {
+        references.add(reference);
+      }
+    } catch (error) {
+      process.stdout.write(`  UK page ${page} failed: ${String(error)}\n`);
+    }
+    await sleep(DELAY_MS);
   }
 
-  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+  const sorted = [...references].sort();
+  process.stdout.write(`UK: ${sorted.length} candidate rulings\n`);
 
-  rows.sort((a, b) => a.rulingNumber.localeCompare(b.rulingNumber));
+  const rows: CorpusRow[] = [];
+  await pooled(sorted.slice(0, limit * 3), async (reference) => {
+    if (rows.length >= limit) return;
+    try {
+      const ruling = await fetchAtarRuling(reference);
+      if (ruling === null) return reject(reference, "UK", "unparsable-page");
 
-  // ---- 4. Write the corpus and a summary of what was kept and dropped.
+      const hs6 = groundTruthHs6([ruling.commodityCode]);
+      if (hs6 === null) return reject(reference, "UK", "ambiguous-ground-truth");
+
+      // ATaR descriptions arrive already separated from the reasoning, so they
+      // are checked for leakage rather than cut. `extractDescription` expects a
+      // letter, so the guard is applied by wrapping the field in the minimum
+      // structure it recognises.
+      const extracted = extractDescription(
+        `Dear Sir:\n\n${ruling.description}\n\nThe applicable subheading`,
+        hs6,
+      );
+      if (!extracted.ok) return reject(reference, "UK", extracted.reason);
+
+      rows.push({
+        description: extracted.description,
+        hs6,
+        hs6Formatted: formatHs6(hs6),
+        nationalCodes: [ruling.commodityCode],
+        jurisdiction: "UK",
+        reference,
+        rulingDate: ruling.startDate,
+        sourceUrl: atarUrl(reference),
+      });
+    } catch (error) {
+      reject(reference, "UK", `error: ${String(error)}`);
+    }
+  });
+
+  return rows;
+}
+
+async function main(): Promise<void> {
+  const perSource = Number(process.env["CORPUS_PER_SOURCE"] ?? 175);
+
+  const us = await collectUs(perSource);
+  const uk = await collectUk(perSource);
+
+  const rows = [...us, ...uk].sort((a, b) =>
+    a.jurisdiction === b.jurisdiction
+      ? a.reference.localeCompare(b.reference)
+      : a.jurisdiction.localeCompare(b.jurisdiction),
+  );
+
   const dataDir = join(import.meta.dirname, "..", "data");
   writeFileSync(
     join(dataDir, "corpus.jsonl"),
@@ -159,16 +250,24 @@ async function main(): Promise<void> {
     subheadings.add(row.hs6);
   }
 
+  // Subheadings both authorities have ruled on. These are the rows where the
+  // two jurisdictions demonstrably agree at HS-6, and they are the evidence
+  // that the label travels across borders rather than being a US artefact.
+  const usSubheadings = new Set(us.map((r) => r.hs6));
+  const ukSubheadings = new Set(uk.map((r) => r.hs6));
+  const shared = [...usSubheadings].filter((h) => ukSubheadings.has(h));
+
   const stats = {
     builtAt: new Date().toISOString(),
-    source: "CBP CROSS (rulings.cbp.gov)",
+    authorities: AUTHORITY,
     rows: rows.length,
+    rowsByJurisdiction: { US: us.length, UK: uk.length },
     distinctSubheadings: subheadings.size,
     distinctChapters: Object.keys(chapters).length,
+    subheadingsCoveredByBothAuthorities: shared.length,
     rowsPerChapter: Object.fromEntries(
       Object.entries(chapters).sort(([a], [b]) => a.localeCompare(b)),
     ),
-    candidatesConsidered: candidates.size,
     rejected: rejections.length,
     rejectedByReason: Object.fromEntries(
       Object.entries(byReason).sort(([, a], [, b]) => b - a),
@@ -180,8 +279,9 @@ async function main(): Promise<void> {
   );
 
   process.stdout.write(
-    `${rows.length} rows, ${subheadings.size} distinct subheadings across ` +
-      `${stats.distinctChapters} chapters\n` +
+    `\n${rows.length} rows (US ${us.length}, UK ${uk.length}), ` +
+      `${subheadings.size} subheadings across ${stats.distinctChapters} chapters\n` +
+      `${shared.length} subheadings ruled on by both authorities\n` +
       `${rejections.length} rejected: ${JSON.stringify(stats.rejectedByReason)}\n`,
   );
 }
