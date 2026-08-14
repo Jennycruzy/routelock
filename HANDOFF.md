@@ -1,7 +1,9 @@
 # RouteLock — Handoff
 
-**Last updated: 14 August 2026** — carrier adapter and compliance engine built
-and running against real APIs; both credentials live. Resume at §2 "Resume here".
+**Last updated: 14 August 2026** — carrier adapter and compliance engine built,
+benchmark scored in two configurations. **Paused mid-run: the Anthropic account
+is out of credit and 101 benchmark rows are unscored.** Top up, then see
+§2 "RESUME HERE" — one command finishes it.
 
 Read this before touching anything. It covers the rules that are not negotiable,
 where the build actually stands, and what is blocked on a human.
@@ -298,7 +300,64 @@ array order preserved, confidence rounded to 3dp *before* hashing. The CLI
 prints the bytes next to the hash so the commitment can be checked rather than
 trusted.
 
-### Benchmark corpus — built, unscored
+### RESUME HERE — 101 benchmark rows unscored, blocked on credit
+
+The grounded scoring run died at row 253 of 354 because the Anthropic account
+ran out of credit. **Top up, then run one command:**
+
+```bash
+cd /root/routelock && set -a && . ./.env && set +a
+pnpm --filter @routelock/bench score
+```
+
+It resumes from a checkpoint and pays only for the ~101 missing rows (roughly
+$0.85 at the introductory rate). Do **not** delete
+`bench/data/.checkpoint-claude-sonnet-5-grounded.jsonl` — it is what makes the
+253 already-paid-for rows free. It is gitignored, so it exists only on this box.
+
+Afterwards, update the figures in `bench/README.md` and the root `README.md`;
+both currently state the 253-row numbers and say so explicitly.
+
+Two hard-won protections are in place and should not be removed: a `400` is
+**not** retried (credit exhaustion arrives as one, and retrying burns the rest of
+the run), while 429/529/5xx retry with backoff; and each configuration writes its
+own results file, because a single shared filename destroyed the ungrounded
+baseline once and it had to be recovered from git.
+
+### Compliance engine — measured, and the measurement changed the design
+
+Scored over the corpus in two configurations. On the 253 rows both runs covered:
+
+| | From memory | Grounded |
+|---|---|---|
+| Top-1 accuracy | 36.8% | **47.4%** |
+| Accuracy when approved | 79% | **89%** |
+| | | 40 fixed, 13 broken |
+
+**The calibration curve is the finding.** Classifying from memory the engine was
+overconfident by fifteen to twenty-five points at every level; grounded, at
+0.9–1.0 it states 92.0% and delivers 92.6%.
+
+Consequence: **leave `CROSS_BORDER_CONFIDENCE_THRESHOLD` at 0.9.** An earlier
+reading of the ungrounded curve concluded the threshold was too permissive and
+should be raised — that recommendation does not survive the grounded data, and
+the docs were corrected rather than left standing.
+
+Three things not to rediscover:
+
+- **Lexical retrieval over the nomenclature is worse than the model alone** —
+  recall@40 of 22.3% against the model's own 36.8% top-1. Tariff wording is
+  legalistic and shares little vocabulary with how a shipper describes goods.
+  Killed by a free measurement before any model call was spent on it; do not
+  rebuild it.
+- **The first pass names the right chapter 80.6% of the time and the right
+  subheading 36.8%.** That gap is why grounding works and is the ceiling on it —
+  the second pass can only choose within the chapters the first pass named.
+- **The nomenclature cache is committed** (`packages/compliance/data/nomenclature/`,
+  2,092 subheadings from the USITC HTS export). Fetching it needs no model and no
+  key; runs are reproducible offline.
+
+### Benchmark corpus — built and scored
 
 `bench/` holds 258 rows drawn from CBP CROSS binding rulings, 133 HS-6
 subheadings across 35 chapters, each citing the ruling it came from. 26 tests.
@@ -316,11 +375,8 @@ empty — nothing in them is stubbed or scaffolded with placeholder behaviour.
 
 ### Resume here — in this order
 
-1. **Score the benchmark.** The corpus (354 rows) and the engine both exist;
-   nothing connects them yet. Running one over the other produces top-1
-   accuracy, refusal precision and a calibration curve — the number no
-   competitor will have, and the thing that turns the 0.85 threshold from a
-   guess into a measurement. Unblocked, highest value.
+1. **Finish the last 101 benchmark rows** — one command, resumes from the
+   checkpoint, needs only a topped-up account. See "RESUME HERE" above.
 2. **Frontend a judge can drive from any location.** Own origin, own
    destination, own goods description; see the verdict, the reason, and the
    on-chain record. Two of the seven judging criteria are product completeness

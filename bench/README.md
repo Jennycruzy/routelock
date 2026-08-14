@@ -4,69 +4,103 @@ A corpus for measuring the compliance engine, rather than asserting that it
 works. Every competitor will claim their model classifies goods correctly;
 almost none will publish a number, a method, and a way to check it.
 
-**Status: scored.** Figures below come from a real run of the engine over this
-corpus, recorded in [`data/results-claude-sonnet-5.json`](data/results-claude-sonnet-5.json)
-with every individual outcome, so they can be recomputed rather than trusted.
+**Status: scored, twice.** The engine was measured in two configurations over
+the same corpus, and both results are published with every individual outcome so
+they can be recomputed rather than trusted:
+[`data/results-claude-sonnet-5-ungrounded.json`](data/results-claude-sonnet-5-ungrounded.json)
+and [`data/results-claude-sonnet-5-grounded.json`](data/results-claude-sonnet-5-grounded.json).
 
-## Results — `claude-sonnet-5`, 331 rows
+## Results — `claude-sonnet-5`
 
-| | |
-|---|---|
-| Top-1 accuracy | **36.1%** |
-| Accuracy of what it **approved** | **83.3%** (18 rows) |
-| Refusal precision | **66.3%** (306 declined for uncertainty) |
-| Mean calibration error | 0.453 |
-| US rulings / UK rulings | 33.6% / 38.2% |
+Compared on the **253 rows both configurations scored**:
 
-23 of 354 rows were not scored: the inference account ran out of credit during
-the run. The failures are recorded in the results file rather than dropped.
-
-**Top-1 accuracy of 36% is the honest headline, and it is low.** Every row here
-is a case an importer paid to have ruled on precisely because the answer was not
-obvious, so this is far harder than an average parcel. The number is reported
-first anyway, because a benchmark that leads with its flattering figure is
-marketing.
-
-**The interesting result is the calibration curve.**
-
-| Stated confidence | n | Observed accuracy |
+| | Ungrounded | Grounded |
 |---|---|---|
-| 0.0–0.1 | 3 | 0.0% |
-| 0.1–0.2 | 3 | 0.0% |
-| 0.2–0.3 | 13 | 0.0% |
-| 0.3–0.4 | 27 | 7.4% |
-| 0.4–0.5 | 47 | 21.3% |
-| 0.5–0.6 | 58 | 27.6% |
-| 0.6–0.7 | 77 | 39.0% |
-| 0.7–0.8 | 60 | 48.3% |
-| 0.8–0.9 | 24 | 70.8% |
-| 0.9–1.0 | 18 | 83.3% |
+| Top-1 accuracy | 36.8% | **47.4%** |
+| Accuracy of what it **approved** | 79% | **89%** |
+| Approvals issued | 14 | 19 |
 
-It is **monotonic** — every step up in stated confidence buys a real step up in
-accuracy — and **systematically overconfident** by fifteen to twenty-five points
-at every level. Both facts matter. Monotonicity is what makes a confidence gate
-work at all; the overconfidence is what tells you where to set it.
+Grounding **fixed 40 rows and broke 13** — a net gain of 27, not a strict
+improvement. It is reported that way because the regressions are real: reading
+the published text sometimes talks the engine out of an answer it had right.
 
-**What this says about the threshold, which is the point of measuring.** The
-engine approves at 0.85 domestic and 0.9 cross-border. At those levels the model
-is right about 71% and 83% of the time — so **roughly one in six approvals is a
-misclassification.** For a decision that releases escrow that is too loose. The
-gate is working (83.3% of approvals correct against 36.1% overall, so it catches
-most errors) but it is not yet set where the data says it should be.
+**Top-1 accuracy of 47% is the honest headline, and it is low.** Every row is a
+case an importer paid to have ruled on precisely because the answer was not
+obvious, so this is far harder than an average parcel. It is reported first
+anyway, because a benchmark that leads with its flattering figure is marketing.
 
-That is the benchmark doing its job: `CONFIDENCE_THRESHOLD` was a guess, and the
-measurement says the guess was wrong. Any change to it changes `ENGINE_VERSION`,
-because a decision is only reproducible if the rule that produced it is pinned.
+### The calibration curve is the result that matters
 
-**The two authorities agree closely** — 33.6% on US rulings, 38.2% on UK — which
-is evidence the engine is reading the nomenclature rather than one country's
-house style. A large gap would have meant the opposite.
+| Stated confidence | Observed — ungrounded | Observed — grounded |
+|---|---|---|
+| 0.4–0.5 | 21.3% | 20.0% |
+| 0.5–0.6 | 27.6% | 27.1% |
+| 0.6–0.7 | 39.0% | 44.0% |
+| 0.7–0.8 | 48.3% | 43.9% |
+| 0.8–0.9 | 70.8% | **80.6%** |
+| 0.9–1.0 | 83.3% | **92.6%** |
 
-Re-run with:
+Ungrounded, the engine was **overconfident by fifteen to twenty-five points at
+every level**. Grounded, it is close to calibrated where it counts: at 0.9–1.0 it
+states 92.0% and delivers **92.6%**.
+
+**What that says about the threshold — the point of measuring.** The engine
+approves at 0.85 domestic and 0.9 cross-border. Before grounding, no cut point
+gave both safety and throughput: even the top bin topped out at 83%, so roughly
+one approval in six was a misclassification. After grounding, ≥0.9 yields 92.6%
+correct — about one in twelve.
+
+So the measurement now says **leave `CROSS_BORDER_CONFIDENCE_THRESHOLD` at 0.9**.
+The earlier reading of the ungrounded curve said raise it; that recommendation
+does not survive the new data. Any change to a threshold changes
+`ENGINE_VERSION`, because a decision is only reproducible if the rule that
+produced it is pinned.
+
+### What grounding is
+
+The first pass classifies from memory. Measured against these rulings it names
+the correct **chapter** 80.6% of the time and the correct **subheading** only
+36.8% — it knows roughly where goods belong and loses precision drilling down. So
+a second pass gives it the published heading text for the chapters it named and
+asks it to choose by reading rather than by recall.
+
+Two shortlisting strategies were measured before one was built, because the
+shortlist is the ceiling on accuracy and measuring it costs nothing:
+
+| Strategy | Ceiling |
+|---|---|
+| Lexical retrieval over the whole nomenclature | recall@40 = **22.3%** |
+| The first pass's own candidate chapters | **80.6%** |
+
+Lexical retrieval loses because tariff wording is legalistic and shares little
+vocabulary with how a shipper describes goods — "angled flange plated base"
+against "lamps and lighting fittings, parts thereof". It was discarded rather
+than shipped. Grounding captures roughly a third of the headroom to the 80.6%
+ceiling; the remaining loss is the engine picking the wrong subheading *within*
+the right chapter.
+
+### Coverage of these runs
+
+Neither run scored all 354 rows — the inference account ran out of credit part
+way through each. Failures are recorded in the results files rather than
+dropped.
+
+| Run | Rows scored | Not scored |
+|---|---|---|
+| Ungrounded | 331 | 23 |
+| Grounded | 253 | 101 |
+
+The grounded run's 101 unscored rows fall disproportionately on the US half (75
+US scored against 178 UK), so the per-authority split — 44.0% US, 48.9% UK — is
+directionally sound but rests on fewer US rows than the corpus holds.
+
+Re-running is cheap and resumable: every row is checkpointed as it lands, so a
+re-run pays only for rows not already scored.
 
 ```bash
-pnpm --filter @routelock/bench score              # every row
-pnpm --filter @routelock/bench score --limit 40   # a stratified sample
+pnpm --filter @routelock/bench score                     # resumes; scores what is missing
+pnpm --filter @routelock/bench score --grounding false   # the ungrounded baseline
+pnpm --filter @routelock/bench score --limit 40          # a stratified sample
 ```
 
 ## What is in it

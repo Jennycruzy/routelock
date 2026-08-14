@@ -336,6 +336,40 @@ The honest limitation to keep stating: the ground truth is US practice. HS-6 is
 shared by WCO members, but where national interpretation diverges these rulings
 reflect CBP, not Nigeria Customs.
 
+### Engine scored — and the measurement changed the design
+
+Two configurations over the same corpus. On the 253 rows both covered:
+
+| | From memory | Grounded |
+|---|---|---|
+| Top-1 accuracy | 36.8% | **47.4%** |
+| Accuracy when approved | 79% | **89%** |
+| Approvals issued | 14 | 19 |
+
+Grounding fixed 40 rows and broke 13 — a net gain of 27, recorded that way
+because the regressions are real.
+
+**Calibration is the finding.** From memory the engine ran fifteen to
+twenty-five points overconfident at every confidence level. Grounded, at 0.9–1.0
+it states 92.0% and delivers 92.6%. So the cross-border threshold stays at 0.9 —
+an earlier reading of the ungrounded curve said raise it, and that conclusion did
+not survive the new data.
+
+Worth not rediscovering:
+
+- **Lexical retrieval over the nomenclature is worse than the model alone**:
+  recall@40 of 22.3% against the model's own 36.8%. Tariff text is legalistic and
+  shares little vocabulary with a shipper's description. Killed by a *free*
+  measurement before a single model call was spent on it — measure the shortlist
+  before building the thing that consumes it.
+- **The first pass names the right chapter 80.6% of the time** but the right
+  subheading only 36.8%. That gap is both why grounding works and its ceiling.
+- **Both scoring runs died on an exhausted account** (23 rows lost the first
+  time, 101 the second). The second run lost nothing re-runnable: rows are
+  checkpointed as they land, a `400` is never retried, and each configuration
+  writes its own results file. The first run had already destroyed the ungrounded
+  baseline by sharing one filename; it was recovered from git.
+
 ### Next — resume here
 
 1. **Deploy to BOT Chain testnet.** `./scripts/deploy.sh botchain_testnet
@@ -357,9 +391,10 @@ reflect CBP, not Nigeria Customs.
 4. Locate and document the Shipbubble cancellation endpoint and its refund
    behaviour **before** any live purchase.
 
-5. **Score the benchmark** — the corpus is built; what remains is running the
-   engine over it and reporting top-1 accuracy, refusal precision, and a
-   calibration curve image. Depends entirely on (2).
+5. **Finish the last 101 benchmark rows.** Blocked only on inference credit —
+   `pnpm --filter @routelock/bench score` resumes from the checkpoint and pays
+   for nothing already scored. Then refresh the figures in `bench/README.md` and
+   the root `README.md`, which currently state the 253-row numbers explicitly.
 
 Empty and untouched: `packages/{compliance,carrier,attest}`, `apps/{web,api}`.
 Nothing in them is stubbed or scaffolded with placeholder behaviour.

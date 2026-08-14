@@ -227,22 +227,27 @@ on **354 rulings from two independent customs authorities** — 176 from US CBP 
 178 from UK HMRC — covering 185 HS-6 subheadings across 57 chapters, every row
 citing the binding ruling it came from.
 
-Scored over 331 rows with `claude-sonnet-5`:
+Measured with `claude-sonnet-5` in two configurations over the same 253 rows —
+classifying from memory, and grounded in the published nomenclature:
 
-| | |
-|---|---|
-| Top-1 accuracy | **36.1%** |
-| Accuracy of what it **approved** | **83.3%** |
-| Refusal precision | **66.3%** |
+| | From memory | Grounded |
+|---|---|---|
+| Top-1 accuracy | 36.8% | **47.4%** |
+| Accuracy of what it **approved** | 79% | **89%** |
 
-36% is low and is stated first anyway: every row is a case an importer paid to
-have ruled on *because* the answer was not obvious. The result that matters is
-that stated confidence tracks observed accuracy **monotonically** while running
-fifteen to twenty-five points overconfident — which is exactly the measurement
-needed to set a refusal threshold, and it says the current one is too permissive.
-Method, the calibration curve, and the limitations are in
-[`bench/README.md`](bench/README.md); every individual outcome is in
-[`bench/data/`](bench/data/) so the figures can be recomputed rather than trusted.
+47% is low and is stated first anyway: every row is a case an importer paid to
+have ruled on *because* the answer was not obvious.
+
+The result that matters is calibration. Classifying from memory, the engine ran
+**fifteen to twenty-five points overconfident** at every level. Grounded, at
+0.9–1.0 confidence it states 92.0% and delivers **92.6%** — which is what makes a
+refusal threshold meaningful, and it says the current 0.9 cross-border bar is set
+where it should be.
+
+Method, both calibration curves, the strategy that was measured and discarded,
+and the coverage limits are in [`bench/README.md`](bench/README.md); every
+individual outcome is in [`bench/data/`](bench/data/) so the figures can be
+recomputed rather than trusted.
 
 ## Verified networks
 
