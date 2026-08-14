@@ -495,3 +495,65 @@ would make the already-paid rows cost money again.
    build quality, and days have already passed without a post.
 4. **BOT Chain gas support form** and project submission form.
 5. **Inference credit**, for the carbon benchmark rather than the HS remainder.
+
+---
+
+## Carbon adapter — 14 August 2026
+
+### Completed
+
+- **`packages/carbon`** implements the shared port: `CarbonmarkClient` speaks the
+  API, `CarbonmarkAdapter` is the single adapter above it. Same two-layer naming
+  as delivery.
+
+- **Carbonmark verified live**, not read off documentation
+  (`docs/carbonmark-verification.md`). An OpenAPI 3.1 spec at
+  `api.carbonmark.com/openapi.json` supplied the ordering contract, so `/quotes`
+  and `/orders` are built from the published schema rather than guesswork.
+
+- **The pairing guard now covers Carbonmark.** `assertProviderPairing` is
+  generic over a `ProviderKeyScheme`; `assertEnvironmentPairing` delegates to it
+  and its wording is unchanged, so no existing test moved.
+
+- **Suite: 145 tests**, up from 118 at the start of the day. Contracts untouched.
+
+### The retirement that wasn't
+
+A real order was submitted, at 0.01 t, deliberately and with permission. It
+returned `status: COMPLETED`, a real Polygon transaction hash, a real
+certificate URL, and an on-chain receipt reading SUCCESS with 34 logs.
+
+**It retired nothing.** The transaction is Carbonmark's shared test-mode
+placeholder: a genuine retirement from **April 2024**, beneficiary "Developer
+Tester", 0.123 t, that every test-mode order links to. Their own record on that
+page says not to deliver it to customers because the environmental benefit was
+already claimed.
+
+Nothing was charged. Spec §4.3 was right and the earlier reading here — that the
+danger was a real, billable retirement rather than a synthetic one — was wrong.
+
+**The tell was the block number.** The chain head was ~92,017,000 while the
+transaction sat in block 55,853,988; a transaction created minutes ago cannot be
+36 million blocks old. Every other signal looked like success. *Check that a
+transaction's block is recent, not merely that the transaction exists.*
+
+The code enforces the general form rather than a match on that one page:
+`fulfil()` throws when the beneficiary returned is not the one requested,
+because a receipt that does not describe the request is not evidence for the
+request. A `Receipt` is what gets hashed into `carrierRefHash` and published, so
+committing a placeholder would be fabricated evidence.
+
+### Three API traps now in code and docs
+
+1. **`/prices` is public** — 200 with no key and with an invalid key. It can
+   never confirm a credential. `/orders` is the check; it 401s on a bad key.
+2. **Retirement is asynchronous.** `POST /orders` returns before the transaction
+   hash exists. The client polls and throws rather than returning a receipt with
+   no proof in it.
+3. **`GET /orders/{id}` is unusable** — it takes a numeric id that no order
+   response contains. Orders are matched on quote uuid or transaction hash.
+
+### Blocked
+
+**Carbonmark production access is now the critical path to the X Layer demo.**
+Everything upstream of the retirement is done and exercised against real data.

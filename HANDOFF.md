@@ -423,9 +423,56 @@ Shipbubble's API, and `ShipbubbleAdapter` is the single adapter above it. Status
 lives in `docs/adapters.md` and is mirrored in the adapter's own fields, so the
 two move together.
 
+### Carbon — built against the real API, blocked on production access
+
+`packages/carbon` implements the shared port. Everything upstream of the
+retirement itself is exercised against real data with the test key: credential
+verification, listing discovery, supply filtering, assessment and quoting.
+`pnpm --filter @routelock/carbon smoke` runs the lot and deliberately stops
+before spending.
+
+**The finding that matters, and the one not to re-learn the hard way: a
+test-mode key retires nothing.** Submitting a real order on 14 August returned
+`status: COMPLETED`, a real Polygon transaction hash, a real certificate URL, and
+an on-chain receipt reading SUCCESS with 34 logs. All of it looked like success.
+It was Carbonmark's **shared placeholder** — a genuine retirement from **April
+2024**, beneficiary "Developer Tester", 0.123 t, that every test-mode order in
+the world links to. Their own record on that page says not to deliver it to
+customers because the benefit was already claimed.
+
+**Never show that certificate URL to a judge.**
+
+The tell was the block number: the chain head was ~92,017,000 while the
+transaction sat in block 55,853,988. A transaction created minutes ago cannot be
+36 million blocks old. **Check that a transaction's block is recent, not just
+that the transaction exists.**
+
+The code now enforces the general form of that check rather than a match on one
+known page: `fulfil()` throws when the returned beneficiary is not the one asked
+for, because a receipt that does not describe the request is not evidence for
+the request. A `Receipt` is what gets hashed into `carrierRefHash` and published
+as proof, so committing a placeholder on-chain would be fabricated evidence.
+
+Other Carbonmark facts worth keeping (full detail in
+`docs/carbonmark-verification.md`):
+
+- **`/prices` is public.** It answers 200 with no key and with an invalid key.
+  It can never confirm a credential. **`/orders` is the check** — 401 on a bad
+  key.
+- **No sandbox host.** `api.sandbox.carbonmark.com` does not resolve; both
+  environments answer on `api.carbonmark.com`, so the key prefix is the only
+  separator. That is why `livePrefix` stays `null` until a real production key
+  exists to read the format from — no key can boot a mainnet adapter today.
+- **Retirement is asynchronous.** `POST /orders` returns before the transaction
+  hash exists; the client polls.
+- **`GET /orders/{id}` is unusable** — it takes a numeric id that no order
+  response contains. Orders are matched on quote uuid or transaction hash.
+- Only **61 of 723** listings had liquid supply. Read it live; supply moved from
+  18,993 t to 0.056 t on one listing within minutes.
+
 ### Not started
 
-Carbon and compute adapters, the attestation package, and the frontend.
+The compute adapter, the attestation package, and the frontend.
 `packages/attest` and `apps/{web,api}` are empty — nothing in them is stubbed or
 scaffolded with placeholder behaviour.
 
@@ -469,14 +516,24 @@ X Layer is finished completely before BOT Chain is started.
 `packages/chain/src/chains.ts` implements spec §1.2.5. It throws at process
 start, before any route is registered:
 
-| Chain env | Required carrier key | Consequence of mismatch |
-|---|---|---|
-| testnet | `sb_sandbox…` | a live key on testnet throws — this is how real shipments get bought by accident |
-| mainnet | `sb_prod…` | a sandbox key on mainnet throws — a mainnet deploy must never show a sandbox result |
+| Provider | Chain env | Required key | Consequence of mismatch |
+|---|---|---|---|
+| Shipbubble | testnet | `sb_sandbox…` | a live key on testnet throws — this is how real shipments get bought by accident |
+| Shipbubble | mainnet | `sb_prod…` | a sandbox key on mainnet throws — a mainnet deploy must never show a sandbox result |
+| Carbonmark | testnet | `cm_api_sandbox…` | as above, for retirements |
+| Carbonmark | mainnet | **none accepted yet** | `livePrefix` is `null`, so *no* key boots a mainnet carbon adapter |
 
 An **absent** key throws too. There is no mock-carrier fallback, deliberately.
 An **unrecognised** key prefix throws rather than guessing which environment it
 belongs to.
+
+Carbonmark's `livePrefix` is deliberately `null` because no production key has
+been seen. `openapi.json` shows examples shaped `cm_api_<uuid>` with no
+environment marker, but an example in documentation is not evidence about a key
+nobody holds, and guessing would defeat the guard — Carbonmark has no separate
+sandbox host, so the prefix is the only thing distinguishing the environments.
+**When the production key arrives, read its prefix and set `livePrefix` from the
+key itself.**
 
 `requireSettlementToken()` throws on an unresolved settlement rather than
 returning a zero or placeholder address. All four targets now resolve, so
@@ -489,29 +546,33 @@ stops an unverified token address reaching a deployment.
 
 These cannot be resolved from this box and are listed in the order they block work.
 
-1. **The Shipbubble LIVE key.** The sandbox key is in and working; the live one
-   is not. It is what proves a real lane, real coverage and a real price —
-   sandbox can prove none of those (see §2). Only 5 free live shipments exist,
-   and cancellation is now documented: **scheduled shipments only, before the
-   processing date, refund behaviour unconfirmed.** Treat each purchase as
-   spent.
+1. **Carbonmark production access.** This is now *the* blocker for a real
+   retirement, and therefore for the X Layer demo. A test-mode key returns a
+   shared placeholder and retires nothing (see §2). Needs a business email on a
+   domain. **Ask in the same submission whether retiring on behalf of third
+   parties as a platform is permitted** — the same question that stalled
+   Shipbubble, asked once and early this time. State the 21 August deadline;
+   naming it is a legitimate expedite reason and costs nothing.
 
-2. **Ask Shipbubble support, in writing:** is platform / third-party shipment
-   creation via their API permitted, and is there a partner tier? A written yes
-   is the closest achievable substitute for an issuer agreement and is the
-   foundation of the RWA claim (spec §11). Ask in the same message **which
-   countries the live account can actually ship to** — the sandbox cannot answer
-   it, and the answer decides which lanes can be demoed.
-
-3. **Dedicated X account** must be created and posting daily from day 1, with the
+2. **Dedicated X account** must be created and posting daily from day 1, with the
    submission post mentioning **@XLayerOfficial**. This is a hard eligibility
    gate; failing it disqualifies the submission regardless of build quality.
    Day 1 has already passed without a post.
 
+3. **Inference credit**, for the carbon quality benchmark. Not for the parked HS
+   rows.
+
 4. **BOT Chain gas support form** (1 BOT per eligible project) and their project
    submission form — both were to be filed day 1 and have not been.
 
-5. **Mainnet gas, for both mainnets.** Testnet funding is done (see §2). What
+5. **Shipbubble is no longer blocking anything.** Delivery is a reference
+   implementation that is not deployed, so the LIVE key and the
+   third-party-platform question are both moot for this submission. Left
+   recorded because the questions become live again if delivery is ever shipped:
+   only 5 free live shipments exist, and cancellation is **scheduled shipments
+   only, before the processing date, refund behaviour unconfirmed.**
+
+6. **Mainnet gas, for both mainnets.** Testnet funding is done (see §2). What
    remains is X Layer mainnet, which holds 0.00045 OKB, and BOT Chain mainnet,
    which holds 0. Neither is needed until the mainnet deploys, but X Layer's
    eligibility gate requires mainnet *after* testnet, so this cannot be left to

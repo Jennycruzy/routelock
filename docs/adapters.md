@@ -10,7 +10,7 @@ performed a real fulfilment on the named chain.
 
 | Adapter | Chain | Status | Fulfilment proof |
 |---|---|---|---|
-| `carbonmark` | X Layer | **In development.** Not deployed. No retirement performed. | Public certificate URL |
+| `carbonmark` | X Layer | **In development.** Not deployed. No retirement performed — a test-mode key returns a shared placeholder and retires nothing. | Public certificate URL |
 | `akash` | BOT Chain | **Not started.** Begins after X Layer is submitted. | On-chain lease + ingress URL |
 | `shipbubble` | none | **Reference implementation. Not deployed.** Retained to demonstrate the contract set carries no vertical. | Carrier label + tracking |
 
