@@ -113,6 +113,44 @@ export const CHAINS = {
 
 export type ChainKey = keyof typeof CHAINS;
 
+/**
+ * Chains RouteLock does not deploy to, but whose state its proofs point at.
+ *
+ * Base is here and not in `CHAINS` because the distinction is the architecture,
+ * not a filing convenience. The obligation, the collateral, the escrow and the
+ * compliance record are RouteLock's own and live on X Layer; the retirement
+ * executes on Base through Klima's aggregator, and the certificate is
+ * Carbonmark's. Nothing is deployed here, nothing is bridged, and no credit is
+ * wrapped or tokenised. A judge inspects X Layer state and then clicks a
+ * third-party receipt — which is stronger than a self-contained system where
+ * every claim traces back to our own database.
+ *
+ * Verified live 2026-08-14: eth_chainId -> 0x2105.
+ */
+export const FULFILMENT_CHAINS = {
+  base_mainnet: {
+    name: "Base Mainnet",
+    chainId: 8453,
+    rpcEnvVar: "BASE_MAINNET_RPC",
+    defaultRpc: "https://mainnet.base.org",
+    explorer: "https://basescan.org",
+    /**
+     * The input token the retirement is paid in. Verified on-chain
+     * 2026-08-14: symbol() -> "USDC", decimals() -> 6. Also the token whose
+     * EIP-3009 authorization the issuer signs, which is why its address is
+     * pinned here rather than read from the endpoint's response — an endpoint
+     * that could name its own payment token could name a different one.
+     */
+    inputToken: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    inputTokenSymbol: "USDC",
+    inputTokenDecimals: 6,
+  },
+} as const;
+
+export type FulfilmentChainKey = keyof typeof FULFILMENT_CHAINS;
+export type FulfilmentChainConfig =
+  (typeof FULFILMENT_CHAINS)[FulfilmentChainKey];
+
 export function getChain(key: string): ChainConfig {
   const chain = (CHAINS as Record<string, ChainConfig>)[key];
   if (!chain) {
@@ -204,6 +242,86 @@ export const CARBONMARK_KEYS: ProviderKeyScheme = {
   livePrefix: null,
   liveOnTestConsequence: "this is how real credits get retired by accident",
 };
+
+/**
+ * A provider that has no sandbox at all, and therefore no key to mispair.
+ *
+ * `ProviderKeyScheme` above works because a keyed provider announces its
+ * environment in the credential itself, so the mismatch is detectable at boot.
+ * A keyless mainnet-only provider offers nothing to inspect: there is no
+ * credential, no test host, and no way for a wrong configuration to look
+ * different from a right one. The guard therefore moves from process start to
+ * the spend boundary — the only place where the distinction has consequences.
+ *
+ * This is a deliberate narrowing of §1.2.5, not a lapse from it. The rule
+ * exists so a testnet deployment cannot quietly spend real money; here that is
+ * enforced where the money actually moves, and reads — which cost nothing and
+ * are identical in both environments — stay available everywhere.
+ */
+export interface KeylessSpendScheme {
+  /** Names the provider in error messages. */
+  readonly noun: string;
+  /** Why no sandbox exists. Stated so the guard reads as measured, not assumed. */
+  readonly reason: string;
+  /** Env var an operator must set to authorise real spending from a test chain. */
+  readonly optInVar: string;
+  /** The exact value required. Deliberately unguessable and self-describing. */
+  readonly optInValue: string;
+}
+
+/**
+ * The Klima x402 retirement endpoint.
+ *
+ * **It has no test mode.** The manifest's JSON schema advertises chainId 84532
+ * (Base Sepolia) alongside 8453, and the published error registry repeats it —
+ * but the live endpoint rejects 84532 with
+ * `unsupported_chain_id: "Only Base mainnet is supported", supported: [8453]`.
+ * Verified 2026-08-14; see docs/carbonmark-verification.md. The schema is
+ * aspirational and the runtime is authoritative, which is the whole reason
+ * every value in this file is read from the thing itself rather than its
+ * documentation.
+ *
+ * Consequence: every retirement this project performs is real, irreversible,
+ * and on Base mainnet. There is no environment in which a retirement can be
+ * rehearsed, so there is nothing to pair a test chain against.
+ */
+export const KLIMA_X402_SPEND: KeylessSpendScheme = {
+  noun: "Klima x402 retirement",
+  reason:
+    "the endpoint serves Base mainnet only — chainId 84532 appears in its " +
+    "schema but is rejected at runtime, so no sandbox retirement exists",
+  optInVar: "ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT",
+  optInValue: "yes-retire-for-real",
+};
+
+/**
+ * Refuse to spend real money on behalf of a test-chain deployment.
+ *
+ * Called from `fulfil()`, not from a constructor: discovery, pricing and
+ * authorization-building are free and behave identically everywhere, so a
+ * testnet deployment must still be able to perform them. What it must not do
+ * is burn a credit that cannot be un-burned.
+ *
+ * The opt-in exists because the alternative is worse. Without it, exercising
+ * the real path during development would mean editing the guard — and a guard
+ * that gets edited to be worked around is not a guard.
+ */
+export function assertKeylessSpendAllowed(
+  chain: ChainConfig,
+  scheme: KeylessSpendScheme,
+  env: Record<string, string | undefined> = process.env
+): void {
+  if (chain.env === "live") return;
+
+  if (env[scheme.optInVar] === scheme.optInValue) return;
+
+  throw new Error(
+    `FATAL: ${chain.name} is a test chain and ${scheme.noun} has no sandbox — ` +
+      `${scheme.reason}. Proceeding would retire a real credit, irreversibly, ` +
+      `against a testnet obligation. Set ${scheme.optInVar}=${scheme.optInValue} ` +
+      `to authorise that deliberately, or run this on a live chain.`
+  );
+}
 
 export function assertProviderPairing(
   chain: ChainConfig,

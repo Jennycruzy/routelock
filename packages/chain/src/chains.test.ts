@@ -7,7 +7,10 @@ import {
   requireSettlementToken,
   assertEnvironmentPairing,
   assertProviderPairing,
+  assertKeylessSpendAllowed,
   CARBONMARK_KEYS,
+  KLIMA_X402_SPEND,
+  FULFILMENT_CHAINS,
   type ChainConfig,
 } from "./chains.ts";
 
@@ -221,6 +224,76 @@ describe("Carbonmark key pairing", () => {
     assert.throws(
       () => assertProviderPairing(CHAINS.xlayer_testnet, undefined, CARBONMARK_KEYS),
       /no Carbonmark key/,
+    );
+  });
+});
+
+describe("keyless spending — the Klima x402 endpoint has no sandbox", () => {
+  const ALLOWED = { ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT: "yes-retire-for-real" };
+
+  test("a live chain may spend", () => {
+    assert.doesNotThrow(() =>
+      assertKeylessSpendAllowed(CHAINS.xlayer_mainnet, KLIMA_X402_SPEND, {}),
+    );
+  });
+
+  test("a test chain refuses, because there is no rehearsal to spend on", () => {
+    // The manifest's schema advertises Base Sepolia; the runtime rejects it
+    // with `supported: [8453]`. So a testnet deployment reaching this endpoint
+    // would retire a real credit, irreversibly, against a testnet obligation.
+    for (const chain of [CHAINS.xlayer_testnet, CHAINS.botchain_testnet]) {
+      assert.throws(
+        () => assertKeylessSpendAllowed(chain, KLIMA_X402_SPEND, {}),
+        /no sandbox/,
+      );
+    }
+  });
+
+  test("the opt-in is exact, and nothing near it counts", () => {
+    // A guard that is satisfied by "true" or "1" is a guard that gets tripped
+    // by a leftover variable from something else.
+    for (const value of ["yes", "true", "1", "", "YES-RETIRE-FOR-REAL"]) {
+      assert.throws(
+        () =>
+          assertKeylessSpendAllowed(CHAINS.xlayer_testnet, KLIMA_X402_SPEND, {
+            ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT: value,
+          }),
+        /no sandbox/,
+      );
+    }
+
+    assert.doesNotThrow(() =>
+      assertKeylessSpendAllowed(CHAINS.xlayer_testnet, KLIMA_X402_SPEND, ALLOWED),
+    );
+  });
+
+  test("the refusal explains what would happen, not just that it refused", () => {
+    // An operator who hits this needs to know the consequence, because the
+    // opt-in that clears it authorises real irreversible spending.
+    assert.throws(
+      () => assertKeylessSpendAllowed(CHAINS.xlayer_testnet, KLIMA_X402_SPEND, {}),
+      /irreversibly/,
+    );
+  });
+});
+
+describe("Base is a fulfilment chain, not a deployment target", () => {
+  test("Base is absent from the deployment table", () => {
+    // The distinction is the architecture. RouteLock deploys nothing on Base:
+    // the obligation, the collateral, the escrow and the compliance record are
+    // on X Layer, and only the retirement executes over there.
+    assert.equal(
+      Object.values(CHAINS).some((c: ChainConfig) => c.chainId === 8453),
+      false,
+    );
+  });
+
+  test("Base mainnet matches the values verified on 2026-08-14", () => {
+    assert.equal(FULFILMENT_CHAINS.base_mainnet.chainId, 8453);
+    assert.equal(FULFILMENT_CHAINS.base_mainnet.inputTokenDecimals, 6);
+    assert.equal(
+      FULFILMENT_CHAINS.base_mainnet.inputToken,
+      "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
     );
   });
 });
