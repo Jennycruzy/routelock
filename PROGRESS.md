@@ -415,3 +415,83 @@ Worth not rediscovering:
 
 Empty and untouched: `packages/{compliance,carrier,attest}`, `apps/{web,api}`.
 Nothing in them is stubbed or scaffolded with placeholder behaviour.
+
+---
+
+## Build spec v2 — 14 August 2026
+
+**The Next list above is superseded**, including its claim that the compliance
+package is empty — it was written before that package existed and both the
+engine and the carrier adapter shipped later the same day.
+
+### The change
+
+Delivery moved from first adapter to **third**, and to a reference
+implementation that is deliberately not deployed. The binding constraint is
+remote verifiability: a judge in another timezone cannot verify a parcel moving
+in Nigeria. Carbon retirement leads on X Layer and compute leasing follows on
+BOT Chain, both of which produce a public proof URL a stranger can check in
+under two minutes.
+
+The contracts do not change, and that is the point. Swapping the adapter proves
+the claim the README already makes — that the five deployed contracts carry no
+vertical — rather than asserting it.
+
+### Completed
+
+- **`docs/adapters.md`** — the authoritative status table, with a defined bar
+  for "Active": deployed *and* one real fulfilment with a public proof URL.
+  Carbon is recorded as **in development**, not active, because no retirement
+  has happened yet.
+
+- **`docs/adapter-mapping.md`** — how the registry's five hashes map onto each
+  vertical, and why the delivery-era field names are kept rather than renamed.
+  Renaming would force a redeploy and destroy the evidence that the contracts
+  predate the vertical now running on them.
+
+- **Vertical leakage measured, not asserted.** Grepping the contract sources for
+  delivery vocabulary returns hits in `ActivationRegistry` only;
+  `ServiceEntitlement`, `EntitlementFactory`, `SettlementEscrow` and
+  `FulfilmentReceipt` have none. Every hit is a *name* — field, event, function
+  or comment. None is a type the contract interprets, a parameter it parses, or
+  a branch in its logic; the values are opaque `bytes32` written and read
+  without inspection.
+
+- **`packages/fulfilment`** — the shared `FulfilmentAdapter` port. A
+  zero-dependency leaf on purpose: `@routelock/compliance` already depends on
+  `@routelock/carrier`, so a port importing compliance would close a cycle.
+
+- **The approval gate is structural.** `fulfil()` takes `Approved<TOrder>`,
+  obtainable only from `approve()` in the compliance package, which returns
+  `null` for every verdict other than `Approved` — `NeedsInformation` included,
+  since that is a request for facts and never a soft yes. Confirmed by probe:
+  `tsc` rejects both a bare order and a hand-forged object carrying every
+  visible field.
+
+- **Delivery presented through the port.** The two layers are now named for what
+  they are: `ShipbubbleClient` speaks Shipbubble's API, `ShipbubbleAdapter` is
+  the single adapter above it. No test logic changed — the rename was
+  mechanical and the suite stayed green throughout.
+
+- **Suite:** 133 TypeScript tests passing across five packages, up from 118. The
+  159 Solidity tests are untouched; no contract was modified.
+
+### Deliberately parked
+
+The HS benchmark stays at 253 of 354 rows. Delivery no longer ships, so HS
+accuracy gates nothing, and the inference credit belongs to the carbon quality
+benchmark instead. Both READMEs already disclose the 253-row basis explicitly,
+so nothing overstates what was measured. The checkpoint is kept — deleting it
+would make the already-paid rows cost money again.
+
+### Blocked on a human
+
+1. **Carbonmark production access form**, with the third-party platform question
+   in the same submission. Needs a business email on a domain. This is the only
+   thing standing between the build and a real retirement certificate.
+2. **Carbonmark sandbox key** — instant, and enough to build the adapter against.
+3. **Dedicated X account** posting daily, submission post mentioning
+   **@XLayerOfficial**. A hard eligibility gate that disqualifies regardless of
+   build quality, and days have already passed without a post.
+4. **BOT Chain gas support form** and project submission form.
+5. **Inference credit**, for the carbon benchmark rather than the HS remainder.

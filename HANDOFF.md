@@ -300,10 +300,19 @@ array order preserved, confidence rounded to 3dp *before* hashing. The CLI
 prints the bytes next to the hash so the commitment can be checked rather than
 trusted.
 
-### RESUME HERE — 101 benchmark rows unscored, blocked on credit
+### The HS benchmark is parked at 253 of 354 rows — deliberately
 
-The grounded scoring run died at row 253 of 354 because the Anthropic account
-ran out of credit. **Top up, then run one command:**
+The grounded scoring run died at row 253 of 354 when the inference account ran
+out of credit. **This is no longer the next action.** Delivery is now a
+reference implementation rather than a deployed adapter, so HS classification
+accuracy gates nothing that ships, and the remaining credit belongs to the
+carbon quality benchmark instead.
+
+Both READMEs already state the 253-row figures and say so explicitly, so nothing
+in the repository overstates what was measured. Leave that disclosure standing.
+
+Finishing it stays cheap and worthwhile whenever there is credit to spare — one
+command, ~101 rows, roughly $0.85:
 
 ```bash
 cd /root/routelock && set -a && . ./.env && set +a
@@ -389,28 +398,69 @@ The trap that matters is in `bench/README.md`: a ruling states its own answer in
 its header and its conclusion, so a careless extraction yields a benchmark that
 reports near-perfect accuracy while measuring nothing.
 
+### Adapters — one shared port, three verticals
+
+`packages/fulfilment` holds `FulfilmentAdapter`, the port every vertical
+implements. It is a zero-dependency leaf on purpose: `@routelock/compliance`
+already depends on `@routelock/carrier`, so a port importing compliance would
+close a dependency cycle.
+
+Two things in that package are load-bearing and should not be softened:
+
+- **`fulfil()` takes `Approved<TOrder>`, not a bare order.** The only way to
+  obtain one is `approve()` in the compliance package, which returns `null` for
+  every verdict other than `Approved`. Fulfilling unapproved work is therefore a
+  *compile error*, not a runtime check that a future call site could forget —
+  the TypeScript counterpart of `SettlementEscrow` refusing `COMPLIANCE_ROLE`.
+  Verified by probe: both a bare order and a hand-forged object carrying every
+  visible field are rejected by `tsc`.
+- **`cancel` is deliberately absent from the port**, because a retired carbon
+  credit cannot be un-retired. Adapters expose cancellation shaped to what their
+  provider actually supports, and `reversible` says which can.
+
+Delivery names the two layers for what they are: `ShipbubbleClient` speaks
+Shipbubble's API, and `ShipbubbleAdapter` is the single adapter above it. Status
+lives in `docs/adapters.md` and is mirrored in the adapter's own fields, so the
+two move together.
+
 ### Not started
 
-Attestation package and the frontend. `packages/attest` and `apps/{web,api}` are
-empty — nothing in them is stubbed or scaffolded with placeholder behaviour.
+Carbon and compute adapters, the attestation package, and the frontend.
+`packages/attest` and `apps/{web,api}` are empty — nothing in them is stubbed or
+scaffolded with placeholder behaviour.
 
 ### Resume here — in this order
 
-1. **Finish the last 101 benchmark rows** — one command, resumes from the
-   checkpoint, needs only a topped-up account. See "RESUME HERE" above.
-2. **Frontend a judge can drive from any location.** Own origin, own
+X Layer is finished completely before BOT Chain is started.
+
+1. **Carbonmark access** — production form submitted, with the third-party
+   platform question in the same message; sandbox key obtained. Blocked on a
+   human: it needs a business email on a domain.
+2. **`CarbonmarkAdapter`** against the shared port, sandbox first —
+   `/prices` → `/quotes` → `/orders` → retirement → certificate URL.
+3. **Carbon quality benchmark**, 80–150 rows, and the threshold derived from its
+   calibration curve rather than chosen. This is the long-lead item and it gates
+   everything downstream, so it starts early. Building the corpus needs no
+   inference; only scoring it does.
+4. **Wire `ActivationRegistry`** using the mapping in `docs/adapter-mapping.md`.
+5. **Secondary market listing contract**, with a test asserting a bound
+   entitlement cannot be listed.
+6. **Float `YieldAdapter`** into Aave V3 on X Layer, with a Foundry
+   `invariant_` test on the solvency property. Extend `verify:chains` to assert
+   the Aave pool, the USD₮0 reserve and the aToken live, before wiring anything.
+7. **Frontend a judge can drive from any location.** Own origin, own
    destination, own goods description; see the verdict, the reason, and the
    on-chain record. Two of the seven judging criteria are product completeness
    and user value, and this is how both are won. The owner is explicit that
    **no route may be hardcoded** — Hong Kong and everywhere else stay available.
-3. **BOT Chain testnet deploy** — funded, ready, needs a human at the keystore
-   prompt. Re-run the `COMPLIANCE_ROLE` revert check afterwards.
-4. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed.
+8. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed.
    They share one key today, so a box compromise reaches role administration.
-5. **Mainnet deploys**, both chains. Hard eligibility gate for X Layer, which
-   requires testnet *before* mainnet.
-6. **`ClassShares` wrapper** — a fungible per-class token over unbound
-   entitlements. The owner wants this built; see §6 for why it is last.
+9. **X Layer mainnet deploy**, after testnet, sequence provable. Then a real
+   issuer, real collateral, a real retirement, and `totalMinted()` ≠ 0.
+10. **Submit X Layer.** Only then start BOT Chain: testnet deploy (funded,
+    needs a human at the keystore prompt), `AkashAdapter`, mainnet, submit.
+
+`ClassShares` remains wanted and remains last.
 
 ---
 
