@@ -6,7 +6,7 @@
 > eligibility, and **refuses to proceed when its confidence is insufficient** —
 > so nothing moves on a guessed declaration.
 
-**Status: day 1 of 8. This README describes what is built, and says plainly what
+**Status: day 2 of 8. This README describes what is built, and says plainly what
 is not.** Nothing below is simulated. Where a feature does not exist yet, it is
 listed as not existing rather than demonstrated with fake data.
 
@@ -14,17 +14,33 @@ listed as not existing rather than demonstrated with fake data.
 
 ## The real-world asset
 
-The asset is **a named carrier's contractual obligation to perform a specific
-delivery** — in v1, a parcel from **Port Harcourt to Lagos**, at a quoted rate,
-within a stated service window, fulfilled through Shipbubble. That obligation
-already exists off-chain as an ordinary commercial commitment. RouteLock makes it
-a transferable instrument.
+The asset is **a service provider's contractual obligation to perform a specific
+piece of work**, on stated terms, within a stated window. That obligation already
+exists off-chain as an ordinary commercial commitment; it is illiquid, bilateral,
+and unenforceable by anyone but its original counterparty. RouteLock makes it a
+transferable, collateral-backed instrument.
 
 **What the token is a claim on.** One `ServiceEntitlement` (ERC-721) represents
-one unit of a *class* — a specific route, weight band, and service level, sold by
-a specific registered issuer, under terms whose signed document is committed
-on-chain as `termsHash`. Holding the token is holding that issuer's promise to
-move one parcel on those terms.
+one unit of a *class*, issued by one registered issuer, under terms whose signed
+document is committed on-chain as `termsHash`. Holding the token is holding that
+issuer's obligation to perform one unit of that class.
+
+**The contracts do not know what the service is.** This is worth stating
+precisely, because it is the difference between a product and a demo. A class —
+`ServiceSpec` in [`RouteLockTypes.sol`](packages/contracts/src/RouteLockTypes.sol) —
+carries an issuer, a terms hash, a settlement token, a price, a payout
+obligation, an expiry, and a supply cap. There is **no origin field, no
+destination, no weight, no carrier, and no parcel** anywhere in the contract set.
+The class is identified by `classId`, an opaque `keccak256` of whatever human
+label the issuer chose.
+
+So the generality is not a roadmap item. The five contracts already deployed at
+the addresses below would back a pallet-month of bonded warehousing, a cold-chain
+window, an hour of machine time, or a freight slot **without a redeploy and
+without a line changed** — a different label, a different terms document, and a
+different off-chain adapter. What varies between verticals is the adapter that
+proves fulfilment; what stays fixed is collateralised issuance, escrowed
+settlement, and a compliance gate that can refuse.
 
 **Why it is an asset and not a voucher.** Two things back it, and both are
 enforced by the contracts rather than promised in prose:
@@ -36,27 +52,54 @@ enforced by the contracts rather than promised in prose:
   entitlement is not merely discouraged — it is unreachable. Collateral can be
   withdrawn only down to, never below, outstanding obligations.
 - **The buyer's payment is escrowed, not paid.** Funds go from the buyer into
-  `SettlementEscrow` at purchase and are released to the issuer only when the
-  carrier produces a real label, recorded by the backend oracle from the carrier's
-  own API response. **Compliance approving an activation releases nothing.** If
-  the parcel is refused, remedied, or expires, the buyer is refunded.
+  `SettlementEscrow` at purchase and are released to the issuer only against
+  proof of performance from the provider's own system, recorded by the backend
+  oracle — for the delivery adapter, a real carrier label.
+  **Compliance approving an activation releases nothing.** If the work is
+  refused, remedied, or the entitlement expires, the buyer is refunded.
 
 So the holder has a claim that is economically backed if honoured *and* if
 defaulted on, which is what distinguishes it from a prepaid credit.
 
-**Why it is transferable.** Before parcel data is bound to it, the token is
-generic — it names a route and a service level, nothing about any person. It can
-be resold, gifted, or held as inventory by a freight broker. The moment a
-consignee and parcel are attached, transfers lock permanently: moving it
-afterwards would either leak the recipient's details to whoever received the
-token, or let a shipment the carrier has already accepted be redirected.
+**Why it is transferable.** Before consignment data is bound to it, the token is
+generic — it names a class and a service level, nothing about any person. It can
+be resold, gifted, or held as inventory by a broker. The moment a counterparty's
+details are attached, transfers lock permanently: moving it afterwards would
+either leak those details to whoever received the token, or let work a provider
+has already accepted be redirected.
 
-**Why delivery is only the first adapter.** The contracts never mention parcels,
-carriers, or customs. They describe a service commitment identified by a class
-and a terms hash, with an off-chain adapter handling fulfilment. The same
-deployed contracts back a pallet-month of bonded warehousing, a cold-chain
-window, an hour of machine time, or a freight slot, without a redeploy. Delivery
-is the adapter that proves the primitive works against a real counterparty.
+## The first adapter, and why it is this one
+
+An entitlement is only worth what the obligation behind it is worth, so the
+primitive has to be proven against a provider who can actually be held to it.
+The first adapter is **delivery**, fulfilled through Shipbubble, and the first
+class is a parcel lane between **Port Harcourt and Lagos**.
+
+That lane is a deliberate choice, not a default, and the reasoning is the part
+worth reading:
+
+- **The counterparty is real on it.** Shipbubble genuinely serves that corridor
+  with live rates and real labels. An entitlement written against a lane no
+  carrier actually runs would be a simulation with extra steps — the obligation
+  has to be one somebody is contractually on the hook for.
+- **It has a genuine classification problem.** Carriers refuse goods. Deciding
+  whether a described item is acceptable, restricted, or prohibited is a real
+  decision with a real cost of being wrong, which is precisely what the
+  compliance engine has to be measured against. HS nomenclature gives that
+  decision a standard vocabulary rather than a bespoke one, and the same
+  vocabulary extends to cross-border lanes later without rework.
+- **It is domestic, so the failure modes are ours.** No customs broker sits
+  between the model's decision and the outcome, absorbing or masking its errors.
+  When the engine refuses, the refusal is the system's own and is measurable as
+  such.
+
+**The lane is a parameter, not the product.** Grep the contract set for it: it
+occurs in non-test Solidity exactly once, in a comment, as an example of what a
+`classId` might be a hash of (`RouteLockTypes.sol:33`). Every other occurrence
+is a test fixture. Nothing in the deployed bytecode knows the corridor exists.
+A second issuer, a second corridor, a second country, or a second vertical
+entirely requires no contract change — which is the claim the rest of this
+README is built to let you check rather than take on trust.
 
 ### What is not yet true of the asset
 
@@ -110,9 +153,9 @@ compliance layer for a real-world service obligation — not yet a tokenized one
     compliance service cannot be given authority over funds by any admin at any
     point. The AI opening the activation gate and money being released are two
     separate events with two separate triggers.
-  - Entitlements stop being transferable the moment parcel data is bound to
-    them, because transferring afterwards would either leak the consignee's
-    details or let an accepted shipment be redirected.
+  - Entitlements stop being transferable the moment counterparty data is bound
+    to them, because transferring afterwards would either leak that party's
+    details or let work a provider has already accepted be redirected.
 
 - **A deployment script that refuses more than it accepts.** It picks the
   settlement token from the chain id rather than the environment, reads
@@ -126,7 +169,10 @@ compliance layer for a real-world service obligation — not yet a tokenized one
 
 ### X Layer testnet — live
 
-Chain 1952, deployed 13 August 2026 at block 38195716.
+Chain 1952, deployed 13 August 2026. The deployment transactions mined at block
+**38195716**; `deployedAtBlock` in the address file records **38195693**, the
+head at the moment the script began. Both are recorded because they are
+different facts, and the receipts under `broadcast/` are the authoritative ones.
 Addresses: [`deployments/xlayer_testnet.json`](deployments/xlayer_testnet.json).
 Transaction records: [`packages/contracts/broadcast/Deploy.s.sol/1952/`](packages/contracts/broadcast/Deploy.s.sol/1952/).
 
@@ -162,8 +208,9 @@ adapter behind it would be an address, not a product.
 
 ### BOT Chain testnet — not deployed
 
-Blocked on testnet gas. Deploy costs ~0.21 tBOT there, because BOT Chain gas is
-20 gwei against X Layer's 0.02.
+The deployer wallet now holds 10 tBOT from the faucet, so this is no longer
+blocked. A deploy costs ~0.21 tBOT there, because BOT Chain gas is 20 gwei
+against X Layer's 0.02 — roughly 47 deploys of headroom from a single claim.
 
 ### BOT Chain mainnet — not deployed
 
