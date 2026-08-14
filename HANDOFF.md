@@ -1,6 +1,7 @@
 # RouteLock — Handoff
 
-**Last updated: 14 August 2026**
+**Last updated: 14 August 2026** — carrier adapter and compliance engine built
+and running against real APIs; both credentials live. Resume at §2 "Resume here".
 
 Read this before touching anything. It covers the rules that are not negotiable,
 where the build actually stands, and what is blocked on a human.
@@ -210,6 +211,93 @@ Broadcast records under `packages/contracts/broadcast/` are **tracked in git** �
 they carry the tx hashes and timestamps that evidence X Layer's
 testnet-before-mainnet requirement. Only `dry-run/` subdirectories are ignored.
 
+### Credentials — both live as of 14 August
+
+`SHIPBUBBLE_API_KEY` (sandbox, `sb_sandbox…`) and `ANTHROPIC_API_KEY` are in
+`/root/routelock/.env`, both verified against their real APIs. The day-1 guess
+that the carrier key would carry an `sb_sandbox` prefix turned out to be
+correct, so `assertEnvironmentPairing` needed no change.
+
+`ROUTELOCK_LLM_PROVIDER=anthropic`, `ROUTELOCK_LLM_MODEL=claude-sonnet-5`.
+
+### Carrier adapter — built, exercised against the real API
+
+`packages/carrier`. A generic `CarrierAdapter` port with `ShipbubbleAdapter`
+behind it; 24 tests. `pnpm --filter @routelock/carrier smoke` quotes three lanes
+(NG→NG, NG→GB, NG→HK) against the live sandbox and consumes no quota.
+
+**Four findings that constrain what can honestly be demoed:**
+
+1. **Sandbox couriers are test fixtures** — "Bubble Express", "Richard Express",
+   "Millie Express". Their prices respond to weight but **not to destination**:
+   Lagos, London and Hong Kong return byte-identical figures. Sandbox proves the
+   integration works and proves nothing about what a cross-border shipment
+   costs. Every `Quote` carries a `live` flag derived from the chain so a
+   sandbox number can never be displayed as a real one.
+2. **Real coverage is unknowable from sandbox.** The per-courier coverage
+   endpoint 404s for the test couriers, so whether Shipbubble serves any given
+   country still needs the live key or a written answer from support.
+3. **Cancellation is narrow.** Only *scheduled* shipments can be cancelled, and
+   only while the processing date has not passed; afterwards the carrier answers
+   "Shipment label already processed". Refund behaviour is undocumented and
+   unconfirmed. **Treat a live purchase as spent, not reversible**, and book a
+   far-future pickup date to keep the window open.
+4. **Category ids are account-specific.** The sandbox returns entirely different
+   ids from Shipbubble's published example, so the adapter matches by name and
+   resolves ids at runtime. A hardcoded id would work here and mis-route in
+   production.
+
+**Routing and refusal are separate modules, deliberately.** `categories.ts` maps
+all 96 real HS chapters to a routing bucket and refuses nothing. `policy.ts`
+holds carrier acceptance, quoting Shipbubble's published "Prohibited products"
+clause with a dated source URL, and every refusal names the clause it came from.
+
+The first version of this was wrong and is worth not repeating: the refusal list
+was written from general knowledge with no source, and was wrong **in both
+directions** — it permitted prescription pharmaceuticals and alcohol, which the
+policy forbids, and refused petroleum, chemicals, fertiliser and artworks, which
+the policy never mentions. Note also that **chapter 22 splits at the heading**:
+2201-2202 are water and soft drinks, 2203-2208 are alcoholic. Refusing the
+chapter blocks bottled water; permitting it ships whisky.
+
+### Compliance engine — built, ruling against the real model
+
+`packages/compliance`, 35 tests. `pnpm --filter @routelock/compliance classify
+--goods "…" --from NG --to GB` rules on one consignment and prints the verdict,
+its ground, the decision hash, and the exact bytes hashed.
+
+**The structural rule: the model proposes, deterministic code decides.** The
+model returns a `Proposal` — candidate HS-6, stated confidence, what it is
+missing, purpose flags. It has **no verdict field**, so its opinion of the
+outcome has no path to the chain; a test asserts that shape so it cannot widen.
+`decide()` is a pure function with no network and no model in it. Together with
+the escrow refusing `COMPLIANCE_ROLE`, the AI can neither move money nor choose
+the outcome.
+
+Verified live: whisky was classified correctly and confidently by the model
+(`220830`, 0.95) and **refused anyway** by the carrier-policy rule. "a box of
+stuff" returned no classification, confidence 0, and four usable questions.
+
+Three things not to undo:
+
+- **Check order is part of the rule.** Purpose flags outrank carrier policy,
+  which outranks missing information, which outranks confidence. A prohibited
+  item described vaguely by an unsure model could exit three ways; it must exit
+  by the most serious, or the record reads "we needed more information" about
+  goods that are simply refused.
+- **Cross-border faces a higher confidence bar** (0.9 against 0.85), derived
+  from the two country codes and never configured. **0.85 is a starting
+  position, not a tuned constant** — replacing it with a measured one is what
+  the benchmark is for, and changing it must change `ENGINE_VERSION`.
+- **`decide()` re-checks the confidence range itself.** `parseProposal` already
+  clamps model output, but `decide` gates money and must not trust its caller: a
+  confidence of `2` would otherwise clear a threshold of `0.9`. Found by a test.
+
+The decision hash commits to a canonical JSON — keys sorted at every depth,
+array order preserved, confidence rounded to 3dp *before* hashing. The CLI
+prints the bytes next to the hash so the commitment can be checked rather than
+trusted.
+
 ### Benchmark corpus — built, unscored
 
 `bench/` holds 258 rows drawn from CBP CROSS binding rulings, 133 HS-6
@@ -223,10 +311,29 @@ reports near-perfect accuracy while measuring nothing.
 
 ### Not started
 
-Compliance engine, carrier adapter, attestation package, frontend. All are
-blocked on credentials — see §4. Nothing in them has been stubbed or scaffolded
-with placeholder behaviour; the directories are empty. See `PROGRESS.md` for the
-running state.
+Attestation package and the frontend. `packages/attest` and `apps/{web,api}` are
+empty — nothing in them is stubbed or scaffolded with placeholder behaviour.
+
+### Resume here — in this order
+
+1. **Score the benchmark.** The corpus (354 rows) and the engine both exist;
+   nothing connects them yet. Running one over the other produces top-1
+   accuracy, refusal precision and a calibration curve — the number no
+   competitor will have, and the thing that turns the 0.85 threshold from a
+   guess into a measurement. Unblocked, highest value.
+2. **Frontend a judge can drive from any location.** Own origin, own
+   destination, own goods description; see the verdict, the reason, and the
+   on-chain record. Two of the seven judging criteria are product completeness
+   and user value, and this is how both are won. The owner is explicit that
+   **no route may be hardcoded** — Hong Kong and everywhere else stay available.
+3. **BOT Chain testnet deploy** — funded, ready, needs a human at the keystore
+   prompt. Re-run the `COMPLIANCE_ROLE` revert check afterwards.
+4. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed.
+   They share one key today, so a box compromise reaches role administration.
+5. **Mainnet deploys**, both chains. Hard eligibility gate for X Layer, which
+   requires testnet *before* mainnet.
+6. **`ClassShares` wrapper** — a fungible per-class token over unbound
+   entitlements. The owner wants this built; see §6 for why it is last.
 
 ---
 
@@ -255,34 +362,29 @@ stops an unverified token address reaching a deployment.
 
 These cannot be resolved from this box and are listed in the order they block work.
 
-1. **No Shipbubble account or API keys.** Both the sandbox and live keys are
-   needed. The sandbox key unblocks ~90% of the carrier adapter — address
-   validation and rate quotes are free and do not consume shipment quota. Only
-   5 free live shipments exist; the live key should not be used until the
-   cancellation endpoint and its refund behaviour are documented.
+1. **The Shipbubble LIVE key.** The sandbox key is in and working; the live one
+   is not. It is what proves a real lane, real coverage and a real price —
+   sandbox can prove none of those (see §2). Only 5 free live shipments exist,
+   and cancellation is now documented: **scheduled shipments only, before the
+   processing date, refund behaviour unconfirmed.** Treat each purchase as
+   spent.
 
 2. **Ask Shipbubble support, in writing:** is platform / third-party shipment
    creation via their API permitted, and is there a partner tier? A written yes
    is the closest achievable substitute for an issuer agreement and is the
-   foundation of the RWA claim (spec §11). Send this today — reply latency is
-   the risk, not the asking.
+   foundation of the RWA claim (spec §11). Ask in the same message **which
+   countries the live account can actually ship to** — the sandbox cannot answer
+   it, and the answer decides which lanes can be demoed.
 
-3. **An inference credential for the compliance engine.** There is no LLM API key
-   on this box and none in the repo, so `packages/compliance` cannot be started —
-   the engine is the one component that cannot be written against anything but a
-   real model, and the benchmark depends on it. This blocks the project's stated
-   differentiator, and with the chain work finished it is now the single largest
-   piece of unbuilt scope.
-
-4. **Dedicated X account** must be created and posting daily from day 1, with the
+3. **Dedicated X account** must be created and posting daily from day 1, with the
    submission post mentioning **@XLayerOfficial**. This is a hard eligibility
    gate; failing it disqualifies the submission regardless of build quality.
    Day 1 has already passed without a post.
 
-5. **BOT Chain gas support form** (1 BOT per eligible project) and their project
+4. **BOT Chain gas support form** (1 BOT per eligible project) and their project
    submission form — both were to be filed day 1 and have not been.
 
-6. **Mainnet gas, for both mainnets.** Testnet funding is done (see §2). What
+5. **Mainnet gas, for both mainnets.** Testnet funding is done (see §2). What
    remains is X Layer mainnet, which holds 0.00045 OKB, and BOT Chain mainnet,
    which holds 0. Neither is needed until the mainnet deploys, but X Layer's
    eligibility gate requires mainnet *after* testnet, so this cannot be left to
@@ -315,3 +417,80 @@ git log --format='%an <%ae>' -20            # identity check before any push
 `pnpm verify:chains` passes clean on all four targets as of 2026-08-13. If it
 starts failing, trust it over the config — it is asking the chain, and the config
 is only a record of a previous answer.
+
+```bash
+pnpm --filter @routelock/carrier smoke      # quote 3 lanes, free, no quota used
+pnpm --filter @routelock/compliance classify --goods "…" --from NG --to GB
+pnpm --filter @routelock/bench build:corpus # rebuild from both rulings databases
+pnpm test                                   # 267 across the workspace
+```
+
+---
+
+## 6. Where the prize money actually is
+
+Researched 14 August from the sponsors' own pages, not from the original brief.
+
+**X Layer BuildX AI Season** — three tiers:
+
+| Grant | Amount | Unlock |
+|---|---|---|
+| Hackathon | 30K / 15K / 5K USDT | judged on merit |
+| Liquidity | 50K USDT | best project in the AI-RWA track |
+| Launch | up to 200K USDT | **$10M cumulative OKX DEX volume by 31 Aug** |
+
+**The Launch Grant is not reachable and should not be planned around.** It needs
+ten million dollars of DEX volume within ten days of submission, which requires a
+liquid fungible token. RouteLock mints ERC-721s. Realistic target is the 30K plus
+the 50K.
+
+Judging criteria, verbatim: *application of AI, innovation, product completeness,
+user value, integration with X Layer, growth potential, contribution to the X
+Layer ecosystem.*
+
+**BOT Chain** Builder Challenge #1 paid **up to 5,000 USDT total**. If #2 is
+proportional, BOT Chain deserves a deploy and a submission, not a redesign. Its
+criteria were depth of chain integration, product completeness, innovation, demo
+and documentation quality, and on-chain deployment and verification.
+
+### Honest competitive position
+
+A known competing entry: an AI agent monitoring OKX x-RWA backing and redemption
+conditions for xBETH, auto-protecting Aave positions collateralised by it. It is
+strong on ecosystem integration — built inside OKX's own product — and has an
+obvious user with urgent pain. It is likely weak on AI depth: monitoring a
+backing ratio and firing an action is a keeper bot, and it is derivative of a
+product it does not control.
+
+Where RouteLock wins: **depth and measurability of the AI.** Classification
+against the full nomenclature, refusal when confidence is insufficient, and a
+published number measured against 354 real government rulings from two
+authorities. Nobody measures a threshold check. Also, RouteLock brings a new
+asset class on-chain rather than defending value already there.
+
+Where RouteLock loses: product completeness while components are missing, and
+liquidity/ecosystem contribution — an ERC-721 for one specific parcel generates
+none.
+
+### The positioning change worth making
+
+Lead with **the compliance oracle**, not the tokenized parcel. Same contracts,
+same engine, same benchmark — but framed as infrastructure any cross-border
+tokenized-goods protocol can call, rather than an app that ships parcels. It
+answers "who is the user" (other protocols), "growth potential" (every
+cross-border RWA) and "ecosystem contribution" (composable infrastructure), which
+are the three criteria the current framing scores worst on. `ActivationRegistry`
+already records verdicts on-chain; making them explicitly queryable by
+third-party contracts is a small change with a large positioning payoff.
+
+### Why `ClassShares` is last, not dropped
+
+The owner has decided it gets built, and a testnet redeploy is genuinely cheap
+(~0.00014 OKB), so "already deployed" was never a real argument against it. The
+argument is opportunity cost only. The design insight behind it is sound and is
+the project's own: entitlements are **interchangeable within a class until
+consignment data binds them** — which is the definition of fungible — so a
+fungible per-class token over unbound entitlements is economically honest rather
+than a gimmick. Build it as an **additive wrapper** holding `Available`
+entitlements and issuing shares, so the five deployed contracts and their 159
+tests are untouched and the work is droppable if time runs short.
