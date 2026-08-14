@@ -7,7 +7,8 @@
   "scripts": {
     "smoke": "tsx scripts/smoke.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/*.test.ts"
+    "test": "tsx --test src/**/*.test.ts src/*.test.ts",
+    "smoke:x402": "tsx scripts/smoke-x402.ts"
   },
   "dependencies": {
     "@routelock/chain": "workspace:*",

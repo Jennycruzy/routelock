@@ -23,6 +23,10 @@ packages/contracts/broadcast/**/dry-run/
 artifacts/carrier/
 *.pdf
 
+# The retirement ledger. Local durable spending state, not evidence: the proof
+# of a retirement is its on-chain transaction and its public certificate.
+data/retirements.jsonl
+
 # Scoring-run checkpoints. Transient: they let an interrupted run resume
 # without paying for the same rows twice, and are removed on a clean finish.
 bench/data/.checkpoint-*.jsonl
