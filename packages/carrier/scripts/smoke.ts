@@ -12,7 +12,8 @@
 
 import { getChain } from "@routelock/chain";
 import { ShipbubbleAdapter } from "../src/shipbubble.ts";
-import { categoryForHs6, CATEGORY_NAMES } from "../src/categories.ts";
+import { categoryForHs6 } from "../src/categories.ts";
+import { isAcceptable } from "../src/policy.ts";
 import { isCrossBorder, type Lane } from "../src/types.ts";
 
 const CHAIN = process.env["ROUTELOCK_CHAIN"] ?? "xlayer_testnet";
@@ -48,12 +49,23 @@ async function main(): Promise<void> {
     `${adapter.name} against ${chain.name} — mode: ${adapter.live ? "LIVE" : "sandbox"}\n\n`,
   );
 
+  const acceptance = isAcceptable(HS6);
+  if (!acceptance.ok) {
+    process.stdout.write(
+      `HS ${HS6} REFUSED by carrier policy — "${acceptance.clause}"\n` +
+        `  ${acceptance.reason}\n  source: ${acceptance.source}\n`,
+    );
+    return;
+  }
+
   const category = categoryForHs6(HS6);
   if (!category.ok) {
     process.stdout.write(`HS ${HS6} → ${category.reason}: ${category.detail}\n`);
     return;
   }
-  process.stdout.write(`HS ${HS6} → carrier category "${category.category}"\n\n`);
+  process.stdout.write(
+    `HS ${HS6} → accepted by carrier policy, routed as "${category.category}"\n\n`,
+  );
 
   for (const [from, to] of LANES) {
     const [origin, destination] = await Promise.all([

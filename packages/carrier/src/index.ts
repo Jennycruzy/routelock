@@ -11,3 +11,5 @@ export type {
 } from "./types.ts";
 export { categoryForHs6, CATEGORY_NAMES } from "./categories.ts";
 export type { CategoryName, CategoryResolution } from "./categories.ts";
+export { isAcceptable, POLICY_SOURCE } from "./policy.ts";
+export type { AcceptanceResult } from "./policy.ts";
