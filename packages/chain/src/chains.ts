@@ -157,35 +157,92 @@ export function assertEnvironmentPairing(
   chain: ChainConfig,
   carrierKey: string | undefined
 ): void {
-  if (!carrierKey) {
+  assertProviderPairing(chain, carrierKey, SHIPBUBBLE_KEYS);
+}
+
+/**
+ * How one provider's keys announce which environment they belong to.
+ *
+ * `livePrefix` is nullable because a provider's production prefix is not
+ * knowable until production access is granted. A null one does not mean
+ * "accept anything" — it means no key can satisfy a live chain, so a mainnet
+ * boot fails loudly instead of proceeding on a guess.
+ */
+export interface ProviderKeyScheme {
+  /** Names the credential in error messages, e.g. "carrier key". */
+  readonly noun: string;
+  readonly sandboxPrefix: string;
+  readonly livePrefix: string | null;
+  /** What goes wrong if a live key reaches a test chain. Provider-specific. */
+  readonly liveOnTestConsequence: string;
+}
+
+export const SHIPBUBBLE_KEYS: ProviderKeyScheme = {
+  noun: "carrier key",
+  sandboxPrefix: "sb_sandbox",
+  livePrefix: "sb_prod",
+  liveOnTestConsequence: "this is how real shipments get bought by accident",
+};
+
+/**
+ * Carbonmark's production prefix is deliberately unknown.
+ *
+ * Production access has not been granted, so no production key has been seen.
+ * Guessing a prefix would defeat the guard: an unrecognised key would be
+ * accepted as live and a mainnet retirement could be attempted with a sandbox
+ * credential, or the reverse. It stays null until a real production key exists
+ * to read it from.
+ *
+ * This matters more here than for the carrier, because Carbonmark has no
+ * separate sandbox host — both environments answer on api.carbonmark.com, so
+ * the key prefix is the only thing distinguishing them. See
+ * docs/carbonmark-verification.md.
+ */
+export const CARBONMARK_KEYS: ProviderKeyScheme = {
+  noun: "Carbonmark key",
+  sandboxPrefix: "cm_api_sandbox",
+  livePrefix: null,
+  liveOnTestConsequence: "this is how real credits get retired by accident",
+};
+
+export function assertProviderPairing(
+  chain: ChainConfig,
+  key: string | undefined,
+  scheme: ProviderKeyScheme
+): void {
+  if (!key) {
     throw new Error(
-      `FATAL: no carrier key supplied for ${chain.name}. Refusing to boot — ` +
+      `FATAL: no ${scheme.noun} supplied for ${chain.name}. Refusing to boot — ` +
         `RouteLock does not run against a mocked carrier.`
     );
   }
 
-  const isLiveKey = carrierKey.startsWith("sb_prod");
-  const isSandboxKey = carrierKey.startsWith("sb_sandbox");
+  const isSandboxKey = key.startsWith(scheme.sandboxPrefix);
+  const isLiveKey = scheme.livePrefix !== null && key.startsWith(scheme.livePrefix);
 
   if (!isLiveKey && !isSandboxKey) {
+    const live =
+      scheme.livePrefix === null
+        ? `(the live prefix is not yet known — production access has not been granted)`
+        : `("${scheme.livePrefix}…")`;
     throw new Error(
-      `FATAL: carrier key for ${chain.name} matches neither the live ` +
-        `("sb_prod…") nor the sandbox ("sb_sandbox…") prefix. Refusing to boot ` +
+      `FATAL: ${scheme.noun} for ${chain.name} matches neither the live ` +
+        `${live} nor the sandbox ("${scheme.sandboxPrefix}…") prefix. Refusing to boot ` +
         `rather than guess which environment it belongs to.`
     );
   }
 
   if (chain.env === "live" && !isLiveKey) {
     throw new Error(
-      `FATAL: ${chain.name} is a live chain but the carrier key is a sandbox key. ` +
+      `FATAL: ${chain.name} is a live chain but the ${scheme.noun} is a sandbox key. ` +
         `A mainnet deployment must never display a sandbox result.`
     );
   }
 
   if (chain.env === "test" && !isSandboxKey) {
     throw new Error(
-      `FATAL: ${chain.name} is a test chain but a LIVE carrier key was supplied. ` +
-        `Refusing to boot — this is how real shipments get bought by accident.`
+      `FATAL: ${chain.name} is a test chain but a LIVE ${scheme.noun} was supplied. ` +
+        `Refusing to boot — ${scheme.liveOnTestConsequence}.`
     );
   }
 }

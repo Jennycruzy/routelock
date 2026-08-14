@@ -3,7 +3,10 @@ export {
   getChain,
   requireSettlementToken,
   assertEnvironmentPairing,
+  assertProviderPairing,
   carrierModeFor,
+  SHIPBUBBLE_KEYS,
+  CARBONMARK_KEYS,
 } from "./chains.ts";
 
 export type {
@@ -12,4 +15,5 @@ export type {
   ChainEnv,
   CarrierMode,
   Settlement,
+  ProviderKeyScheme,
 } from "./chains.ts";

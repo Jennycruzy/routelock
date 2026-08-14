@@ -6,6 +6,8 @@ import {
   getChain,
   requireSettlementToken,
   assertEnvironmentPairing,
+  assertProviderPairing,
+  CARBONMARK_KEYS,
   type ChainConfig,
 } from "./chains.ts";
 
@@ -160,5 +162,65 @@ describe("chain identity", () => {
     assert.equal(CHAINS.xlayer_mainnet.chainId, 196);
     assert.equal(CHAINS.botchain_testnet.chainId, 968);
     assert.equal(CHAINS.botchain_mainnet.chainId, 677);
+  });
+});
+
+describe("Carbonmark key pairing", () => {
+  const sandbox = "cm_api_sandbox_example";
+
+  test("a sandbox key pairs with a test chain", () => {
+    assert.doesNotThrow(() =>
+      assertProviderPairing(CHAINS.xlayer_testnet, sandbox, CARBONMARK_KEYS),
+    );
+  });
+
+  test("a sandbox key on a live chain refuses", () => {
+    // A mainnet retirement displayed from a sandbox credential would be a
+    // fabricated certificate — the exact failure rule §1.2.1 forbids.
+    assert.throws(
+      () => assertProviderPairing(CHAINS.xlayer_mainnet, sandbox, CARBONMARK_KEYS),
+      /must never display a sandbox result/,
+    );
+  });
+
+  test("no key at all can satisfy a live chain while the live prefix is unknown", () => {
+    // Production access has not been granted, so no production key has been
+    // seen and its prefix cannot be known. The guard must fail a mainnet boot
+    // rather than accept an unrecognised key as live — otherwise the one thing
+    // it exists to prevent becomes possible.
+    for (const candidate of [
+      sandbox,
+      "cm_api_prod_guess",
+      "cm_api_live_guess",
+      "cm_whatever",
+    ]) {
+      assert.throws(
+        () => assertProviderPairing(CHAINS.xlayer_mainnet, candidate, CARBONMARK_KEYS),
+        /FATAL/,
+      );
+    }
+  });
+
+  test("an unrecognised prefix says why it cannot be classified", () => {
+    assert.throws(
+      () => assertProviderPairing(CHAINS.xlayer_testnet, "cm_api_prod_guess", CARBONMARK_KEYS),
+      /production access has not been granted/,
+    );
+  });
+
+  test("a carrier key is not accepted as a Carbonmark key", () => {
+    // Two providers, two prefixes. Pasting one into the other's variable is an
+    // ordinary mistake and must not boot.
+    assert.throws(
+      () => assertProviderPairing(CHAINS.xlayer_testnet, "sb_sandbox_example", CARBONMARK_KEYS),
+      /matches neither the live/,
+    );
+  });
+
+  test("an absent Carbonmark key refuses — there is no mock retirement", () => {
+    assert.throws(
+      () => assertProviderPairing(CHAINS.xlayer_testnet, undefined, CARBONMARK_KEYS),
+      /no Carbonmark key/,
+    );
   });
 });
