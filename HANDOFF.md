@@ -318,11 +318,21 @@ $0.85 at the introductory rate). Do **not** delete
 Afterwards, update the figures in `bench/README.md` and the root `README.md`;
 both currently state the 253-row numbers and say so explicitly.
 
-Two hard-won protections are in place and should not be removed: a `400` is
-**not** retried (credit exhaustion arrives as one, and retrying burns the rest of
-the run), while 429/529/5xx retry with backoff; and each configuration writes its
-own results file, because a single shared filename destroyed the ungrounded
-baseline once and it had to be recovered from git.
+**Three protections are in place because each was learned the hard way. Do not
+remove them.**
+
+1. **Every row is saved the moment it finishes.** An earlier run wrote results
+   only at the very end, so when it died it threw away all the finished work.
+   Now a crash costs only the rows not yet reached.
+2. **A `400` error is never retried.** "Your credit balance is too low" arrives
+   as a `400`, and retrying it can never succeed — it just burns the rest of the
+   run against a dead account. Errors that *are* temporary (429 rate limit, 529
+   overloaded, any 5xx) do retry, with backoff.
+3. **Each configuration writes its own results file.** Both runs originally
+   wrote to one shared filename, so the grounded run overwrote the ungrounded
+   results and destroyed the "before" half of the comparison. It had to be
+   recovered from git history. Grounded and ungrounded now write
+   `results-<model>-grounded.json` and `-ungrounded.json`.
 
 ### Compliance engine — measured, and the measurement changed the design
 
@@ -345,14 +355,25 @@ the docs were corrected rather than left standing.
 
 Three things not to rediscover:
 
-- **Lexical retrieval over the nomenclature is worse than the model alone** —
-  recall@40 of 22.3% against the model's own 36.8% top-1. Tariff wording is
-  legalistic and shares little vocabulary with how a shipper describes goods.
-  Killed by a free measurement before any model call was spent on it; do not
-  rebuild it.
+- **Do not rebuild word-matching as the way to shortlist candidate codes.** The
+  idea was to hand the engine a shortlist to choose from rather than have it
+  recall a code from memory, and the obvious way to build that shortlist is to
+  match words in the goods description against words in the official tariff
+  text. It does not work: **the correct code was in the shortlist only 22.3% of
+  the time**, while the engine on its own already reaches 36.8% — so the
+  shortlist would have made it worse. Tariff wording is legalistic and shares
+  little vocabulary with how a shipper describes goods ("angled flange plated
+  base" against "lamps and lighting fittings, parts thereof").
+
+  The way this was found is the reusable part: **checking a shortlist costs no
+  model calls at all**, so it was measured in a minute, before anything was
+  built on top of it and before a penny of inference was spent. Measure the
+  shortlist before building what consumes it.
 - **The first pass names the right chapter 80.6% of the time and the right
-  subheading 36.8%.** That gap is why grounding works and is the ceiling on it —
-  the second pass can only choose within the chapters the first pass named.
+  subheading 36.8%.** In other words the engine knows roughly *where* goods
+  belong and loses accuracy narrowing down. That gap is why grounding works —
+  and it is also its ceiling, because the second pass can only choose within the
+  chapters the first pass named.
 - **The nomenclature cache is committed** (`packages/compliance/data/nomenclature/`,
   2,092 subheadings from the USITC HTS export). Fetching it needs no model and no
   key; runs are reproducible offline.

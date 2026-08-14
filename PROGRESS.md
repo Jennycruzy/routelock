@@ -357,18 +357,35 @@ not survive the new data.
 
 Worth not rediscovering:
 
-- **Lexical retrieval over the nomenclature is worse than the model alone**:
-  recall@40 of 22.3% against the model's own 36.8%. Tariff text is legalistic and
-  shares little vocabulary with a shipper's description. Killed by a *free*
-  measurement before a single model call was spent on it — measure the shortlist
-  before building the thing that consumes it.
+- **Word-matching is the wrong way to shortlist candidate codes — do not rebuild
+  it.** The plan was to hand the engine a shortlist of candidate subheadings to
+  choose from instead of recalling one from memory, built by matching words in
+  the goods description against words in the official tariff text. Measured, the
+  correct code was in that shortlist only **22.3%** of the time, against the
+  engine's own **36.8%** unaided — it would have made things worse. Tariff
+  wording is legalistic and shares little vocabulary with how a shipper writes
+  ("angled flange plated base" versus "lamps and lighting fittings, parts
+  thereof").
+
+  The reusable lesson is *how* that was caught: **checking a shortlist needs no
+  model calls**, so it took a minute and cost nothing, before anything was built
+  on top of it. Measure the shortlist before building what consumes it.
 - **The first pass names the right chapter 80.6% of the time** but the right
-  subheading only 36.8%. That gap is both why grounding works and its ceiling.
-- **Both scoring runs died on an exhausted account** (23 rows lost the first
-  time, 101 the second). The second run lost nothing re-runnable: rows are
-  checkpointed as they land, a `400` is never retried, and each configuration
-  writes its own results file. The first run had already destroyed the ungrounded
-  baseline by sharing one filename; it was recovered from git.
+  subheading only 36.8% — it knows roughly *where* goods belong and loses
+  accuracy narrowing down. That gap is both why grounding works and its ceiling.
+- **Both scoring runs died the same way: the Anthropic account ran out of
+  credit** — 23 rows of finished work lost the first time, none the second.
+  Three changes made between them, each worth keeping:
+
+  1. **Save every row the moment it finishes.** The first run wrote results only
+     at the end, so dying meant losing everything it had already paid for.
+  2. **Never retry a `400`.** "Your credit balance is too low" comes back as a
+     `400`; retrying it cannot succeed and just burns the rest of the run.
+     Genuinely temporary errors — 429, 529, any 5xx — do retry with backoff.
+  3. **One results file per configuration.** Both runs first wrote to the same
+     filename, so the grounded run overwrote the ungrounded results and
+     destroyed the "before" half of the comparison. It was recovered from git
+     history, and the files are now `-grounded.json` and `-ungrounded.json`.
 
 ### Next — resume here
 

@@ -64,20 +64,27 @@ the correct **chapter** 80.6% of the time and the correct **subheading** only
 a second pass gives it the published heading text for the chapters it named and
 asks it to choose by reading rather than by recall.
 
-Two shortlisting strategies were measured before one was built, because the
-shortlist is the ceiling on accuracy and measuring it costs nothing:
+**The shortlist is the ceiling.** The engine can only pick from the candidates it
+is shown, so if the correct subheading is not among them, no amount of careful
+reading will find it. That makes the shortlist worth measuring *first* — and
+measuring it needs no model calls at all, so it costs nothing.
 
-| Strategy | Ceiling |
+Two ways of building the shortlist were measured before either was built on:
+
+| How the shortlist is built | How often it contains the right answer |
 |---|---|
-| Lexical retrieval over the whole nomenclature | recall@40 = **22.3%** |
-| The first pass's own candidate chapters | **80.6%** |
+| Matching words in the description against the tariff text | **22.3%** |
+| The chapters the first pass itself named | **80.6%** |
 
-Lexical retrieval loses because tariff wording is legalistic and shares little
-vocabulary with how a shipper describes goods — "angled flange plated base"
-against "lamps and lighting fittings, parts thereof". It was discarded rather
-than shipped. Grounding captures roughly a third of the headroom to the 80.6%
-ceiling; the remaining loss is the engine picking the wrong subheading *within*
-the right chapter.
+Word-matching is worse than doing nothing — the engine unaided already reaches
+36.8%, so a shortlist right only 22.3% of the time would drag it down. Tariff
+wording is legalistic and shares little vocabulary with how a shipper describes
+goods: "angled flange plated base" against "lamps and lighting fittings, parts
+thereof". It was measured and discarded rather than shipped.
+
+Grounding captures roughly a third of the headroom to the 80.6% ceiling. The
+remaining loss is the engine picking the wrong subheading *within* the right
+chapter.
 
 ### Coverage of these runs
 
@@ -94,8 +101,12 @@ The grounded run's 101 unscored rows fall disproportionately on the US half (75
 US scored against 178 UK), so the per-authority split — 44.0% US, 48.9% UK — is
 directionally sound but rests on fewer US rows than the corpus holds.
 
-Re-running is cheap and resumable: every row is checkpointed as it lands, so a
-re-run pays only for rows not already scored.
+Re-running is cheap and resumable: **every row is saved the moment it finishes**,
+so a re-run pays only for the rows still missing. A run that dies — an exhausted
+account, a dropped connection — costs nothing already paid for. The
+"credit balance too low" error is a `400` and is deliberately never retried,
+because retrying it cannot succeed and would burn the rest of the run; temporary
+errors (429, 529, 5xx) do retry with backoff.
 
 ```bash
 pnpm --filter @routelock/bench score                     # resumes; scores what is missing
