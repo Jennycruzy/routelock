@@ -285,6 +285,38 @@ Two factual defects fixed while in there:
   commit. Worth noting as a pattern — a checkable claim in a README that invites
   checking has to actually be checked.
 
+### Benchmark corpus built
+
+`bench/` is now a workspace package, `@routelock/bench`. **258 rows, 133 HS-6
+subheadings, 35 chapters**, sourced from CBP CROSS binding classification
+rulings — an authority's determination with a citable ruling number on every
+row, not annotations written here. 26 tests, typecheck clean.
+
+This was buildable because a corpus needs no inference; only scoring it does.
+There are no accuracy numbers anywhere in the repo and there must not be until a
+real model has run against it.
+
+Three things worth not rediscovering:
+
+- **The letters state their own answer twice** — the `TARIFF NO.:` header and
+  the "applicable subheading" conclusion — so extraction is a cutting problem,
+  and a bad cut produces a benchmark that reports near-perfect accuracy while
+  measuring nothing. 149 of 472 usable rulings were dropped as contaminated.
+  The filter is deliberately over-eager: rows are cheap, a corrupted measurement
+  is not.
+- **`\bHTSUS\b` does not match `HTSUSA`**, because the trailing `A` defeats the
+  word boundary. One row reached the first corpus carrying "Chapter 95 of the
+  HTSUSA", disclosing its own answer's first two digits. Found by auditing the
+  output independently rather than trusting the extractor — worth repeating on
+  any future corpus change.
+- **HTS chapters 98 and 99 are US-only** and carry no international HS meaning,
+  so rulings landing there are excluded rather than truncated to a code that
+  looks valid.
+
+The honest limitation to keep stating: the ground truth is US practice. HS-6 is
+shared by WCO members, but where national interpretation diverges these rulings
+reflect CBP, not Nigeria Customs.
+
 ### Next — resume here
 
 1. **Deploy to BOT Chain testnet.** `./scripts/deploy.sh botchain_testnet
@@ -306,10 +338,9 @@ Two factual defects fixed while in there:
 4. Locate and document the Shipbubble cancellation endpoint and its refund
    behaviour **before** any live purchase.
 
-5. **Benchmark** (`bench/`) — 200–300 real product descriptions with ground-truth
-   HS codes, reporting top-1 accuracy, refusal precision, and a calibration
-   curve. Depends on (2). This is the differentiator; the contingency order is to
-   shrink it, never drop it.
+5. **Score the benchmark** — the corpus is built; what remains is running the
+   engine over it and reporting top-1 accuracy, refusal precision, and a
+   calibration curve image. Depends entirely on (2).
 
-Empty and untouched: `packages/{compliance,carrier,attest}`, `apps/{web,api}`,
-`bench/`. Nothing in them is stubbed or scaffolded with placeholder behaviour.
+Empty and untouched: `packages/{compliance,carrier,attest}`, `apps/{web,api}`.
+Nothing in them is stubbed or scaffolded with placeholder behaviour.

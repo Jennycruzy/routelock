@@ -12,6 +12,15 @@ importers:
         specifier: ^26.2.0
         version: 26.2.0
 
+  bench:
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.12
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   packages/chain:
     devDependencies:
       tsx:

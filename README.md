@@ -217,11 +217,18 @@ against X Layer's 0.02 — roughly 47 deploys of headroom from a single claim.
 ## Not finished yet
 
 **Not built at all:** the compliance engine, the carrier adapter, the attestation
-and replay endpoint, the frontend, and the classification benchmark. These are
-blocked on credentials — a Shipbubble sandbox key and an inference credential —
-and nothing has been stubbed in their place, because a simulated feature
-presented as working would be worse than an absent one. See
-[`PROGRESS.md`](PROGRESS.md).
+and replay endpoint, and the frontend. These are blocked on credentials — a
+Shipbubble sandbox key and an inference credential — and nothing has been stubbed
+in their place, because a simulated feature presented as working would be worse
+than an absent one. See [`PROGRESS.md`](PROGRESS.md).
+
+**Built, but not yet measuring anything:** the classification benchmark corpus —
+258 rulings from CBP's public database, 133 HS-6 subheadings across 35 chapters,
+every row citing the binding customs ruling it came from. Building the corpus
+needs no inference, so it was not blocked. **Scoring it does**, so this
+repository contains no accuracy figures and will contain none until a real model
+has been run against those rows. Method, exclusions and limitations are in
+[`bench/README.md`](bench/README.md).
 
 ## Verified networks
 

@@ -210,12 +210,23 @@ Broadcast records under `packages/contracts/broadcast/` are **tracked in git** �
 they carry the tx hashes and timestamps that evidence X Layer's
 testnet-before-mainnet requirement. Only `dry-run/` subdirectories are ignored.
 
+### Benchmark corpus — built, unscored
+
+`bench/` holds 258 rows drawn from CBP CROSS binding rulings, 133 HS-6
+subheadings across 35 chapters, each citing the ruling it came from. 26 tests.
+
+Building it needed no inference; **scoring it does**, so there are no accuracy
+figures in this repository and none may be added until a real model has been run.
+The trap that matters is in `bench/README.md`: a ruling states its own answer in
+its header and its conclusion, so a careless extraction yields a benchmark that
+reports near-perfect accuracy while measuring nothing.
+
 ### Not started
 
-Compliance engine, carrier adapter, attestation package, frontend, benchmark.
-All four are blocked on credentials — see §4. Nothing in them has been stubbed
-or scaffolded with placeholder behaviour; the directories are empty. See
-`PROGRESS.md` for the running state.
+Compliance engine, carrier adapter, attestation package, frontend. All are
+blocked on credentials — see §4. Nothing in them has been stubbed or scaffolded
+with placeholder behaviour; the directories are empty. See `PROGRESS.md` for the
+running state.
 
 ---
 
