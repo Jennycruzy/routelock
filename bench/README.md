@@ -4,10 +4,70 @@ A corpus for measuring the compliance engine, rather than asserting that it
 works. Every competitor will claim their model classifies goods correctly;
 almost none will publish a number, a method, and a way to check it.
 
-**Status: the corpus is built. Nothing is scored yet** — scoring needs the
-compliance engine, which is blocked on an inference credential. There are no
-accuracy figures in this repository, and there will be none until a real model
-has been run against these rows.
+**Status: scored.** Figures below come from a real run of the engine over this
+corpus, recorded in [`data/results-claude-sonnet-5.json`](data/results-claude-sonnet-5.json)
+with every individual outcome, so they can be recomputed rather than trusted.
+
+## Results — `claude-sonnet-5`, 331 rows
+
+| | |
+|---|---|
+| Top-1 accuracy | **36.1%** |
+| Accuracy of what it **approved** | **83.3%** (18 rows) |
+| Refusal precision | **66.3%** (306 declined for uncertainty) |
+| Mean calibration error | 0.453 |
+| US rulings / UK rulings | 33.6% / 38.2% |
+
+23 of 354 rows were not scored: the inference account ran out of credit during
+the run. The failures are recorded in the results file rather than dropped.
+
+**Top-1 accuracy of 36% is the honest headline, and it is low.** Every row here
+is a case an importer paid to have ruled on precisely because the answer was not
+obvious, so this is far harder than an average parcel. The number is reported
+first anyway, because a benchmark that leads with its flattering figure is
+marketing.
+
+**The interesting result is the calibration curve.**
+
+| Stated confidence | n | Observed accuracy |
+|---|---|---|
+| 0.0–0.1 | 3 | 0.0% |
+| 0.1–0.2 | 3 | 0.0% |
+| 0.2–0.3 | 13 | 0.0% |
+| 0.3–0.4 | 27 | 7.4% |
+| 0.4–0.5 | 47 | 21.3% |
+| 0.5–0.6 | 58 | 27.6% |
+| 0.6–0.7 | 77 | 39.0% |
+| 0.7–0.8 | 60 | 48.3% |
+| 0.8–0.9 | 24 | 70.8% |
+| 0.9–1.0 | 18 | 83.3% |
+
+It is **monotonic** — every step up in stated confidence buys a real step up in
+accuracy — and **systematically overconfident** by fifteen to twenty-five points
+at every level. Both facts matter. Monotonicity is what makes a confidence gate
+work at all; the overconfidence is what tells you where to set it.
+
+**What this says about the threshold, which is the point of measuring.** The
+engine approves at 0.85 domestic and 0.9 cross-border. At those levels the model
+is right about 71% and 83% of the time — so **roughly one in six approvals is a
+misclassification.** For a decision that releases escrow that is too loose. The
+gate is working (83.3% of approvals correct against 36.1% overall, so it catches
+most errors) but it is not yet set where the data says it should be.
+
+That is the benchmark doing its job: `CONFIDENCE_THRESHOLD` was a guess, and the
+measurement says the guess was wrong. Any change to it changes `ENGINE_VERSION`,
+because a decision is only reproducible if the rule that produced it is pinned.
+
+**The two authorities agree closely** — 33.6% on US rulings, 38.2% on UK — which
+is evidence the engine is reading the nomenclature rather than one country's
+house style. A large gap would have meant the opposite.
+
+Re-run with:
+
+```bash
+pnpm --filter @routelock/bench score              # every row
+pnpm --filter @routelock/bench score --limit 40   # a stratified sample
+```
 
 ## What is in it
 
@@ -137,16 +197,34 @@ plain substring check does not see.
 - **Descriptions vary in length** from 121 to 3,579 characters, median 697. Long
   rows describe several articles that were classified together.
 
-## What it will measure
+## How refusal precision is counted
 
-Once the engine exists: top-1 HS-6 accuracy, **refusal precision** — of the cases
-the engine declined, how many it would have got wrong — and a calibration curve
-relating stated confidence to observed accuracy.
+Two kinds of decline exist and they are **never pooled**:
 
-Refusal precision is the figure that matters for RouteLock. The engine is allowed
-to say `NEEDS_INFORMATION` or `REFUSED`, and a model that refuses exactly when it
-would have been wrong is more useful than one that guesses at higher raw
-accuracy.
+- **Uncertainty** — no classification, low confidence, missing information. The
+  engine saying "I might be wrong". This is what refusal precision measures: of
+  these, how many would have been errors if approved.
+- **Policy** — carrier policy or a purpose flag. Whisky is classified perfectly
+  and refused anyway. Counting that as a good call would inflate the figure with
+  cases that had nothing to do with uncertainty.
+
+Of 331 rows, 306 were declined for uncertainty and 7 refused on policy — one of
+which was correctly classified before being refused, which is the desired
+behaviour rather than a failure.
+
+Refusal precision is the figure that matters for RouteLock: a model that refuses
+exactly when it would have been wrong is more useful than one that guesses at
+higher raw accuracy.
+
+## What is held constant
+
+Weight and declared value are **not part of the ground truth** — a customs ruling
+classifies goods, not consignments — so they are held fixed at 1 kg and 100,000
+NGN. That keeps them from varying the result; it does not pretend they are real.
+
+The lane is set from each row's own authority: Nigeria to the country whose
+customs service issued the ruling. Every row is therefore scored as the
+cross-border decision it would really be, at the higher 0.9 confidence bar.
 
 ```bash
 pnpm --filter @routelock/bench test   # 33 tests: extraction, HS handling, ATaR parsing

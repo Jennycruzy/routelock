@@ -222,16 +222,27 @@ Shipbubble sandbox key and an inference credential — and nothing has been stub
 in their place, because a simulated feature presented as working would be worse
 than an absent one. See [`PROGRESS.md`](PROGRESS.md).
 
-**Built, but not yet measuring anything:** the classification benchmark corpus —
-**354 rulings from two independent customs authorities**, 176 from US CBP and 178
-from UK HMRC, covering 185 HS-6 subheadings across 57 chapters, every row citing
-the binding ruling it came from. Two authorities rather than one because the
-route is chosen by whoever is shipping: a single-country corpus measures how well
-a model reproduces that country's reading of the nomenclature, not the
-nomenclature. Building it needs no inference, so it was not blocked. **Scoring it
-does**, so this repository contains no accuracy figures and will contain none
-until a real model has been run against those rows. Method, exclusions and
-limitations are in [`bench/README.md`](bench/README.md).
+**Measured, and the numbers are published.** The classification benchmark draws
+on **354 rulings from two independent customs authorities** — 176 from US CBP and
+178 from UK HMRC — covering 185 HS-6 subheadings across 57 chapters, every row
+citing the binding ruling it came from.
+
+Scored over 331 rows with `claude-sonnet-5`:
+
+| | |
+|---|---|
+| Top-1 accuracy | **36.1%** |
+| Accuracy of what it **approved** | **83.3%** |
+| Refusal precision | **66.3%** |
+
+36% is low and is stated first anyway: every row is a case an importer paid to
+have ruled on *because* the answer was not obvious. The result that matters is
+that stated confidence tracks observed accuracy **monotonically** while running
+fifteen to twenty-five points overconfident — which is exactly the measurement
+needed to set a refusal threshold, and it says the current one is too permissive.
+Method, the calibration curve, and the limitations are in
+[`bench/README.md`](bench/README.md); every individual outcome is in
+[`bench/data/`](bench/data/) so the figures can be recomputed rather than trusted.
 
 ## Verified networks
 

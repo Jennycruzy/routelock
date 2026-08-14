@@ -13,6 +13,10 @@ importers:
         version: 26.2.0
 
   bench:
+    dependencies:
+      '@routelock/compliance':
+        specifier: workspace:*
+        version: link:../packages/compliance
     devDependencies:
       tsx:
         specifier: ^4.19.2
