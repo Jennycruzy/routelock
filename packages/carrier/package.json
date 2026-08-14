@@ -10,7 +10,8 @@
     "test": "tsx --test src/*.test.ts"
   },
   "dependencies": {
-    "@routelock/chain": "workspace:*"
+    "@routelock/chain": "workspace:*",
+    "@routelock/fulfilment": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.2",

@@ -30,6 +30,9 @@ importers:
       '@routelock/chain':
         specifier: workspace:*
         version: link:../chain
+      '@routelock/fulfilment':
+        specifier: workspace:*
+        version: link:../fulfilment
     devDependencies:
       tsx:
         specifier: ^4.19.2

@@ -1,7 +1,11 @@
-/// Shipbubble as a `CarrierAdapter`.
+/// Shipbubble's API, as a `CarrierClient`.
+///
+/// This is the transport layer, not the adapter. `ShipbubbleAdapter` in
+/// `adapter.ts` sits above it and implements the shared `FulfilmentAdapter`
+/// port; this class knows only how to talk to Shipbubble.
 ///
 /// Every method here calls the real API. There is no offline mode and no
-/// recorded-response mode, deliberately — a carrier adapter that can answer
+/// recorded-response mode, deliberately — a carrier client that can answer
 /// without a carrier is the kind of simulated feature this project treats as
 /// disqualifying. What varies is *which* real environment answers: the sandbox
 /// or the live account, and that is decided by the chain, never by a flag.
@@ -14,7 +18,7 @@ import {
 import {
   CarrierError,
   type AddressInput,
-  type CarrierAdapter,
+  type CarrierClient,
   type Consignment,
   type Lane,
   type Quote,
@@ -31,7 +35,7 @@ interface Envelope<T> {
   readonly data?: T;
 }
 
-export class ShipbubbleAdapter implements CarrierAdapter {
+export class ShipbubbleClient implements CarrierClient {
   readonly name = "Shipbubble";
   readonly live: boolean;
 
@@ -40,7 +44,7 @@ export class ShipbubbleAdapter implements CarrierAdapter {
 
   /// The key is checked against the chain before the adapter exists.
   ///
-  /// Constructing an adapter is the first thing that happens on a boot that
+  /// Constructing a client is the first thing that happens on a boot that
   /// intends to talk to a carrier, so putting the pairing assertion here makes a
   /// mismatched pair a dead process rather than a wrong shipment.
   constructor(chain: ChainConfig, carrierKey: string | undefined) {

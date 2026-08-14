@@ -11,7 +11,7 @@
 /// adapter refuses to construct if the key and the chain disagree.
 
 import { getChain } from "@routelock/chain";
-import { ShipbubbleAdapter } from "../src/shipbubble.ts";
+import { ShipbubbleClient } from "../src/shipbubble.ts";
 import { categoryForHs6 } from "../src/categories.ts";
 import { isAcceptable } from "../src/policy.ts";
 import { isCrossBorder, type Lane } from "../src/types.ts";
@@ -43,7 +43,7 @@ const HS6 = "851830"; // headphones and earphones
 
 async function main(): Promise<void> {
   const chain = getChain(CHAIN);
-  const adapter = new ShipbubbleAdapter(chain, process.env["SHIPBUBBLE_API_KEY"]);
+  const adapter = new ShipbubbleClient(chain, process.env["SHIPBUBBLE_API_KEY"]);
 
   process.stdout.write(
     `${adapter.name} against ${chain.name} — mode: ${adapter.live ? "LIVE" : "sandbox"}\n\n`,

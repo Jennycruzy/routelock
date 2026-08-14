@@ -1,10 +1,14 @@
-/// The carrier-facing side of a `ServiceEntitlement`.
+/// The vocabulary of a carrier's own API.
 ///
-/// The contracts describe a service commitment identified by a class and a terms
-/// hash; they know nothing about parcels, carriers or customs. This interface is
-/// where a specific kind of service becomes concrete, and it is deliberately the
-/// only place delivery vocabulary appears. A warehousing or equipment-time
-/// adapter would implement the same three-stage shape: quote, commit, observe.
+/// This file describes a **transport client**, not an adapter. The distinction
+/// matters and is the reason for the naming: `CarrierClient` speaks a carrier's
+/// API in that carrier's own terms — addresses, parcels, couriers — while
+/// `ShipbubbleAdapter` in `adapter.ts` is the one and only adapter, presenting
+/// delivery through the shared `FulfilmentAdapter` port that carbon and compute
+/// also implement. One adapter per vertical, each over a client.
+///
+/// Delivery vocabulary is confined to this package and never reaches the
+/// contracts, which know only an opaque `classId` and opaque `bytes32` hashes.
 ///
 /// Nothing here takes a route as a constant. Origin and destination are always
 /// arguments, because whoever is shipping chooses them.
@@ -81,8 +85,11 @@ export interface Shipment {
   readonly live: boolean;
 }
 
-/// The generic carrier port. One implementation per carrier.
-export interface CarrierAdapter {
+/// One carrier's API, as this codebase calls it. One implementation per carrier.
+///
+/// Not the port the rest of the system programs against — that is
+/// `FulfilmentAdapter` in `@routelock/fulfilment`. This is the layer beneath it.
+export interface CarrierClient {
   readonly name: string;
   /// Sandbox or live, derived from the chain rather than configured separately.
   readonly live: boolean;
