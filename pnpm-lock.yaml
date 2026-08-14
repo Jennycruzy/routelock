@@ -52,6 +52,9 @@ importers:
       '@routelock/carrier':
         specifier: workspace:*
         version: link:../carrier
+      '@routelock/fulfilment':
+        specifier: workspace:*
+        version: link:../fulfilment
       viem:
         specifier: ^2.21.0
         version: 2.55.16(typescript@5.9.3)
@@ -68,6 +71,15 @@ importers:
       '@openzeppelin/contracts':
         specifier: ^5.1.0
         version: 5.6.1
+
+  packages/fulfilment:
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.12
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
 
 packages:
 
