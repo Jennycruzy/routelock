@@ -135,6 +135,55 @@ balance) belong to the operator path.
 Ten USD₮0 is enough for a demonstration class, but it is the ceiling per claim,
 so class pricing and collateral must be sized against it rather than assumed.
 
+### The binding constraint is the cooldown, not the balance
+
+Established 16 August, after a claim appeared to succeed in the UI and never
+arrived on chain.
+
+**A second claim on an address that claimed recently does not land, and the UI
+does not clearly say so.** The address held 1 USD₮0, a claim was made, and the
+balance did not move. Diagnosis, in the order worth repeating:
+
+1. **Rule out the node first.** Query two independent RPCs (`testrpc.xlayer.tech`
+   and `xlayertestrpc.okx.com`) and compare their head blocks. If they agree at
+   the same height, the balance is real and this is not the load-balancer
+   staleness problem that `send()` retries around.
+2. **Check all three tokens, not just the expected one** — a claim aimed at the
+   wrong entry in the faucet's token list lands somewhere, just not where it was
+   wanted. Here USDC_TEST and USDG were both zero, so that was not it.
+3. **Confirm the faucet is alive** by scanning its outbound `Transfer` logs for
+   *anyone*. It had dispensed 10 USD₮0 to an unrelated address 3.8 hours earlier,
+   which rules out an outage and points back at the requesting address.
+4. **Scan inbound transfers to the address over 24h**, filtering on the `to`
+   topic. Exactly one dispensation appeared — 10 USD₮0, 5h36m earlier, tx
+   `0x0a7a4926b85b527d0ff2c6d3441fa0c894c3a285f2fc1de095c528dd5cdb2fca`. The
+   arithmetic then closed exactly: 10 − 3 − 3 − 3 = 1, three e2e runs at 3 USD₮0
+   each. Every unit was accounted for by the single claim, so no second
+   dispensation had ever occurred.
+
+A trap worth naming, because it cost a scan: filtering those logs by grepping for
+the address matches it in the **`from`** topic too, which surfaces the address's
+own outbound spends and reads as a false positive. Filter on topic index 2
+explicitly — `cast logs <TRANSFER> "" <padded-to-address>` accepts an empty
+topic1, and the only error a too-wide range raises is the 100-block cap.
+
+The cooldown duration is **not established**; the contract carries an
+`...in cooldown period` error string but the window is enforced off-chain by
+OKX's queue. 24h is the assumption, untested.
+
+**Consequence for the e2e rehearsal:** do not plan around re-claiming. The run's
+cost is arbitrary on testnet, so `packages/attest/scripts/e2e.ts` takes
+`ROUTELOCK_PRICE`, `ROUTELOCK_COLLATERAL` and `ROUTELOCK_PAYOUT` and a run
+scaled 10× down costs 0.3 USD₮0 instead of 3. The escrow's only requirement is
+that collateral covers the obligation after the mint
+(`SettlementEscrow.sol:143`), which uniform scaling preserves — so the scaled run
+exercises exactly the same path.
+
+**But those figures are fixed at `createClass`, not at run time.** Reusing an
+existing class label via `ROUTELOCK_CLASS_LABEL` means the on-chain price
+governs the mint and the env vars silently do not apply. Scaled runs need a
+fresh label.
+
 For completeness, on X Layer **mainnet** there is a token named `TestUSDT`
 (symbol `USDT`, 6 dp, 1,000,000 supply) at
 `0x83bf0bacd31f9c2ae93da3a863a4f210f7b9bce1`. It is somebody's test token

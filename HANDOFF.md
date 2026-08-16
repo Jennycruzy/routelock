@@ -1,9 +1,23 @@
 # RouteLock — Handoff
 
-**Last updated: 14 August 2026** — carrier adapter and compliance engine built,
-benchmark scored in two configurations. **Paused mid-run: the Anthropic account
-is out of credit and 101 benchmark rows are unscored.** Top up, then see
-§2 "RESUME HERE" — one command finishes it.
+**Last updated: 16 August 2026** — `packages/attest` built; the whole system runs
+end to end in one script. Steps 1–4 are proven on X Layer testnet; steps 5–9 have
+not completed a full pass yet.
+
+**Paused mid-rehearsal, on nothing blocking.** The next run is ready to go and
+needs no faucet claim:
+
+```bash
+cd /root/routelock
+export ROUTELOCK_CLASS_LABEL="carbon-retirement-0.001t-$(date +%s)"   # keep this
+echo "$ROUTELOCK_CLASS_LABEL"
+ROUTELOCK_PRICE=0.1 ROUTELOCK_COLLATERAL=0.2 ROUTELOCK_PAYOUT=0.1 \
+  pnpm --filter @routelock/attest e2e --broadcast --retire
+```
+
+That costs 0.3 USD₮0 against the 1 held, so it runs three times over without
+touching the faucet. Keystore password prompt at step 0. Save that label — a late
+failure is only recoverable with it. See §2 "End-to-end rehearsal".
 
 Read this before touching anything. It covers the rules that are not negotiable,
 where the build actually stands, and what is blocked on a human.
@@ -470,11 +484,64 @@ Other Carbonmark facts worth keeping (full detail in
 - Only **61 of 723** listings had liquid supply. Read it live; supply moved from
   18,993 t to 0.056 t on one listing within minutes.
 
+### End-to-end rehearsal — built, steps 1–4 proven on chain
+
+`packages/attest/scripts/e2e.ts` runs the whole system in one pass: register
+issuer → create class → post collateral → mint → assess → rule → commit the
+decision on X Layer under the compliance key → retire a real credit → record the
+provider's receipt. **Dry run by default**; `--broadcast` sends, and the
+retirement carries a second independent gate
+(`ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT`) because a testnet obligation discharged
+with a real credit is irreversible.
+
+Two signers, deliberately different keys: the deployer (issuer/buyer/admin/oracle,
+from the Foundry keystore) and the compliance service from
+`COMPLIANCE_PRIVATE_KEY`. The escrow structurally refuses the compliance key any
+authority over funds, so it can open the activation gate and can never move
+money. **Running them as one key would erase the property the whole pitch rests
+on** — do not "simplify" this.
+
+| | address | holds (checked 16 Aug) |
+|---|---|---|
+| deployer / role | `0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6` | 1 USD₮0, 0.3997 OKB on X Layer; **2.99 USDC on Base** |
+| compliance | `0xA30D83117470c884fB3C35532d2a49Bc65B0922a` | 0 USD₮0, 0.2 OKB |
+
+**Step 8 is funded and the old README claim that it was not is wrong.** The
+retirement pays ~0.03 USDC on Base via EIP-3009, which **needs no ETH** — the
+Base ETH balance is 0 and that is fine. `ROUTELOCK_MAX_RETIREMENT_USDC` caps a
+single signature, default 1 USDC.
+
+Note the deliberate asymmetry in `e2e.ts`: the adapter built at step 5 for
+assessment takes a `sign` that throws, so the code path that reads inventory
+physically cannot spend. Step 8 constructs a *second* adapter with a real signer
+under an explicit ceiling. **That throwing stub is not a TODO — do not "fix" it.**
+
+**Steps 1–4 are proven on the real chain. Steps 5–9 have not completed a full
+pass.** Step 8 — the EIP-3009 signature and the irreversible burn — has never
+executed; it is the first thing to watch on the next run and is exactly what the
+rehearsal exists to find out.
+
+**Run cost is now configurable and defaults unchanged.** `ROUTELOCK_PRICE`,
+`ROUTELOCK_COLLATERAL` and `ROUTELOCK_PAYOUT` default to 1/2/1 USD₮0. A 10×
+scaled run costs 0.3 and exercises an identical path — the escrow only requires
+collateral to cover the obligation after the mint. **These are fixed at
+`createClass`, so reusing a class label via `ROUTELOCK_CLASS_LABEL` means the
+on-chain price governs and the env vars silently do not apply.** Scaled runs need
+a fresh label.
+
+`ROUTELOCK_RESUME_TOKEN` resumes a token already submitted for review, and
+**requires `ROUTELOCK_CLASS_LABEL`** — without the original label the run
+computes a different `classId` and would bind the decision to the wrong class.
+It only works on a token that reached `submitParcel`; the resume path reads the
+on-chain parcel hash and refuses on a zero.
+
+**Token 3 is stranded** — minted, never submitted, 3 USD₮0 locked in escrow. Not
+recoverable by resume.
+
 ### Not started
 
-The compute adapter, the attestation package, and the frontend.
-`packages/attest` and `apps/{web,api}` are empty — nothing in them is stubbed or
-scaffolded with placeholder behaviour.
+The compute adapter and the frontend. `apps/{web,api}` are empty — nothing in
+them is stubbed or scaffolded with placeholder behaviour.
 
 ### Resume here — in this order
 
@@ -562,6 +629,14 @@ These cannot be resolved from this box and are listed in the order they block wo
 3. **Inference credit**, for the carbon quality benchmark. Not for the parked HS
    rows.
 
+   **X Layer testnet USD₮0 is *not* on this list, and should not be treated as
+   blocking.** The faucet has a per-address cooldown enforced off-chain by OKX's
+   queue; a second claim inside the window does not land and the UI does not
+   clearly say so. The response is not to wait for it — scale the run down with
+   `ROUTELOCK_PRICE` / `ROUTELOCK_COLLATERAL` / `ROUTELOCK_PAYOUT` and use the
+   balance already held. Diagnosis method in `docs/chain-verification.md`, under
+   "The binding constraint is the cooldown, not the balance".
+
 4. **BOT Chain gas support form** (1 BOT per eligible project) and their project
    submission form — both were to be filed day 1 and have not been.
 
@@ -610,8 +685,36 @@ is only a record of a previous answer.
 pnpm --filter @routelock/carrier smoke      # quote 3 lanes, free, no quota used
 pnpm --filter @routelock/compliance classify --goods "…" --from NG --to GB
 pnpm --filter @routelock/bench build:corpus # rebuild from both rulings databases
-pnpm test                                   # 267 across the workspace
+pnpm test                                   # 326 across the workspace
 ```
+
+### End to end
+
+```bash
+pnpm --filter @routelock/attest e2e                      # simulate, spend nothing
+pnpm --filter @routelock/attest e2e --broadcast --retire  # real, irreversible
+```
+
+A dry run cannot get past step 2 on a fresh label: `createClass` is simulated but
+never sent, so step 3 posts collateral to a class that does not exist and reverts
+`UnknownClass` (`0x693b1355` — `ESCROW_ABI` omits the custom errors, so it prints
+undecoded). That is inherent to simulating a stateful sequence, not a defect.
+
+Check funding without spending the keystore password — the balance gate at step 0
+throws before anything is sent, so a short balance costs nothing but the prompt:
+
+```bash
+export PATH="$PATH:/root/.foundry/bin"
+cast call --rpc-url https://testrpc.xlayer.tech \
+  0x9e29b3AaDa05Bf2D2c827Af80Bd28Dc0b9b4FB0c \
+  'balanceOf(address)(uint256)' 0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6
+```
+
+**`pnpm -r typecheck` is only as wide as each package's `include` globs.** It
+read clean for days while `packages/attest/scripts/` — the only code that spends
+money — was outside them. All six packages with a `scripts/` directory now
+include it. If a check passes on code that plainly has a defect, suspect the
+check's scope first.
 
 ---
 

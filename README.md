@@ -380,13 +380,14 @@ prose.
 
 Stated as absent rather than stubbed:
 
-- **No fulfilment has been performed by any adapter.** The carbon adapter is
-  funded-blocked: the issuer address holds **0 USDC on Base** against the
-  ~0.03 USDC a 0.001 t retirement costs.
-- **The attestation package and public replay endpoint** (`packages/attest`) —
-  empty, nothing scaffolded.
+- **No fulfilment has been performed by any adapter.** The carbon retirement is
+  wired end to end and funded — the paying address holds 2.99 USDC on Base
+  against the ~0.03 USDC a 0.001 t retirement costs, and EIP-3009 needs no ETH —
+  but it **has never executed**. Until it does, no credit has been retired.
+- **The end-to-end script exists and has not completed a full pass.**
+  `packages/attest/scripts/e2e.ts` runs all nine steps; steps 1–4 are proven on
+  X Layer testnet, steps 5–9 are not. The public replay endpoint is not built.
 - **The frontend** (`apps/web`, `apps/api`) — empty, nothing scaffolded.
-- **`ActivationRegistry` is deployed but not yet wired** to the adapters.
 - **The compute adapter** — not started.
 - **`ADMIN` and `ORACLE` share one key**, as a testnet shortcut. They are
   separated before any mainnet deploy.

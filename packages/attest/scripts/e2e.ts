@@ -29,6 +29,7 @@ import {
   encodeFunctionData,
   http,
   keccak256,
+  parseUnits,
   toHex,
 } from "viem";
 import type { Account, Address, PublicClient, WalletClient } from "viem";
@@ -125,10 +126,37 @@ interface Deployment {
 
 /// Sized against the faucet: 10 USD₮0 per claim is the ceiling, so a run must
 /// cost well under that or a second run needs a second claim.
-const PRICE = 1_000_000n; // 1 USD₮0, 6 decimals
-const COLLATERAL = 2_000_000n; // 2 USD₮0 — must cover payoutObligation per unit
-const PAYOUT_OBLIGATION = 1_000_000n;
+///
+/// Overridable because the faucet's per-address cooldown is the real constraint,
+/// not the balance. A rehearsal that has already burned a claim can still run at
+/// a tenth of these figures on the change left over:
+///
+///   ROUTELOCK_PRICE=0.1 ROUTELOCK_COLLATERAL=0.2 ROUTELOCK_PAYOUT=0.1
+///
+/// The amounts are denominated in whole USD₮0 and are arbitrary on testnet — the
+/// escrow only cares that collateral covers the obligation after the mint
+/// (`SettlementEscrow.sol:143`), which any uniform scaling preserves. Nothing
+/// about the mechanism changes; only the denomination does.
+function usd(envVar: string, fallback: string): bigint {
+  const raw = process.env[envVar];
+  if (raw === undefined) return parseUnits(fallback, 6);
+  const parsed = parseUnits(raw, 6);
+  if (parsed <= 0n) throw new Error(`${envVar} must be greater than zero, got ${raw}`);
+  return parsed;
+}
+
+const PRICE = usd("ROUTELOCK_PRICE", "1");
+const COLLATERAL = usd("ROUTELOCK_COLLATERAL", "2");
+const PAYOUT_OBLIGATION = usd("ROUTELOCK_PAYOUT", "1");
 const MAX_SUPPLY = 5;
+
+// Fail here rather than at the mint, where it costs a broadcast to learn it.
+if (COLLATERAL < PAYOUT_OBLIGATION) {
+  throw new Error(
+    `collateral ${Number(COLLATERAL) / 1e6} does not cover the payout obligation ` +
+      `${Number(PAYOUT_OBLIGATION) / 1e6} — the escrow will refuse the mint`,
+  );
+}
 
 function step(n: number, title: string): void {
   console.log(`\n${"─".repeat(66)}\n${n}. ${title}\n${"─".repeat(66)}`);
@@ -174,10 +202,10 @@ async function send(
 
   if (!EXECUTES) {
     const data = encodeFunctionData({
-      abi: call.abi as never,
-      functionName: call.functionName as never,
-      args: call.args as never,
-    });
+      abi: call.abi,
+      functionName: call.functionName,
+      args: call.args,
+    } as Parameters<typeof encodeFunctionData>[0]);
     console.log(`  ${label}`);
     console.log(`    simulated OK — would send ${data.slice(0, 10)} to ${call.address}`);
     return result;
@@ -297,9 +325,15 @@ async function main(): Promise<void> {
     address: deployment.settlementToken, abi: ERC20_ABI, functionName: "balanceOf", args: [owner.address],
   });
   console.log(`  USD₮0       ${Number(balance) / 1e6}`);
+  console.log(
+    `  run cost    ${Number(PRICE + COLLATERAL) / 1e6} ` +
+      `(price ${Number(PRICE) / 1e6} + collateral ${Number(COLLATERAL) / 1e6})`,
+  );
   if (balance < PRICE + COLLATERAL) {
     throw new Error(
-      `need ${Number(PRICE + COLLATERAL) / 1e6} USD₮0, have ${Number(balance) / 1e6}. Claim from the faucet.`,
+      `need ${Number(PRICE + COLLATERAL) / 1e6} USD₮0, have ${Number(balance) / 1e6}. ` +
+        `Claim from the faucet, or run cheaper — ROUTELOCK_PRICE / ROUTELOCK_COLLATERAL / ` +
+        `ROUTELOCK_PAYOUT scale the run down without changing what it proves.`,
     );
   }
 
@@ -313,6 +347,26 @@ async function main(): Promise<void> {
   if (resumeToken !== undefined) {
     console.log(`\n  resuming token ${resumeToken} — skipping issuance and submission`);
   }
+
+  // The label is opaque to the contracts — they store keccak256 of it and never
+  // parse it. Nothing about carbon can be read back out of a classId.
+  //
+  // Declared out here, not inside the issuance block below: step 5 builds the
+  // order from classId, so a block-scoped const is a ReferenceError on every
+  // run that gets that far. Resuming needs the label of the class the token was
+  // actually minted under — a fresh Date.now() label would hash to a class that
+  // does not hold the token.
+  if (resumeToken !== undefined && process.env.ROUTELOCK_CLASS_LABEL === undefined) {
+    throw new Error(
+      "resuming requires ROUTELOCK_CLASS_LABEL — the label token " +
+        `${resumeToken} was minted under. Without it the run computes a ` +
+        "different classId and binds the decision to the wrong class.",
+    );
+  }
+  const label = process.env.ROUTELOCK_CLASS_LABEL ?? `carbon-retirement-0.001t-${Date.now()}`;
+  const classId = keccak256(toHex(label));
+  const termsHash = keccak256(toHex(`RouteLock carbon retirement terms v1 :: ${label}`));
+  const validUntil = BigInt(Math.floor(Date.now() / 1000) + 30 * 24 * 3600);
 
   if (resumeToken === undefined) {
   step(1, "Register the issuer");
@@ -330,12 +384,6 @@ async function main(): Promise<void> {
   }
 
   step(2, "Create the class");
-  // The label is opaque to the contracts — they store keccak256 of it and never
-  // parse it. Nothing about carbon can be read back out of a classId.
-  const label = process.env.ROUTELOCK_CLASS_LABEL ?? `carbon-retirement-0.001t-${Date.now()}`;
-  const classId = keccak256(toHex(label));
-  const termsHash = keccak256(toHex(`RouteLock carbon retirement terms v1 :: ${label}`));
-  const validUntil = BigInt(Math.floor(Date.now() / 1000) + 30 * 24 * 3600);
   console.log(`  label       ${label}`);
   console.log(`  classId     ${classId}`);
 

@@ -557,3 +557,76 @@ committing a placeholder would be fabricated evidence.
 
 **Carbonmark production access is now the critical path to the X Layer demo.**
 Everything upstream of the retirement is done and exercised against real data.
+
+---
+
+## End-to-end rehearsal — 16 August 2026
+
+`packages/attest` exists and `scripts/e2e.ts` runs the whole system in one pass:
+register issuer → create class → post collateral → mint → assess → rule →
+commit the decision on X Layer → retire a real credit → record the receipt.
+Dry run by default; `--broadcast` sends, and the retirement carries a second
+independent gate on top of that.
+
+**Steps 1–4 are proven on the real chain.** Steps 5–9 have not completed end to
+end yet. Step 8 — the EIP-3009 signature and the irreversible burn — has never
+executed.
+
+### Two bugs found by running it for real
+
+**A write was read back before it settled.** `submitParcel` returned as soon as
+the transaction was broadcast, so `recordDecision` read the state on the next
+line and saw the pre-transaction value. The token was moving to `PendingReview`;
+the read simply got there first. `send()` now waits for two confirmations, and
+state preconditions retry for a few seconds before refusing. A genuinely wrong
+state still fails, just later and correctly.
+
+**`classId` was declared inside a block and read outside it.** A resume flag was
+added by wrapping steps 1–4 in `if (resumeToken === undefined) { … }` without
+checking which `const` declarations were read further down. `classId` is built
+in step 2 and used in step 5, so the run died with `classId is not defined` —
+on *every* path, not an edge case, and only after four real transactions had
+been broadcast and 3 USD₮0 spent.
+
+**The reason nothing caught it is the part worth keeping.**
+`packages/attest/tsconfig.json` had `"include": ["src/**/*.ts"]`. `scripts/` was
+never typechecked, so `tsc` never looked at the one file in the package that
+spends money, and a clean `pnpm -r typecheck` meant nothing about it. Every
+other package with a `scripts/` directory already included it; attest was the
+only exception. Now aligned — and the fix immediately surfaced a real
+`encodeFunctionData` call whose `abi: … as never` had collapsed the whole
+argument to `never`.
+
+*Generalisation: a "0 errors" result is only as wide as the `include` globs. When
+a check passes on code that obviously has a defect, suspect the check's scope
+before suspecting the defect.*
+
+### Funding is cooldown-bound, and the run is now cheap enough not to care
+
+A faucet claim appeared to succeed and never landed. Full diagnosis in
+`docs/chain-verification.md` — the short version is that the address had claimed
+5h36m earlier, the faucet was demonstrably alive for other addresses, and the
+balance arithmetic closed exactly against a single dispensation, so no second
+claim had occurred. The cooldown window is enforced off-chain and its length is
+unverified.
+
+`e2e.ts` therefore takes `ROUTELOCK_PRICE`, `ROUTELOCK_COLLATERAL` and
+`ROUTELOCK_PAYOUT`, defaulting to the previous 1/2/1. A 10× scaled run costs
+0.3 USD₮0 rather than 3 and exercises an identical path, because the escrow only
+requires collateral to cover the obligation after the mint. The script now
+prints the run cost at step 0 and refuses at startup if collateral cannot cover
+the obligation, rather than discovering it at the mint.
+
+### Known limitations, not yet addressed
+
+- **A dry run cannot get past step 2 on a fresh label.** `createClass` is
+  simulated but never sent, so step 3 posts collateral to a class that does not
+  exist and reverts with `UnknownClass`. Inherent to simulating a stateful
+  sequence; worth knowing before treating a dry-run failure as a real defect.
+- **`ESCROW_ABI` in `e2e.ts` omits the contract's custom errors**, so that revert
+  prints as an undecodable `0x693b1355` rather than by name. Cheap to fix and it
+  would have saved a lookup.
+- **Token 3 is stranded.** It was minted before the `classId` failure and never
+  reached `submitParcel`, so `ROUTELOCK_RESUME_TOKEN` cannot recover it — the
+  resume path reads the on-chain parcel hash and refuses on a zero. Its 3 USD₮0
+  sits in escrow.
