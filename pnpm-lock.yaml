@@ -90,9 +90,15 @@ importers:
 
   packages/compliance:
     dependencies:
+      '@routelock/carbon':
+        specifier: workspace:*
+        version: link:../carbon
       '@routelock/carrier':
         specifier: workspace:*
         version: link:../carrier
+      '@routelock/chain':
+        specifier: workspace:*
+        version: link:../chain
       '@routelock/fulfilment':
         specifier: workspace:*
         version: link:../fulfilment

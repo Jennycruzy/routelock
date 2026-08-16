@@ -25,7 +25,7 @@ artifacts/carrier/
 
 # The retirement ledger. Local durable spending state, not evidence: the proof
 # of a retirement is its on-chain transaction and its public certificate.
-data/retirements.jsonl
+**/data/retirements.jsonl
 
 # Scoring-run checkpoints. Transient: they let an interrupted run resume
 # without paying for the same rows twice, and are removed on a clean finish.
@@ -36,3 +36,6 @@ bench/data/.checkpoint-*.jsonl
 # Foundry libraries are fetched on install (see packages/contracts prepare
 # script) rather than vendored, so the repo contains only RouteLock's own code.
 packages/contracts/lib/
+
+# The inference spend ledger. Local operational state, not evidence.
+**/data/inference-calls.jsonl
