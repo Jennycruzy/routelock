@@ -10,9 +10,28 @@ performed a real fulfilment on the named chain.
 
 | Adapter | Chain | Status | Fulfilment proof |
 |---|---|---|---|
-| `carbonmark` | X Layer | **In development.** Not deployed. No retirement performed — a test-mode key returns a shared placeholder and retires nothing. | Public certificate URL |
+| `carbonmark-x402` | X Layer | **In development.** Not deployed. No retirement performed. Code complete and exercised against the live Klima endpoint; blocked on the issuer holding USDC on Base. | Public certificate URL |
+| `carbonmark` (REST) | X Layer | **Superseded.** Retained, not shipped — Carbonmark's REST API is KYB-gated and a test-mode key retires nothing. | Public certificate URL |
 | `akash` | BOT Chain | **Not started.** Begins after X Layer is submitted. | On-chain lease + ingress URL |
 | `shipbubble` | none | **Reference implementation. Not deployed.** Retained to demonstrate the contract set carries no vertical. | Carrier label + tracking |
+
+## Two carbon adapters, and which one ships
+
+`CarbonmarkX402Adapter` is the one that ships. The Klima x402 endpoint needs no
+key and no onboarding, and its retirements are real. It settles on **Base
+mainnet** while the obligation, collateral, escrow and compliance record stay on
+X Layer; nothing is bridged and no credit is wrapped.
+
+`CarbonmarkAdapter` implements Carbonmark's standard REST API — corporate
+compliance review, a signed API Services Agreement, then dashboard access for
+live keys. It is retained rather than deleted because it is exercised as far as
+a test-mode key allows, and because it holds the finding that a test-mode
+retirement returns a shared placeholder and retires nothing. See
+[carbonmark-verification.md](./carbonmark-verification.md).
+
+The status vocabulary below gains one term for this: **Superseded** means built
+and exercised, kept in the tree for the evidence it carries, and not on the path
+to Active.
 
 ## Status vocabulary
 
@@ -22,6 +41,7 @@ performed a real fulfilment on the named chain.
 | **In development** | Code exists. No real fulfilment has been performed. Nothing in the UI or README may present it as working. |
 | **Not started** | No implementation. |
 | **Reference implementation** | Built and exercised against the provider's real API, deliberately not deployed. Present as evidence of vertical-agnosticism. |
+| **Superseded** | Built and exercised, kept for the evidence it carries, not on the path to Active. |
 
 Delivery is not deleted. Three adapters against one unchanged contract set is
 stronger evidence of generality than two, and the delivery adapter is the one
