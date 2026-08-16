@@ -20,7 +20,7 @@ export type {
 } from "./types.ts";
 
 /// Carbon credit quality — the second vertical the engine rules on.
-export { decideCarbon, CARBON_CONFIDENCE_THRESHOLD, MAX_VINTAGE_AGE_YEARS, RECOGNISED_REGISTRIES } from "./carbon/decide.ts";
+export { decideCarbon, CARBON_ENGINE_VERSION, CARBON_CONFIDENCE_THRESHOLD, MAX_VINTAGE_AGE_YEARS, RECOGNISED_REGISTRIES } from "./carbon/decide.ts";
 export { proposeCarbonQuality, proposeCarbonQualityWithRetry, parseCarbonProposal, buildCarbonPrompt } from "./carbon/propose.ts";
 export type { CarbonModelOptions } from "./carbon/propose.ts";
 export { InferenceBudget, InferenceBudgetExceeded, estimateCostUsd, ledgerPath, capsFromEnv as budgetCapsFromEnv, DEFAULT_CAPS as DEFAULT_BUDGET_CAPS } from "./carbon/budget.ts";

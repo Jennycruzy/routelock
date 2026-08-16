@@ -23,7 +23,20 @@
 /// gate exists to prevent.
 
 import { Verdict } from "../types.ts";
+
 import type { CarbonGround, CarbonProposal, CarbonQualityRequest } from "./types.ts";
+
+/// What produced a carbon ruling, written on chain as `engineVersion`.
+///
+/// Separate from the delivery engine's version, and it has to be: the first
+/// live run committed `compliance-0.2.0/hs-2022+grounded` against a carbon
+/// decision, which claims the HS classifier and its nomenclature edition
+/// produced a judgement they had nothing to do with. On a permanent audit
+/// record that is a false provenance, not a cosmetic slip.
+///
+/// The suffix names what the ruling actually depended on: the registry
+/// allowlist and confidence bar in this file, both picked rather than measured.
+export const CARBON_ENGINE_VERSION = "compliance-0.2.0/carbon-registry-v1";
 
 /// Minimum confidence to approve a retirement.
 ///

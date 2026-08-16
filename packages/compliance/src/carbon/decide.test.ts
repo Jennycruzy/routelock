@@ -4,6 +4,7 @@ import { test } from "node:test";
 import { Verdict } from "../types.ts";
 import {
   CARBON_CONFIDENCE_THRESHOLD,
+  CARBON_ENGINE_VERSION,
   decideCarbon,
   deterministicGround,
   MAX_VINTAGE_AGE_YEARS,
@@ -390,4 +391,11 @@ test("every live registry code is either recognised or deliberately refused", ()
     assert.equal(typeof known, "boolean");
   }
   assert.equal(observed.filter((c) => !RECOGNISED_REGISTRIES.includes(c)).length, 1);
+});
+
+test("the carbon engine version does not claim the HS classifier", () => {
+  // The first live run wrote "hs-2022+grounded" on chain for a carbon ruling.
+  // engineVersion is permanent evidence of what produced a decision.
+  assert.ok(!CARBON_ENGINE_VERSION.includes("hs-"), CARBON_ENGINE_VERSION);
+  assert.match(CARBON_ENGINE_VERSION, /carbon/);
 });

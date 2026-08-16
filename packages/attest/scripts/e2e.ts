@@ -43,7 +43,7 @@ import {
   proposeCarbonQuality,
   Verdict,
   VERDICT_NAMES,
-  ENGINE_VERSION,
+  CARBON_ENGINE_VERSION,
 } from "@routelock/compliance";
 import type { CarbonQualityRequest } from "@routelock/compliance";
 import { approve, canonicalHash } from "@routelock/compliance";
@@ -437,7 +437,7 @@ async function main(): Promise<void> {
   console.log(`  cost        ${budget.summary()}`);
 
   const decision = {
-    engineVersion: ENGINE_VERSION, model: process.env.ROUTELOCK_LLM_MODEL!,
+    engineVersion: CARBON_ENGINE_VERSION, model: process.env.ROUTELOCK_LLM_MODEL!,
     request, proposal, verdict, ground, irreversible: true as const,
   };
 
@@ -468,7 +468,7 @@ async function main(): Promise<void> {
   const complianceRegistry = new ActivationRegistryClient(publicClient, {
     registry: deployment.activationRegistry, entitlement: deployment.serviceEntitlement,
   }, complianceWallet);
-  await complianceRegistry.recordDecision(tokenId, fields.decisionHash, ENGINE_VERSION, verdict);
+  await complianceRegistry.recordDecision(tokenId, fields.decisionHash, CARBON_ENGINE_VERSION, verdict);
   console.log(`    committed — ${VERDICT_NAMES[verdict]} is now on chain`);
 
   if (verdict !== Verdict.Approved) {
