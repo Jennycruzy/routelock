@@ -11,7 +11,8 @@
     "fetch:nomenclature": "tsx scripts/fetch-nomenclature.ts",
     "retrieval:recall": "tsx scripts/retrieval-recall.ts",
     "estimate:cost": "tsx scripts/estimate-cost.ts",
-    "smoke:carbon": "tsx scripts/smoke-carbon-compliance.ts"
+    "smoke:carbon": "tsx scripts/smoke-carbon-compliance.ts",
+    "rule:inventory": "tsx scripts/rule-inventory.ts"
   },
   "dependencies": {
     "@routelock/carrier": "workspace:*",

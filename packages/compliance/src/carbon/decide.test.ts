@@ -5,7 +5,10 @@ import { Verdict } from "../types.ts";
 import {
   CARBON_CONFIDENCE_THRESHOLD,
   decideCarbon,
+  deterministicGround,
   MAX_VINTAGE_AGE_YEARS,
+  RECOGNISED_REGISTRIES,
+  unassessedProposal,
 } from "./decide.ts";
 import type { CarbonProposal, CarbonQualityRequest } from "./types.ts";
 
@@ -271,4 +274,85 @@ test("refusal and needs-information are distinct outcomes, never collapsed", () 
   assert.equal(refused.verdict, Verdict.Refused);
   assert.equal(referred.verdict, Verdict.NeedsInformation);
   assert.notEqual(refused.verdict, referred.verdict);
+});
+
+// --- skipping inference when the facts already decide ----------------------
+
+test("a sound class needs the model — no short-circuit", () => {
+  assert.equal(deterministicGround(goodRequest()), null);
+});
+
+test("an unidentifiable class is settled without paying for inference", () => {
+  const ground = deterministicGround(goodRequest({ identityUnknown: true }));
+  assert.equal(ground?.kind, "identity_unknown");
+});
+
+test("an unregistered class is settled without inference", () => {
+  assert.equal(deterministicGround(goodRequest({ isRegistered: false }))?.kind, "unregistered_class");
+});
+
+test("an unrecognised registry is settled without inference", () => {
+  assert.equal(
+    deterministicGround(goodRequest({ registries: ["NOT-A-REGISTRY"] }))?.kind,
+    "unregistered_class",
+  );
+});
+
+test("insufficient liquidity is settled without inference", () => {
+  assert.equal(
+    deterministicGround(goodRequest({ liquidityTonnes: 0, tonnesRequested: 1 }))?.kind,
+    "insufficient_liquidity",
+  );
+});
+
+test("the short-circuit agrees with the full decision every time", () => {
+  // If these ever disagreed, skipping the model would change the verdict —
+  // which would make the saving a correctness bug.
+  const cases = [
+    goodRequest({ identityUnknown: true }),
+    goodRequest({ isRegistered: false }),
+    goodRequest({ registries: [] }),
+    goodRequest({ liquidityTonnes: 0, tonnesRequested: 1 }),
+  ];
+
+  for (const req of cases) {
+    const short = deterministicGround(req);
+    assert.notEqual(short, null);
+    const full = decideCarbon(req, unassessedProposal("short-circuit"));
+    assert.equal(full.ground.kind, short!.kind);
+    assert.equal(full.verdict, Verdict.NeedsInformation);
+  }
+});
+
+test("an unassessed proposal states plainly that nothing was assessed", () => {
+  const p = unassessedProposal("class identity could not be established");
+
+  assert.equal(p.confidence, 0);
+  assert.equal(p.rationale, "");
+  assert.match(p.openQuestions[0]!, /no assessment was attempted/);
+  // And it can never approve.
+  assert.notEqual(decideCarbon(goodRequest(), p).verdict, Verdict.Approved);
+});
+
+test("the registry allowlist uses the provider's codes, not registry names", () => {
+  // The bug this pins: "PURO" was written from memory; the endpoint returns
+  // "PUR", and three of six live classes were refused as a result.
+  assert.ok(RECOGNISED_REGISTRIES.includes("PUR"), "Puro.earth is PUR, not PURO");
+  assert.ok(!RECOGNISED_REGISTRIES.includes("PURO"), "PURO is not a code the provider returns");
+  assert.ok(RECOGNISED_REGISTRIES.includes("REGEN"));
+});
+
+test("CMARK stays out until somebody confirms what it denotes", () => {
+  // Not an oversight — a deliberate refusal direction. Remove this test only
+  // alongside evidence about what the code identifies.
+  assert.ok(!RECOGNISED_REGISTRIES.includes("CMARK"));
+});
+
+test("every live registry code is either recognised or deliberately refused", () => {
+  const observed = ["UCR", "REGEN", "PUR", "CMARK"];
+  for (const code of observed) {
+    const known = RECOGNISED_REGISTRIES.includes(code);
+    assert.equal(typeof known, "boolean");
+  }
+  assert.equal(observed.filter((c) => !RECOGNISED_REGISTRIES.includes(c)).length, 1);
 });

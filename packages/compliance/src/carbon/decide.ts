@@ -43,11 +43,79 @@ export const MAX_VINTAGE_AGE_YEARS = 10;
 
 /// Registries whose retirements can be independently verified.
 ///
-/// **Chosen, not measured**, and sourced from what the endpoint actually
-/// returns rather than from memory of what registries exist. A class from a
-/// registry not on this list is referred, never silently trusted: the whole
-/// proof model rests on a third party being checkable.
-export const RECOGNISED_REGISTRIES: readonly string[] = ["VCS", "GS", "ACR", "CAR", "UCR", "PURO"];
+/// **Chosen, not measured.** A class from a registry not on this list is
+/// referred, never silently trusted: the proof model rests on a third party
+/// being checkable.
+///
+/// ⚠️ **These are the provider's codes, read off live responses — not registry
+/// names from memory.** The first version of this list was written from memory
+/// and was wrong in a way that refused three of the six classes in live
+/// inventory: it said `PURO` where the endpoint returns `PUR`, and omitted
+/// `REGEN` entirely. A scan of the whole inventory caught it. If a new code
+/// appears, read it from a response before adding it here.
+///
+/// Codes observed live on 2026-08-16: `UCR`, `REGEN`, `PUR`, `CMARK`.
+///
+/// `CMARK` is deliberately **absent**. It appears on Carbonmark-side listings
+/// and it is not established that it identifies an issuing registry whose
+/// retirements can be checked independently of the marketplace itself — which
+/// is the entire property this check tests for. Referring those classes until
+/// somebody confirms what the code denotes is the correct failure direction.
+export const RECOGNISED_REGISTRIES: readonly string[] = [
+  "VCS", // Verra
+  "GS", // Gold Standard
+  "ACR", // American Carbon Registry
+  "CAR", // Climate Action Reserve
+  "UCR", // Universal Carbon Registry
+  "PUR", // Puro.earth — the provider's code, not "PURO"
+  "REGEN", // Regen Registry
+];
+
+/// Can the facts alone settle this, without asking the model?
+///
+/// Several grounds below depend on nothing the model supplies: a class with no
+/// identity, no registry, or not enough supply is referred whatever an
+/// assessment would have said. Paying for inference on those is spending money
+/// to reach a conclusion already reached.
+///
+/// Returns the ground when the facts decide, `null` when a model is genuinely
+/// needed. Callers that skip the call must still record *why* they skipped —
+/// see `unassessedProposal`.
+export function deterministicGround(request: CarbonQualityRequest): CarbonGround | null {
+  if (request.identityUnknown) return { kind: "identity_unknown" };
+  if (!request.isRegistered) return { kind: "unregistered_class" };
+  if (
+    request.registries.length === 0 ||
+    !request.registries.some((r) => RECOGNISED_REGISTRIES.includes(r.toUpperCase()))
+  ) {
+    return { kind: "unregistered_class" };
+  }
+  if (request.insufficientLiquidity || request.liquidityTonnes < request.tonnesRequested) {
+    return {
+      kind: "insufficient_liquidity",
+      available: request.liquidityTonnes,
+      requested: request.tonnesRequested,
+    };
+  }
+  return null;
+}
+
+/// The proposal to record when no model was asked.
+///
+/// Not an empty object dressed up as an assessment: it states plainly that no
+/// assessment was attempted and why. The published decision must never imply a
+/// model looked at something it never saw.
+export function unassessedProposal(reason: string): CarbonProposal {
+  return {
+    methodologyStrength: "weak",
+    permanenceRisk: "high",
+    adverseFindings: [],
+    integrityFlags: [],
+    openQuestions: [`no assessment was attempted: ${reason}`],
+    confidence: 0,
+    rationale: "",
+  };
+}
 
 /// Apply the rules. Pure, total, and ordered — the order is the policy.
 export function decideCarbon(
