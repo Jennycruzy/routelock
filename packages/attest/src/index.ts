@@ -22,3 +22,12 @@ export {
   AttestationError,
 } from "./attestation.ts";
 export type { Attestation, WorkSpec, EvidenceSet } from "./attestation.ts";
+
+export { ActivationRegistryClient, RegistryError } from "./registry.ts";
+export type { RegistryAddresses, OnChainActivation } from "./registry.ts";
+export {
+  ACTIVATION_REGISTRY_ABI,
+  SERVICE_ENTITLEMENT_ABI,
+  EntitlementState,
+  ENTITLEMENT_STATE_NAMES,
+} from "./abi.ts";

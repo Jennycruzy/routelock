@@ -6,7 +6,8 @@
   "main": "./src/index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/*.test.ts"
+    "test": "tsx --test src/*.test.ts",
+    "verify:registry": "tsx scripts/verify-registry.ts"
   },
   "dependencies": {
     "@routelock/chain": "workspace:*",
