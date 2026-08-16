@@ -12,7 +12,7 @@ performed a real fulfilment on the named chain.
 |---|---|---|---|
 | `carbonmark-x402` | X Layer | **In development.** Not deployed. No retirement performed. Code complete and exercised against the live Klima endpoint; blocked on the issuer holding USDC on Base. | Public certificate URL |
 | `carbonmark` (REST) | X Layer | **Superseded.** Retained, not shipped — Carbonmark's REST API is KYB-gated and a test-mode key retires nothing. | Public certificate URL |
-| `akash` | BOT Chain | **Not started.** Begins after X Layer is submitted. | On-chain lease + ingress URL |
+| `akash` | — | **Not started.** No implementation. | On-chain lease + ingress URL |
 | `shipbubble` | none | **Reference implementation. Not deployed.** Retained to demonstrate the contract set carries no vertical. | Carrier label + tracking |
 
 ## Two carbon adapters, and which one ships

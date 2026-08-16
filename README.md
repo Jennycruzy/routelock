@@ -34,7 +34,7 @@ gate that can refuse. Three adapters sit above one unchanged contract set:
 |---|---|---|---|---|
 | `carbonmark-x402` | Carbon retirement | X Layer | **In development.** Code complete and exercised against the live endpoint. No retirement performed. | Public Carbonmark certificate URL |
 | `shipbubble` | Delivery | none | **Reference implementation.** Built against the real API, deliberately not deployed. | Carrier label + tracking number |
-| `akash` | Compute leasing | BOT Chain | **Not started.** Begins after X Layer is submitted. | On-chain lease + ingress URL |
+| `akash` | Compute leasing | — | **Not started.** Named here because the port it will implement already exists, not because any of it is built. | On-chain lease + ingress URL |
 
 The five contracts already deployed at the addresses below would back a
 pallet-month of bonded warehousing, a cold-chain window, or a freight slot
@@ -130,9 +130,9 @@ paid for immediately and retired later, in bulk, if at all.
 `CarbonmarkX402Adapter` retires through **Klima's x402 endpoint**, settling on
 Base mainnet while the obligation, the collateral, the escrow and the compliance
 record stay on X Layer. Nothing is bridged and no credit is wrapped or tokenised.
-A judge inspects X Layer state and then clicks a third-party certificate — which
-is stronger evidence than a self-contained system where every claim traces back
-to this project's own database.
+Anyone can inspect X Layer state and then check the retirement certificate at the
+registry that issued it — which is stronger evidence than a self-contained system
+where every claim traces back to this project's own database.
 
 Exercised against the live endpoint on 16 August: **six credit classes in
 inventory**, priced from $0.067/t to $947/t, with registry, project ids, vintages
@@ -171,16 +171,25 @@ evidence for the request. Full detail in
 `ShipbubbleAdapter`, built against the real API and exercised on live sandbox
 quotes across three lanes (NG→NG, NG→GB, NG→HK) without consuming shipment quota.
 It is **not deployed**, and that is a deliberate choice rather than an
-incompletion: a judge in another timezone cannot verify a parcel moving in
-Nigeria, so delivery cannot carry the demo. It is retained as the evidence
-described above — that the contract set carries no vertical.
+incompletion. A delivery fulfilment is provable only to its counterparties: the
+proof is a carrier label and a parcel that physically moves in one country, which
+nobody else can independently check. Carbon retirement is the opposite — the
+proof is a public certificate at the registry that issued the credit. For a
+system whose entire argument is *don't trust us, check it*, the vertical that
+leads has to be the one with third-party-verifiable fulfilment. Delivery is
+retained as the evidence described above: that the contract set carries no
+vertical.
 
 Carrier refusals are sourced from the carrier's own published prohibited-items
 policy, never from the model's memory of one.
 
 ### Compute leasing — not started
 
-`AkashAdapter`, for BOT Chain. Work begins only after X Layer is submitted.
+`AkashAdapter`. Nothing is built. It is named because the third vertical is what
+makes the generality claim falsifiable rather than rhetorical: the
+`FulfilmentAdapter` port it would implement already exists and is already
+implemented twice, so the claim can be checked against the two that are built
+rather than promised against the one that is not.
 
 ---
 
@@ -320,16 +329,13 @@ cast call --rpc-url https://testrpc.xlayer.tech \
 Holds 0.00045 OKB. Deploys after the testnet sequence is complete, which is the
 order X Layer's eligibility rules require.
 
-### BOT Chain testnet — not deployed
+### Other verified targets — not deployed
 
-Not blocked: the deployer holds 10 tBOT from the faucet against a ~0.21 tBOT
-deploy cost, because BOT Chain gas is 20 gwei against X Layer's 0.02 — roughly 47
-deploys of headroom from a single claim. Deferred because X Layer is finished
-first.
-
-### BOT Chain mainnet — not deployed
-
-Holds 0.
+The chain layer resolves and verifies four targets in total (see
+[Verified networks](#verified-networks)). Only X Layer carries a deployment. The
+others are configured, RPC-verified and settlement-token-verified so that
+portability is a checkable property of the config rather than an assertion in
+prose.
 
 ## Not finished yet
 
