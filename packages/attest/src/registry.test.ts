@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import type { Address, PublicClient, WalletClient } from "viem";
 import { Verdict } from "@routelock/compliance";
-import type { Approved, Receipt } from "@routelock/fulfilment";
+import type { Receipt } from "@routelock/fulfilment";
 
 import { EntitlementState } from "./abi.ts";
 import { attest, witness } from "./attestation.ts";
@@ -30,14 +30,10 @@ const receipt: Receipt = {
   live: true,
 };
 
-function approvedFixture<T>(order: T): Approved<T> {
-  return { order, decisionHash: DECISION_HASH } as Approved<T>;
-}
-
 function sound(): Attestation {
   return attest({
     vertical: "carbon",
-    approved: approvedFixture({ tonnes: 0.001 }),
+    decisionHash: DECISION_HASH,
     work: { tonnes: 0.001, creditClass: "wind" },
     evidence: { registries: ["UCR"] },
   });

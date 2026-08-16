@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import type { Approved, Receipt } from "@routelock/fulfilment";
+import type { Receipt } from "@routelock/fulfilment";
 
 import {
   attest,
@@ -10,13 +10,6 @@ import {
   witness,
 } from "./attestation.ts";
 import { UNRECORDED } from "./commit.ts";
-
-/// A stand-in for what `approve()` returns. The brand is not exported, so a
-/// cast is the only way to build one outside the compliance package — which is
-/// the point of the brand, and is why this cast is confined to test files.
-function approvedFixture<T>(order: T, decisionHash: `0x${string}`): Approved<T> {
-  return { order, decisionHash } as Approved<T>;
-}
 
 const DECISION_HASH = `0x${"ab".repeat(32)}` as const;
 
@@ -32,7 +25,7 @@ const receipt: Receipt = {
 test("the pre-fulfilment attestation commits work, evidence and decision", () => {
   const a = attest({
     vertical: "carbon",
-    approved: approvedFixture({ tonnes: 0.001 }, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work: { tonnes: 0.001, beneficiary: "RouteLock", creditClass: "wind" },
     evidence: { registries: ["UCR"], vintages: [2021, 2022] },
   });
@@ -46,7 +39,7 @@ test("the pre-fulfilment attestation commits work, evidence and decision", () =>
 test("provider fields are absent before fulfilment, not zero-filled", () => {
   const a = attest({
     vertical: "carbon",
-    approved: approvedFixture({}, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work: {},
     evidence: {},
   });
@@ -60,7 +53,7 @@ test("unfulfilled registry fields read as the contract's own empty value", () =>
   const fields = registryFields(
     attest({
       vertical: "carbon",
-      approved: approvedFixture({}, DECISION_HASH),
+      decisionHash: DECISION_HASH,
       work: {},
       evidence: {},
     }),
@@ -76,7 +69,7 @@ test("the decision hash is carried through, never recomputed", () => {
   // the same bytes.
   const a = attest({
     vertical: "carbon",
-    approved: approvedFixture({ tonnes: 0.001 }, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work: { tonnes: 999 },
     evidence: {},
   });
@@ -88,7 +81,7 @@ test("witnessing adds the provider evidence and the public proof url", () => {
   const a = witness(
     attest({
       vertical: "carbon",
-      approved: approvedFixture({}, DECISION_HASH),
+      decisionHash: DECISION_HASH,
       work: {},
       evidence: {},
     }),
@@ -104,7 +97,7 @@ test("witnessing adds the provider evidence and the public proof url", () => {
 test("witnessing does not disturb the commitments already written on chain", () => {
   const before = attest({
     vertical: "carbon",
-    approved: approvedFixture({}, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work: { tonnes: 0.001 },
     evidence: { registries: ["UCR"] },
   });
@@ -120,7 +113,7 @@ test("witnessing does not disturb the commitments already written on chain", () 
 test("an empty provider reference is refused rather than committed", () => {
   const a = attest({
     vertical: "carbon",
-    approved: approvedFixture({}, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work: {},
     evidence: {},
   });
@@ -134,7 +127,7 @@ test("an empty provider reference is refused rather than committed", () => {
 test("an empty raw response is refused rather than committed", () => {
   const a = attest({
     vertical: "carbon",
-    approved: approvedFixture({}, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work: {},
     evidence: {},
   });
@@ -149,7 +142,7 @@ test("a sound attestation has no unverifiable fields", () => {
   const a = witness(
     attest({
       vertical: "carbon",
-      approved: approvedFixture({}, DECISION_HASH),
+      decisionHash: DECISION_HASH,
       work: { tonnes: 0.001 },
       evidence: { registries: ["UCR"] },
     }),
@@ -163,7 +156,7 @@ test("tampering is reported by field name, not as a bare failure", () => {
   const a = witness(
     attest({
       vertical: "carbon",
-      approved: approvedFixture({}, DECISION_HASH),
+      decisionHash: DECISION_HASH,
       work: { tonnes: 0.001 },
       evidence: { registries: ["UCR"] },
     }),
@@ -182,7 +175,7 @@ test("multiple tampered fields are all reported", () => {
   const a = witness(
     attest({
       vertical: "carbon",
-      approved: approvedFixture({}, DECISION_HASH),
+      decisionHash: DECISION_HASH,
       work: { tonnes: 0.001 },
       evidence: { registries: ["UCR"] },
     }),
@@ -201,7 +194,7 @@ test("multiple tampered fields are all reported", () => {
 test("an unfulfilled attestation is verifiable, with nothing to say about the provider", () => {
   const a = attest({
     vertical: "carbon",
-    approved: approvedFixture({}, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work: { tonnes: 0.001 },
     evidence: {},
   });
@@ -215,13 +208,13 @@ test("the same work under a different vertical still commits identically", () =>
   const work = { ref: "unit-1", quantity: 1 };
   const carbon = attest({
     vertical: "carbon",
-    approved: approvedFixture({}, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work,
     evidence: {},
   });
   const delivery = attest({
     vertical: "delivery",
-    approved: approvedFixture({}, DECISION_HASH),
+    decisionHash: DECISION_HASH,
     work,
     evidence: {},
   });

@@ -13,7 +13,7 @@
 /// Renaming would mean redeploying, which would destroy the very history that
 /// makes the claim checkable.
 
-import type { Approved, Receipt, Vertical } from "@routelock/fulfilment";
+import type { Receipt, Vertical } from "@routelock/fulfilment";
 import { commit, commitVerbatim, UNRECORDED, verifyCommitment } from "./commit.ts";
 import type { Commitment } from "./commit.ts";
 
@@ -42,9 +42,9 @@ export interface Attestation {
   readonly evidence: Commitment;
   /// Commits to the decision JSON. Registry field `decisionHash`.
   ///
-  /// Taken from `Approved.decisionHash` rather than recomputed here. The value
-  /// that authorised the spend and the value written on chain must be the same
-  /// bytes, and recomputing invites them to differ.
+  /// Carried in rather than recomputed here. The value that authorised the
+  /// work and the value written on chain must be the same bytes, and
+  /// recomputing invites them to differ.
   readonly decisionHash: `0x${string}`;
   /// Commits to the provider's identifier for the completed work. Registry
   /// field `carrierRefHash`. Absent until fulfilment has happened.
@@ -68,9 +68,19 @@ export class AttestationError extends Error {
 /// so the work spec, the evidence and the decision are committed while the
 /// outcome is still unknown. That ordering is what makes the record an audit
 /// trail rather than a retrospective justification.
-export function attest<TOrder>(input: {
+///
+/// **Takes a decision hash, not an `Approved`.** An earlier version required
+/// `Approved<TOrder>` here, which was wrong in a way that only showed up the
+/// first time a real refusal ran through: `approve()` returns `null` for every
+/// verdict other than `Approved`, so a refusal had no way to produce an
+/// attestation — and a refusal is exactly what the audit trail most needs to
+/// record. Refusals are committed on chain with the same treatment as
+/// approvals; the compile-time gate belongs on `fulfil()`, which spends money,
+/// not on the record, which does not.
+export function attest(input: {
   readonly vertical: Vertical;
-  readonly approved: Approved<TOrder>;
+  /// Commits to the decision JSON, whatever the verdict was.
+  readonly decisionHash: `0x${string}`;
   readonly work: WorkSpec;
   readonly evidence: EvidenceSet;
 }): Attestation {
@@ -81,7 +91,7 @@ export function attest<TOrder>(input: {
     vertical: input.vertical,
     work,
     evidence,
-    decisionHash: input.approved.decisionHash,
+    decisionHash: input.decisionHash,
     providerRef: null,
     providerRaw: null,
     proofUrl: null,

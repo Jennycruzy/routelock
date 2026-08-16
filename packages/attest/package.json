@@ -7,13 +7,15 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/*.test.ts",
-    "verify:registry": "tsx scripts/verify-registry.ts"
+    "verify:registry": "tsx scripts/verify-registry.ts",
+    "e2e": "tsx scripts/e2e.ts"
   },
   "dependencies": {
     "@routelock/chain": "workspace:*",
     "@routelock/compliance": "workspace:*",
     "@routelock/fulfilment": "workspace:*",
-    "viem": "^2.21.0"
+    "viem": "^2.21.0",
+    "@routelock/carbon": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.2",
