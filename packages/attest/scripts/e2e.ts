@@ -53,6 +53,7 @@ import { attest, registryFields, witness } from "../src/attestation.ts";
 import { ActivationRegistryClient } from "../src/registry.ts";
 import { unlockKeystoreAccount } from "./keystore.ts";
 import { makeRetirementSigner } from "../src/signer.ts";
+import { loadDotEnv } from "./env.ts";
 
 /// Three modes, and the difference matters.
 ///
@@ -70,6 +71,12 @@ import { makeRetirementSigner } from "../src/signer.ts";
 /// **--broadcast** sends real transactions to the real chain.
 const BROADCAST = process.argv.includes("--broadcast");
 const FORK = process.argv.includes("--fork");
+/// Retiring is opt-in on top of --broadcast, because it is the only step with
+/// no undo. The flag sets the adapter's own env guard rather than replacing it:
+/// `assertKeylessSpendAllowed` stays the thing that actually blocks, and this
+/// is just a way to say yes to it that cannot be lost to a line wrap.
+const RETIRE = process.argv.includes("--retire");
+if (RETIRE) process.env.ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT = "yes-retire-for-real";
 /// A fork executes for real, just against a throwaway chain.
 const EXECUTES = BROADCAST || FORK;
 
@@ -164,6 +171,9 @@ async function send(
 }
 
 async function main(): Promise<void> {
+  const loaded = loadDotEnv();
+  if (loaded.length > 0) console.log(`env       loaded ${loaded.length} values from .env`);
+
   const chainKey = process.env.ROUTELOCK_CHAIN ?? "xlayer_testnet";
   const chain = getChain(chainKey);
   const deployment = JSON.parse(
@@ -456,8 +466,8 @@ async function main(): Promise<void> {
     console.log(`  Approved order is ready. Run with --broadcast to retire.`);
     return;
   }
-  if (process.env.ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT !== "yes-retire-for-real") {
-    console.log(`  gated: set ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT=yes-retire-for-real`);
+  if (!RETIRE) {
+    console.log(`  not retiring: pass --retire to burn a real credit.`);
     console.log(`  Everything up to the signature is done. Nothing was retired.`);
     return;
   }
