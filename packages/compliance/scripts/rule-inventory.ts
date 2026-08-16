@@ -101,7 +101,14 @@ async function main(): Promise<void> {
     }
 
     const { verdict, ground } = decideCarbon(request, proposal);
-    console.log(`  → ${VERDICT_NAMES[verdict]} (${ground.kind})${asked ? "" : "  [free]"}`);
+    // In facts-only mode with no short-circuit, the verdict comes from a
+    // proposal nobody made — say so, rather than printing `low_confidence` as
+    // though the model rated it low.
+    const artefact = factsOnly && shortCircuit === null;
+    console.log(
+      `  → ${VERDICT_NAMES[verdict]} (${artefact ? "not assessed — facts-only mode" : ground.kind})` +
+        `${asked ? "" : "  [free]"}`,
+    );
 
     const all = tonnes * (price ?? 0) + 0.01 + 0.0177;
     rows.push(

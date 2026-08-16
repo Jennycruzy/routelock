@@ -249,9 +249,22 @@ test("confidence exactly at the bar is approved", () => {
   assert.equal(verdict, Verdict.Approved);
 });
 
-test("the carbon bar is at least as strict as the delivery cross-border bar", () => {
-  // A retirement cannot be undone; a parcel can be recalled.
-  assert.ok(CARBON_CONFIDENCE_THRESHOLD >= 0.9);
+test("the gate still refuses on facts alone, whatever the confidence bar is", () => {
+  // This is what stops the threshold being load-bearing. Set it to zero and
+  // these still refuse — the discrimination lives upstream of the number.
+  const certain = goodProposal({ confidence: 1 });
+
+  assert.notEqual(decideCarbon(goodRequest({ identityUnknown: true }), certain).verdict, Verdict.Approved);
+  assert.notEqual(decideCarbon(goodRequest({ registries: ["CMARK"] }), certain).verdict, Verdict.Approved);
+  assert.notEqual(decideCarbon(goodRequest({ liquidityTonnes: 0, tonnesRequested: 1 }), certain).verdict, Verdict.Approved);
+  assert.equal(decideCarbon(goodRequest(), goodProposal({ confidence: 1, integrityFlags: ["fraud_finding"] })).verdict, Verdict.Refused);
+});
+
+test("the threshold is documented as picked, and is not the delivery bar", () => {
+  // Pins the reasoning: 0.9 was calibrated for HS classification, a different
+  // question. Copying it here refused the entire marketplace.
+  assert.ok(CARBON_CONFIDENCE_THRESHOLD < 0.9);
+  assert.ok(CARBON_CONFIDENCE_THRESHOLD > 0.5, "still has to mean something");
 });
 
 // --- ordering ---------------------------------------------------------------

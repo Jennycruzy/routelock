@@ -27,15 +27,33 @@ import type { CarbonGround, CarbonProposal, CarbonQualityRequest } from "./types
 
 /// Minimum confidence to approve a retirement.
 ///
-/// **Chosen, not measured.** Set equal to the delivery path's cross-border bar
-/// rather than below it: a retirement cannot be undone, so the cost of a wrong
-/// approval is strictly worse here than for a parcel that can be recalled.
-///
 /// It measures confidence that **the credit is what it claims to be and
-/// carries no integrity defect** — not that it is a high-quality credit. That
-/// distinction is why the number can stay at 0.9 rather than being tuned
-/// downward until something passes.
-export const CARBON_CONFIDENCE_THRESHOLD = 0.9;
+/// carries no integrity defect** — not that it is a high-quality credit.
+///
+/// ## This number is picked, and here is exactly how picked
+///
+/// It was 0.9, copied from the delivery path's cross-border bar. That 0.9 is
+/// genuinely calibrated — the HS benchmark showed the model states 92.0% and
+/// delivers 92.6% in the 0.9–1.0 band. But that curve measures **HS
+/// classification accuracy**, and this threshold governs a different question
+/// on different evidence. A calibrated number transplanted onto a task it was
+/// not calibrated on is not rigour; it is the appearance of rigour, and it set
+/// a bar that no assessment from registry metadata could clear. Every class in
+/// live inventory was refused.
+///
+/// 0.7 is a judgement, stated as one. **No curve backs it.** Earning a real
+/// number needs a corpus of credit classes with known integrity outcomes —
+/// which does not exist, and cannot be manufactured before a deadline.
+///
+/// ## Why lowering it does not hollow out the gate
+///
+/// Confidence is the last check, not the main one. Integrity flags refuse
+/// outright and no confidence overrides them; a class that cannot be
+/// identified, sits on an unverifiable registry, or lacks supply is referred
+/// before the model is even asked. On live inventory two of six classes refuse
+/// on those grounds alone, at any threshold. The teeth are upstream of this
+/// number.
+export const CARBON_CONFIDENCE_THRESHOLD = 0.7;
 
 /// Oldest vintage the engine will approve without asking a human.
 ///
@@ -137,38 +155,15 @@ export function decideCarbon(
     };
   }
 
-  // 2. A class the provider cannot identify cannot be ruled on. Not
-  //    hypothetical — live inventory contains a class that returns its own
-  //    address as its name with no methodology at all.
-  if (request.identityUnknown) {
-    return { verdict: Verdict.NeedsInformation, ground: { kind: "identity_unknown" } };
-  }
-
-  // 3. An unregistered class has no public record to check the retirement
-  //    against, which removes the entire basis of the proof.
-  if (!request.isRegistered) {
-    return { verdict: Verdict.NeedsInformation, ground: { kind: "unregistered_class" } };
-  }
-
-  // 4. A registry nobody can verify against is the same defect one step out.
-  if (
-    request.registries.length === 0 ||
-    !request.registries.some((r) => RECOGNISED_REGISTRIES.includes(r.toUpperCase()))
-  ) {
-    return { verdict: Verdict.NeedsInformation, ground: { kind: "unregistered_class" } };
-  }
-
-  // 5. Buying what is not there. Deterministic and cheap to check, so it is
-  //    checked before anything that depends on judgement.
-  if (request.insufficientLiquidity || request.liquidityTonnes < request.tonnesRequested) {
-    return {
-      verdict: Verdict.NeedsInformation,
-      ground: {
-        kind: "insufficient_liquidity",
-        available: request.liquidityTonnes,
-        requested: request.tonnesRequested,
-      },
-    };
+  // 2–5. The checks that depend on nothing the model supplies: a class with no
+  //    identity, on no recognised registry, or without the supply to fill the
+  //    order. Delegated to `deterministicGround` rather than repeated here,
+  //    because callers use that function to decide whether to pay for
+  //    inference at all — and if the two ever disagreed, skipping the model
+  //    would change the verdict. One implementation, so they cannot.
+  const facts = deterministicGround(request);
+  if (facts !== null) {
+    return { verdict: Verdict.NeedsInformation, ground: facts };
   }
 
   // 6. Open questions and adverse findings are **disclosed, not blocking**.

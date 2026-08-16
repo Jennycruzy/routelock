@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { approve } from "./approve.ts";
 import { buildDecision } from "./decide.ts";
-import { decisionHash } from "./hash.ts";
+import { canonicalHash, decisionHash } from "./hash.ts";
 import { Verdict } from "./types.ts";
 import type { ClassificationRequest, Proposal } from "./types.ts";
 
@@ -101,4 +101,41 @@ test("the hash commits to the decision, so a changed decision changes the token"
 
   assert.ok(a !== null && b !== null);
   assert.notEqual(a.decisionHash, b.decisionHash);
+});
+
+test("approve works for a carbon decision, with no cast", () => {
+  // The carbon path used to need `decision as never` to call this, which
+  // bypassed the gate at the one call site the gate exists for.
+  const carbonDecision = {
+    engineVersion: "compliance-1.0.0",
+    model: "claude-sonnet-5",
+    verdict: Verdict.Approved,
+    irreversible: true as const,
+    proposal: { confidence: 0.82 },
+  };
+
+  const approved = approve({ tonnes: 0.001 }, carbonDecision);
+  assert.notEqual(approved, null);
+  assert.ok(approved!.decisionHash.startsWith("0x"));
+});
+
+test("a refused carbon decision still yields nothing to fulfil with", () => {
+  assert.equal(
+    approve({ tonnes: 0.001 }, { verdict: Verdict.Refused, model: "claude-sonnet-5" }),
+    null,
+  );
+  assert.equal(
+    approve({ tonnes: 0.001 }, { verdict: Verdict.NeedsInformation, model: "claude-sonnet-5" }),
+    null,
+  );
+});
+
+test("the hash approve computes is the hash the attestation commits", () => {
+  // These must be the same bytes: the value that authorised the spend and the
+  // value written on chain. They are produced by different call sites, so the
+  // agreement is asserted rather than assumed.
+  const decision = { verdict: Verdict.Approved, model: "claude-sonnet-5", proposal: { confidence: 1 } };
+  const approved = approve({ tonnes: 0.001 }, decision);
+
+  assert.equal(approved!.decisionHash, canonicalHash(decision));
 });

@@ -438,8 +438,17 @@ async function main(): Promise<void> {
   step(8, "Retire the credit — REAL, IRREVERSIBLE");
   // Only here does the compile-time gate matter: `fulfil()` accepts nothing
   // but an `Approved`, so unapproved work cannot reach a provider.
-  const approved = approve(order, decision as never);
+  const approved = approve(order, decision);
   if (approved === null) throw new Error("unreachable: verdict is Approved but approve() refused");
+  // The value that authorised the spend and the value already written on chain
+  // must be the same bytes. Produced at two call sites, so checked, not assumed.
+  if (approved.decisionHash !== fields.decisionHash) {
+    throw new Error(
+      `decision hash mismatch: committed ${fields.decisionHash}, ` +
+        `authorising ${approved.decisionHash} — refusing to fulfil against a ` +
+        `decision other than the one on chain`,
+    );
+  }
   console.log(`  approved order ready — decisionHash ${approved.decisionHash}`);
   console.log(`  fulfil() needs the EIP-3009 signer, which this script does not hold.`);
   console.log(`  Wire it, then witness() the receipt and call recordCarrier.`);
