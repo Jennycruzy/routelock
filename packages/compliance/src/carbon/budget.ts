@@ -22,8 +22,34 @@
 /// pre-authorised dollar amount. A single call cannot overrun; a budget can be
 /// exceeded by at most the cost of the one call in flight when the cap is hit.
 
-import { appendFileSync, mkdirSync, readFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { appendFileSync, existsSync, mkdirSync, readFileSync } from "node:fs";
+import { dirname, isAbsolute, resolve } from "node:path";
+
+/// Anchor a ledger path to the repository root, not the working directory.
+///
+/// A relative path resolves against `process.cwd()`, which differs per package
+/// when scripts run under a workspace filter. That silently created **one
+/// ledger per script** — so the "hard cap" was really a cap per working
+/// directory, and total spend was the cap times the number of entry points.
+/// Found by noticing a run report 4/25 when 15 calls had already been made.
+///
+/// Walking up for `pnpm-workspace.yaml` gives every caller the same file
+/// regardless of where it was launched from. Absolute paths are honoured as
+/// given, so an operator can still point the ledger anywhere deliberately.
+export function ledgerPath(relative: string): string {
+  if (isAbsolute(relative)) return relative;
+
+  let dir = process.cwd();
+  for (let i = 0; i < 10; i += 1) {
+    if (existsSync(resolve(dir, "pnpm-workspace.yaml"))) return resolve(dir, relative);
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  // No workspace root found — fall back to cwd rather than throwing, but the
+  // caller gets the same behaviour they had before, not a silent second cap.
+  return resolve(process.cwd(), relative);
+}
 
 export class InferenceBudgetExceeded extends Error {
   constructor(
@@ -120,10 +146,11 @@ export function capsFromEnv(env: Record<string, string | undefined> = process.en
 export class InferenceBudget {
   #records: CallRecord[] | null = null;
 
-  constructor(
-    private readonly path: string,
-    private readonly caps: BudgetCaps = DEFAULT_CAPS,
-  ) {}
+  private readonly path: string;
+
+  constructor(path: string, private readonly caps: BudgetCaps = DEFAULT_CAPS) {
+    this.path = ledgerPath(path);
+  }
 
   /// Every call recorded so far. Read once, then kept in memory — the ledger
   /// is single-process by design.

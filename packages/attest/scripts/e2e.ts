@@ -48,9 +48,11 @@ import {
 import type { CarbonQualityRequest } from "@routelock/compliance";
 import { approve, canonicalHash } from "@routelock/compliance";
 
+import { ledgerPath } from "@routelock/compliance";
 import { attest, registryFields, witness } from "../src/attestation.ts";
 import { ActivationRegistryClient } from "../src/registry.ts";
 import { unlockKeystoreAccount } from "./keystore.ts";
+import { makeRetirementSigner } from "../src/signer.ts";
 
 /// Three modes, and the difference matters.
 ///
@@ -343,15 +345,27 @@ async function main(): Promise<void> {
   // ---- assessment and ruling ---------------------------------------------
   step(5, "Assess the credit — deterministic facts, no model");
   const carbon = new CarbonmarkX402Adapter(chain, {
-    ledger: new RetirementLedger("data/retirements.jsonl", retirementCaps()),
+    ledger: new RetirementLedger(ledgerPath("data/retirements.jsonl"), retirementCaps()),
     sign: async () => {
       throw new Error("signing is wired separately; this run does not sign yet");
     },
   });
 
   const classes = await carbon.discover();
-  const candidate = classes.find((c) => c.priceUsdcPerTonne !== null && c.name !== null);
-  if (candidate === undefined) throw new Error("no identifiable class in live inventory");
+  // Selectable, because the engine refuses some classes on purpose and a run
+  // that always picks the first one can only ever exercise one outcome.
+  const wanted = process.env.ROUTELOCK_CARBON_CLASS;
+  const candidate =
+    wanted !== undefined
+      ? classes.find((c) => c.carbonClassId.toLowerCase() === wanted.toLowerCase())
+      : classes.find((c) => c.priceUsdcPerTonne !== null && c.name !== null);
+  if (candidate === undefined) {
+    throw new Error(
+      wanted !== undefined
+        ? `class ${wanted} is not in live inventory`
+        : "no identifiable class in live inventory",
+    );
+  }
 
   const tonnes = Number(process.env.ROUTELOCK_SMOKE_TONNES ?? 0.001);
   const order = {
@@ -436,6 +450,17 @@ async function main(): Promise<void> {
   }
 
   step(8, "Retire the credit — REAL, IRREVERSIBLE");
+
+  if (!BROADCAST) {
+    console.log(`  fork mode does not retire: the credit and the USDC are real on Base.`);
+    console.log(`  Approved order is ready. Run with --broadcast to retire.`);
+    return;
+  }
+  if (process.env.ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT !== "yes-retire-for-real") {
+    console.log(`  gated: set ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT=yes-retire-for-real`);
+    console.log(`  Everything up to the signature is done. Nothing was retired.`);
+    return;
+  }
   // Only here does the compile-time gate matter: `fulfil()` accepts nothing
   // but an `Approved`, so unapproved work cannot reach a provider.
   const approved = approve(order, decision);
@@ -450,9 +475,38 @@ async function main(): Promise<void> {
     );
   }
   console.log(`  approved order ready — decisionHash ${approved.decisionHash}`);
-  console.log(`  fulfil() needs the EIP-3009 signer, which this script does not hold.`);
-  console.log(`  Wire it, then witness() the receipt and call recordCarrier.`);
-  void witness;
+
+  // A signer that will not exceed a ceiling read here, at the call site, on top
+  // of the adapter's own caps. The one action with no undo gets two locks.
+  const ceiling = Number(process.env.ROUTELOCK_MAX_RETIREMENT_USDC ?? 1);
+  const retiring = new CarbonmarkX402Adapter(chain, {
+    ledger: new RetirementLedger(ledgerPath("data/retirements.jsonl"), retirementCaps()),
+    sign: makeRetirementSigner(owner as never, ceiling),
+  });
+  console.log(`  ceiling  ${ceiling} USDC for this signature`);
+
+  const receipt = await retiring.fulfil(approved);
+  console.log(`\n  RETIRED.`);
+  console.log(`    ref        ${receipt.ref}`);
+  console.log(`    charged    ${receipt.amountCharged} ${receipt.currency}`);
+  console.log(`    proof      ${receipt.proofUrl}`);
+
+  step(9, "Commit the provider's own evidence on X Layer");
+  const witnessed = witness(attestation, receipt);
+  const finalFields = registryFields(witnessed);
+  console.log(`  carrierRefHash  ${finalFields.carrierRefHash}`);
+  console.log(`  carrierRawHash  ${finalFields.carrierRawHash}`);
+
+  // recordCarrier is ORACLE_ROLE, which the owner holds. The compliance key
+  // cannot reach it — it opens the activation gate and nothing else.
+  await registry.recordCarrier(tokenId, witnessed);
+  console.log(`    committed`);
+
+  console.log(
+    `\n${"═".repeat(66)}\nCOMPLETE. A real carbon credit was retired against an\n` +
+      `on-chain entitlement, and the provider's own evidence is committed.\n` +
+      `Check it yourself: ${receipt.proofUrl}\n${"═".repeat(66)}`,
+  );
 }
 
 main().catch((error: unknown) => {

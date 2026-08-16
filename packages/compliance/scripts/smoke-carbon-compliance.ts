@@ -13,7 +13,7 @@
 import { CarbonmarkX402Adapter, RetirementLedger, capsFromEnv as retirementCaps } from "@routelock/carbon";
 import { getChain } from "@routelock/chain";
 
-import { budgetCapsFromEnv, InferenceBudget } from "../src/index.ts";
+import { budgetCapsFromEnv, InferenceBudget, ledgerPath } from "../src/index.ts";
 import { decideCarbon } from "../src/carbon/decide.ts";
 import { proposeCarbonQuality } from "../src/carbon/propose.ts";
 import { VERDICT_NAMES } from "../src/types.ts";
@@ -34,7 +34,7 @@ async function main(): Promise<void> {
   // Real inventory, read live. Discovery and assessment are free.
   const chain = getChain(process.env.ROUTELOCK_CHAIN ?? "xlayer_testnet");
   const adapter = new CarbonmarkX402Adapter(chain, {
-    ledger: new RetirementLedger("data/retirements.jsonl", retirementCaps()),
+    ledger: new RetirementLedger(ledgerPath("data/retirements.jsonl"), retirementCaps()),
     sign: async () => {
       throw new Error("this script never signs — it rules, it does not retire");
     },

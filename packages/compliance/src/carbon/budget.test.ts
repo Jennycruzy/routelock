@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -10,6 +10,7 @@ import {
   estimateCostUsd,
   InferenceBudget,
   InferenceBudgetExceeded,
+  ledgerPath,
 } from "./budget.ts";
 
 function tempLedger(): string {
@@ -172,4 +173,30 @@ test("the summary names both the count and the spend", () => {
   });
 
   assert.match(budget.summary(), /^1\/10 calls, \$0\.0\d{3} estimated$/);
+});
+
+test("a relative ledger path anchors to the repo root, not the working directory", () => {
+  // The defect this pins: running scripts from different package directories
+  // created one ledger each, so the cap multiplied by the number of scripts.
+  const fromRoot = ledgerPath("data/inference-calls.jsonl");
+
+  assert.ok(fromRoot.startsWith("/"), "must resolve to an absolute path");
+  assert.ok(
+    !fromRoot.includes("/packages/"),
+    `expected a repo-root path, got ${fromRoot}`,
+  );
+});
+
+test("two budgets built from the same relative path share one ledger", () => {
+  const a = new InferenceBudget("data/test-shared-ledger.jsonl", { maxCalls: 2, softLimitUsd: 1 });
+  a.record({ model: "claude-sonnet-5", purpose: "p", inputTokens: 1, outputTokens: 1 });
+
+  const b = new InferenceBudget("data/test-shared-ledger.jsonl", { maxCalls: 2, softLimitUsd: 1 });
+  assert.equal(b.callsUsed, a.callsUsed, "a second entry point must see the first one's spend");
+
+  rmSync(ledgerPath("data/test-shared-ledger.jsonl"), { force: true });
+});
+
+test("an absolute path is honoured as given", () => {
+  assert.equal(ledgerPath("/tmp/explicit.jsonl"), "/tmp/explicit.jsonl");
 });
