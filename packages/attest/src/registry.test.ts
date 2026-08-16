@@ -59,6 +59,9 @@ function stubPublic(options: {
       options.onSimulate?.();
       return { request: {} };
     },
+    // The client waits for writes to settle before returning, so a stub that
+    // omits this makes every write test hang or throw.
+    waitForTransactionReceipt: async () => ({ status: "success" }),
   } as unknown as PublicClient;
 }
 
@@ -265,6 +268,7 @@ test("the entitlement pairing is read once, not on every write", async () => {
       return EntitlementState.PendingReview;
     },
     simulateContract: async () => ({ request: {} }),
+    waitForTransactionReceipt: async () => ({ status: "success" }),
   } as unknown as PublicClient;
 
   const client = new ActivationRegistryClient(

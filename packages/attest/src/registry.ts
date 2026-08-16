@@ -112,6 +112,21 @@ export class ActivationRegistryClient {
     return state as EntitlementState;
   }
 
+  /// Read the state, retrying while it disagrees with what the caller expects.
+  ///
+  /// A preflight check is only as good as the freshness of the node that
+  /// answers it. Rather than refuse on the first stale answer, give the chain a
+  /// few seconds to agree with itself — then refuse for real. A genuinely wrong
+  /// state still fails, just a little later.
+  async #stateSettled(tokenId: bigint, expected: readonly EntitlementState[]): Promise<EntitlementState> {
+    let state = await this.stateOf(tokenId);
+    for (let attempt = 0; attempt < 4 && !expected.includes(state); attempt += 1) {
+      await new Promise((r) => setTimeout(r, 1500 * (attempt + 1)));
+      state = await this.stateOf(tokenId);
+    }
+    return state;
+  }
+
   // -------------------------------------------------------------------
   // Writes
   // -------------------------------------------------------------------
@@ -122,7 +137,7 @@ export class ActivationRegistryClient {
     this.#assertVerifiable(attestation);
     await this.#assertBoundToEntitlement();
 
-    const state = await this.stateOf(tokenId);
+    const state = await this.#stateSettled(tokenId, [EntitlementState.Available]);
     if (state !== EntitlementState.Available) {
       throw new RegistryError(
         `token ${tokenId} is ${nameState(state)}, and only an Available ` +
@@ -167,7 +182,7 @@ export class ActivationRegistryClient {
       );
     }
 
-    const state = await this.stateOf(tokenId);
+    const state = await this.#stateSettled(tokenId, [EntitlementState.PendingReview]);
     if (state !== EntitlementState.PendingReview) {
       throw new RegistryError(
         `token ${tokenId} is ${nameState(state)}, not PendingReview — ` +
@@ -193,12 +208,12 @@ export class ActivationRegistryClient {
       );
     }
 
-    const state = await this.stateOf(tokenId);
     const permitted = [
       EntitlementState.Activated,
       EntitlementState.LabelCreated,
       EntitlementState.InTransit,
     ];
+    const state = await this.#stateSettled(tokenId, permitted);
     if (!permitted.includes(state)) {
       throw new RegistryError(
         `token ${tokenId} is ${nameState(state)} — recordCarrier would revert ` +
@@ -274,7 +289,17 @@ export class ActivationRegistryClient {
       account,
     });
 
-    return wallet.writeContract(request);
+    const hash = await wallet.writeContract(request);
+
+    // Wait for the write to be visible before returning. Returning the hash
+    // immediately caused a real failure: `submitParcel` was broadcast, this
+    // returned, and `recordDecision` read `stateOf` on the very next line and
+    // saw the pre-transaction value — so it refused a token that had in fact
+    // moved to PendingReview. Two confirmations, because the public RPC is
+    // load-balanced and one node seeing the block does not mean the next one
+    // has.
+    await this.publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
+    return hash;
   }
 }
 

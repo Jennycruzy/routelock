@@ -304,6 +304,17 @@ async function main(): Promise<void> {
   }
 
   // ---- issuance ----------------------------------------------------------
+  // Resume an entitlement that already exists and is already under review.
+  // Each full run locks 3 USD₮0 into escrow, and testnet USD₮0 comes from a
+  // rate-limited faucet — so re-running from the top after a late failure
+  // burns supply to redo work the chain already has.
+  let minted: unknown;
+  const resumeToken = process.env.ROUTELOCK_RESUME_TOKEN;
+  if (resumeToken !== undefined) {
+    console.log(`\n  resuming token ${resumeToken} — skipping issuance and submission`);
+  }
+
+  if (resumeToken === undefined) {
   step(1, "Register the issuer");
   const alreadyIssuer = await publicClient.readContract({
     address: deployment.entitlementFactory, abi: FACTORY_ABI,
@@ -355,10 +366,12 @@ async function main(): Promise<void> {
   // The factory returns the id it minted. Reading it back beats assuming the
   // first token is 1 — a second run on the same deployment mints 2, and a
   // hardcoded id silently binds the wrong entitlement.
-  const minted = await send(ownerWallet, publicClient, owner, {
+  minted = await send(ownerWallet, publicClient, owner, {
     address: deployment.entitlementFactory, abi: FACTORY_ABI, functionName: "mint",
     args: [classId, owner.address],
   }, `mint (price ${Number(PRICE) / 1e6} USD₮0 into escrow)`);
+
+  }
 
   if (!EXECUTES) {
     console.log(
@@ -369,8 +382,13 @@ async function main(): Promise<void> {
   }
 
   // From here the entitlement exists on chain.
-  if (typeof minted !== "bigint") throw new Error(`mint did not return a token id: ${String(minted)}`);
-  const tokenId = minted;
+  let tokenId: bigint;
+  if (resumeToken !== undefined) {
+    tokenId = BigInt(resumeToken);
+  } else {
+    if (typeof minted !== "bigint") throw new Error(`mint did not return a token id: ${String(minted)}`);
+    tokenId = minted;
+  }
   console.log(`  tokenId     ${tokenId}`);
 
   // ---- assessment and ruling ---------------------------------------------
@@ -461,8 +479,22 @@ async function main(): Promise<void> {
   console.log(`  documentsHash  ${fields.documentsHash}`);
   console.log(`  decisionHash   ${fields.decisionHash}`);
 
-  console.log(`\n  submitParcel (token holder)…`);
-  await registry.submitParcel(tokenId, attestation);
+  if (resumeToken === undefined) {
+    console.log(`\n  submitParcel (token holder)…`);
+    await registry.submitParcel(tokenId, attestation);
+  } else {
+    // Already submitted. Confirm the chain holds the same work spec — resuming
+    // against a different one would record a decision about work nobody bound.
+    const onChain = await registry.read(tokenId);
+    if (onChain.parcelHash !== fields.parcelHash) {
+      throw new Error(
+        `token ${tokenId} was submitted with parcelHash ${onChain.parcelHash}, ` +
+          `but this run computed ${fields.parcelHash} — refusing to rule on ` +
+          `work the chain did not record`,
+      );
+    }
+    console.log(`\n  submitParcel already recorded, parcelHash matches`);
+  }
 
   console.log(`  recordDecision (COMPLIANCE_ROLE — a different key)…`);
   const complianceRegistry = new ActivationRegistryClient(publicClient, {
