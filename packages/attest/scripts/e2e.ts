@@ -143,13 +143,34 @@ async function send(
 ): Promise<unknown> {
   // Simulate first, always. It surfaces a revert reason without spending gas
   // and catches a role the caller does not hold before a transaction exists.
-  const { request, result } = await publicClient.simulateContract({
-    address: call.address,
-    abi: call.abi as never,
-    functionName: call.functionName as never,
-    args: call.args as never,
-    account,
-  });
+  //
+  // Retried, because a public RPC behind a load balancer will happily confirm
+  // a receipt on one node and then simulate against another that has not seen
+  // that block yet. That produced a real failure here: `approve` was mined and
+  // confirmed, and the very next `postCollateral` simulation reverted with
+  // ERC20InsufficientAllowance while the allowance was already 3 USD₮0 on
+  // chain. A genuine revert still fails — it just fails a few seconds later.
+  let simulated: { request: unknown; result: unknown } | undefined;
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      simulated = (await publicClient.simulateContract({
+        address: call.address,
+        abi: call.abi as never,
+        functionName: call.functionName as never,
+        args: call.args as never,
+        account,
+      })) as { request: unknown; result: unknown };
+      break;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 4) break;
+      console.log(`  ${label}: simulation failed, node may be behind — retrying`);
+      await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+    }
+  }
+  if (simulated === undefined) throw lastError;
+  const { request, result } = simulated as { request: never; result: unknown };
 
   if (!EXECUTES) {
     const data = encodeFunctionData({
@@ -163,7 +184,7 @@ async function send(
   }
 
   const hash = await wallet.writeContract(request);
-  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
   console.log(`  ${label}`);
   console.log(`    ${receipt.status} — ${hash}`);
   if (receipt.status !== "success") throw new Error(`${label} reverted`);
