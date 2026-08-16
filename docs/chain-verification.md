@@ -110,6 +110,31 @@ which testnet tokens are obtainable. A token that exists but cannot be acquired 
 like the zero-supply USDC above — is useless for a demo, and that is not visible
 from an address listing alone.
 
+### The faucet cannot be claimed from a script
+
+Established 16 August by decoding a real dispensation,
+`0xecd8af0edf6455549447083af655ff0e8c378dff9545996799f5abe8f5cb7bf2`.
+
+The faucet is **operator-driven, not user-callable**. A single privileged EOA
+(`0x49ca9591c98920f517b6b8838956cda94f03c025`) calls selector `0xc5c9b941` with a
+**batch** of requests — ten in the transaction examined — and each carries a
+sequential request id (`0x13616b2`, `0x13616b3`, …) assigned by an off-chain
+queue. Those ids are issued by OKX's backend when a request is made through the
+faucet web page. There is no path from holding an address to producing a valid
+id, so the claim must be made through the UI, which is account-gated.
+
+Do not waste time probing for a public `claim()`: none of the conventional
+faucet signatures appears in the implementation's selector table, and the
+bytecode's error strings (`Receiver must be EOA`, cooldown, insufficient
+balance) belong to the operator path.
+
+**Amount per claim, read from the logs:** 10 units of a 6-decimal token, or
+0.2 OKB for the native claim. The token index in the event is `0` native,
+`1` USD₮0, `2` USDC_TEST, `3` USDG.
+
+Ten USD₮0 is enough for a demonstration class, but it is the ceiling per claim,
+so class pricing and collateral must be sized against it rather than assumed.
+
 For completeness, on X Layer **mainnet** there is a token named `TestUSDT`
 (symbol `USDT`, 6 dp, 1,000,000 supply) at
 `0x83bf0bacd31f9c2ae93da3a863a4f210f7b9bce1`. It is somebody's test token
