@@ -1,0 +1,21 @@
+{
+  "name": "@routelock/attest",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/*.test.ts"
+  },
+  "dependencies": {
+    "@routelock/chain": "workspace:*",
+    "@routelock/compliance": "workspace:*",
+    "@routelock/fulfilment": "workspace:*",
+    "viem": "^2.21.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

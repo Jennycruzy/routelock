@@ -41,13 +41,29 @@ function canonicalise(value: unknown): unknown {
 
 /// The exact bytes that get hashed. Published alongside the hash so a verifier
 /// never has to guess at the serialisation.
-export function canonicalJson(decision: Decision): string {
-  return JSON.stringify(canonicalise(decision));
+///
+/// Generic because `ActivationRegistry` stores five commitments and only one of
+/// them is a `Decision`. `parcelHash` commits to an order specification whose
+/// shape differs per vertical, and `documentsHash` to an evidence set. Those
+/// must land on the same bytes as this function produces or a verifier
+/// recomputing them would need a second, separately-specified canonicalisation
+/// — which is exactly the ambiguity rule 1 through 5 above exist to remove.
+export function canonicalJson(value: unknown): string {
+  return JSON.stringify(canonicalise(value));
+}
+
+/// keccak256 over the canonical JSON of any committable value.
+///
+/// Not for raw provider payloads: `carrierRefHash` and `carrierRawHash` commit
+/// to the provider's bytes *verbatim* and must not be canonicalised. See
+/// `@routelock/attest`.
+export function canonicalHash(value: unknown): `0x${string}` {
+  return keccak256(toHex(canonicalJson(value)));
 }
 
 /// `bytes32` for `ActivationRegistry.recordDecision`.
 export function decisionHash(decision: Decision): `0x${string}` {
-  return keccak256(toHex(canonicalJson(decision)));
+  return canonicalHash(decision);
 }
 
 /// Round a model-supplied probability to the precision the hash commits to.
