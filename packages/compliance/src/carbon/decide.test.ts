@@ -158,43 +158,51 @@ test("the provider's own insufficiency flag is honoured even if the maths looks 
 
 // --- model-derived grounds --------------------------------------------------
 
-test("open questions are surfaced verbatim", () => {
-  const { verdict, ground } = decideCarbon(
-    goodRequest(),
-    goodProposal({ openQuestions: ["Is the buffer pool disclosed?"] }),
-  );
-
-  assert.equal(verdict, Verdict.NeedsInformation);
-  assert.equal(ground.kind, "open_questions");
-  if (ground.kind === "open_questions") {
-    assert.deepEqual(ground.questions, ["Is the buffer pool disclosed?"]);
-  }
-});
-
-test("weak methodology plus high permanence risk is refused", () => {
-  const { verdict, ground } = decideCarbon(
-    goodRequest(),
-    goodProposal({ methodologyStrength: "weak", permanenceRisk: "high" }),
-  );
-
-  assert.equal(verdict, Verdict.Refused);
-  assert.equal(ground.kind, "weak_methodology");
-});
-
-test("weak methodology alone is not a refusal", () => {
-  // Either signal alone is a caution; only both together end it.
+test("open questions are disclosed, not blocking", () => {
+  // A careful assessment always has questions. Blocking on them made approval
+  // unreachable and refused every class in live inventory.
   const { verdict } = decideCarbon(
     goodRequest(),
-    goodProposal({ methodologyStrength: "weak", permanenceRisk: "low" }),
+    goodProposal({ openQuestions: ["Is the buffer pool disclosed?", "Which vintage was verified?"] }),
   );
 
   assert.equal(verdict, Verdict.Approved);
 });
 
-test("high permanence risk alone is not a refusal", () => {
+test("adverse findings are disclosed, not blocking", () => {
+  // The buyer chose this credit at this price. What is contested about it goes
+  // on the record, hashed into the evidence set — it does not veto the sale.
   const { verdict } = decideCarbon(
     goodRequest(),
-    goodProposal({ methodologyStrength: "strong", permanenceRisk: "high" }),
+    goodProposal({
+      adverseFindings: [
+        "additionality contested for grid-connected wind in this market",
+        "registry has less independent scrutiny than Verra",
+      ],
+    }),
+  );
+
+  assert.equal(verdict, Verdict.Approved);
+});
+
+test("a quality opinion never blocks, but an integrity defect always does", () => {
+  // The line the whole design turns on.
+  const quality = decideCarbon(
+    goodRequest(),
+    goodProposal({ methodologyStrength: "weak", permanenceRisk: "high", adverseFindings: ["contested"] }),
+  );
+  const integrity = decideCarbon(goodRequest(), goodProposal({ integrityFlags: ["double_counting"] }));
+
+  assert.equal(quality.verdict, Verdict.Approved);
+  assert.equal(integrity.verdict, Verdict.Refused);
+});
+
+test("weak methodology and high permanence risk are disclosed, not refused", () => {
+  // These are opinions about a credit the market has already priced, not
+  // evidence the credit is other than it claims to be.
+  const { verdict } = decideCarbon(
+    goodRequest(),
+    goodProposal({ methodologyStrength: "weak", permanenceRisk: "high" }),
   );
 
   assert.equal(verdict, Verdict.Approved);
@@ -247,6 +255,20 @@ test("the carbon bar is at least as strict as the delivery cross-border bar", ()
 });
 
 // --- ordering ---------------------------------------------------------------
+
+test("the gate can actually open — the regression that started all this", () => {
+  // A gate that only ever closes is not a gate. Every class in live inventory
+  // was being refused; this pins that a realistic assessment can approve.
+  const realistic = goodProposal({
+    methodologyStrength: "moderate",
+    permanenceRisk: "low",
+    adverseFindings: ["additionality contested in this category"],
+    openQuestions: ["are project-level verification reports public?"],
+    confidence: 0.92,
+  });
+
+  assert.equal(decideCarbon(goodRequest(), realistic).verdict, Verdict.Approved);
+});
 
 test("a hard fact is reported ahead of low confidence", () => {
   // Ordering is the policy: report the reason that survives, not the vaguest one.

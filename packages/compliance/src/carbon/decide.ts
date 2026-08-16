@@ -30,7 +30,11 @@ import type { CarbonGround, CarbonProposal, CarbonQualityRequest } from "./types
 /// **Chosen, not measured.** Set equal to the delivery path's cross-border bar
 /// rather than below it: a retirement cannot be undone, so the cost of a wrong
 /// approval is strictly worse here than for a parcel that can be recalled.
-/// Raising it costs delayed purchases; lowering it burns credits on guesses.
+///
+/// It measures confidence that **the credit is what it claims to be and
+/// carries no integrity defect** — not that it is a high-quality credit. That
+/// distinction is why the number can stay at 0.9 rather than being tuned
+/// downward until something passes.
 export const CARBON_CONFIDENCE_THRESHOLD = 0.9;
 
 /// Oldest vintage the engine will approve without asking a human.
@@ -167,28 +171,17 @@ export function decideCarbon(
     };
   }
 
-  // 6. The model said outright that it lacked something. Surfaced as its own
-  //    ground rather than folded into low confidence, because "I need X" is
-  //    actionable and "I am unsure" is not.
-  if (proposal.openQuestions.length > 0) {
-    return {
-      verdict: Verdict.NeedsInformation,
-      ground: { kind: "open_questions", questions: proposal.openQuestions },
-    };
-  }
+  // 6. Open questions and adverse findings are **disclosed, not blocking**.
+  //    They are hashed into the evidence set and committed on chain, so the
+  //    buyer receives the credit they chose plus a permanent record of what is
+  //    contested about it. Blocking on them instead refused every class in
+  //    live inventory — a gate that only ever closes is not a gate.
+  //
+  //    Likewise a weak methodology or high permanence risk: those are quality
+  //    opinions about a credit the market has already priced, not evidence
+  //    that the credit is other than it claims to be.
 
-  // 7. Weak methodology *and* high permanence risk together describe a credit
-  //    unlikely to represent a durable tonne. Either alone is a caution; both
-  //    is a refusal, because retirement is the one step that cannot be undone
-  //    once the evidence turns out to be thin.
-  if (proposal.methodologyStrength === "weak" && proposal.permanenceRisk === "high") {
-    return {
-      verdict: Verdict.Refused,
-      ground: { kind: "weak_methodology", permanenceRisk: proposal.permanenceRisk },
-    };
-  }
-
-  // 8. Age is a referral, not a defect.
+  // 7. Age is a referral, not a defect.
   if (request.oldestVintageAgeYears > MAX_VINTAGE_AGE_YEARS) {
     return {
       verdict: Verdict.NeedsInformation,
@@ -200,8 +193,11 @@ export function decideCarbon(
     };
   }
 
-  // 9. Last, because every check above is a reason that survives regardless of
-  //    how sure the model is.
+  // 8. Last. Note what this threshold now measures: confidence that the credit
+  //    is **what it claims to be and free of integrity defects** — a question
+  //    answerable from registry metadata. It used to measure confidence that
+  //    the credit was high quality, which no assessment can reach from this
+  //    evidence, so nothing could ever clear it.
   if (proposal.confidence < CARBON_CONFIDENCE_THRESHOLD) {
     return {
       verdict: Verdict.NeedsInformation,

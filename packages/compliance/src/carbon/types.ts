@@ -64,6 +64,14 @@ export interface CarbonQualityRequest {
 /// The carbon analogue of `PurposeFlag`. These are refusals rather than
 /// questions: more information about a credit that is already retired
 /// elsewhere does not make it retirable again.
+///
+/// **These are integrity defects, not quality opinions.** The distinction is
+/// the whole design. A credit whose additionality is contested is still the
+/// credit the buyer chose to buy at the price the market set for it; that
+/// belongs in `adverseFindings`, where it is disclosed and committed on chain.
+/// A credit that was already retired, or whose methodology was withdrawn, is
+/// not the thing it claims to be at any price — and that is what this list is
+/// for.
 export type IntegrityFlag =
   /// The credit appears to have been claimed or retired already.
   | "double_counting"
@@ -92,13 +100,26 @@ export interface CarbonProposal {
   readonly permanenceRisk: "low" | "medium" | "high";
   /// Published, checkable concerns about this project or methodology. Free
   /// text, each one a claim a reader can go and verify.
+  ///
+  /// **Disclosed, never blocking.** These are hashed into the evidence set and
+  /// committed on chain, so the buyer gets the credit they paid for *and* a
+  /// permanent record of what is contested about it. No offset retailer does
+  /// that. Treating them as refusals instead was a design error that made the
+  /// engine refuse every class in live inventory.
   readonly adverseFindings: readonly string[];
   /// Defects that end the matter regardless of confidence.
   readonly integrityFlags: readonly IntegrityFlag[];
-  /// What the model would still need in order to rule. Non-empty means the
-  /// evidence was incomplete, and is surfaced verbatim rather than summarised.
+  /// What the model would still need for a fuller picture. Surfaced verbatim
+  /// rather than summarised, and **disclosed rather than blocking**: a careful
+  /// assessment always has open questions, so treating any question as a
+  /// referral makes approval unreachable by construction.
   readonly openQuestions: readonly string[];
   /// 0–1, rounded to three decimals before hashing.
+  ///
+  /// **Confidence that the credit is what it claims to be and carries no
+  /// integrity defect** — not confidence that it is a high-quality credit.
+  /// The first question is answerable from registry metadata; the second is
+  /// not, and asking it is what pinned every assessment at 0.3–0.4.
   readonly confidence: number;
   readonly rationale: string;
 }
@@ -114,9 +135,7 @@ export type CarbonGround =
   | { readonly kind: "unregistered_class" }
   | { readonly kind: "insufficient_liquidity"; readonly available: number; readonly requested: number }
   | { readonly kind: "vintage_too_old"; readonly ageYears: number; readonly maxAgeYears: number }
-  | { readonly kind: "weak_methodology"; readonly permanenceRisk: string }
-  | { readonly kind: "low_confidence"; readonly confidence: number; readonly threshold: number }
-  | { readonly kind: "open_questions"; readonly questions: readonly string[] };
+  | { readonly kind: "low_confidence"; readonly confidence: number; readonly threshold: number };
 
 /// The complete, publishable record of one carbon ruling.
 ///

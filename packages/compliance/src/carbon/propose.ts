@@ -67,7 +67,9 @@ const ASSESS_TOOL = {
         items: { type: "string" },
         description:
           "Published, checkable concerns about this project or methodology. " +
-          "Each must be a claim a reader could go and verify. Empty if none.",
+          "Each must be a claim a reader could go and verify. These are " +
+          "DISCLOSED to the buyer and committed on chain — they do not block " +
+          "the purchase, so report them fully and without hedging. Empty if none.",
       },
       integrityFlags: {
         type: "array",
@@ -80,12 +82,17 @@ const ASSESS_TOOL = {
         type: "array",
         items: { type: "string" },
         description:
-          "What you would still need in order to rule. Non-empty means the " +
-          "evidence was incomplete.",
+          "What you would still want for a fuller picture. Disclosed alongside " +
+          "the findings; does not block the purchase.",
       },
       confidence: {
         type: "number",
-        description: "0 to 1. Your confidence in this assessment.",
+        description:
+          "0 to 1. Your confidence that this credit IS WHAT IT CLAIMS TO BE and " +
+          "carries no integrity defect — not your confidence that it is a " +
+          "high-quality credit. Contested additionality, a weak methodology or " +
+          "a less-scrutinised registry are quality concerns: report them in " +
+          "adverseFindings and do not let them lower this number.",
       },
       rationale: {
         type: "string",
@@ -111,11 +118,21 @@ const ASSESS_TOOL = {
 /// text the model was shown.
 export function buildCarbonPrompt(request: CarbonQualityRequest): string {
   return [
-    "Assess the quality of this carbon credit class as evidence that a real,",
-    "additional, durable tonne of CO2e was avoided or removed.",
+    "Assess this carbon credit class for a buyer who has already chosen it at",
+    "its market price. Your job is NOT to decide whether it is a good credit —",
+    "the market prices that, and the buyer picked it. Your job is to establish",
+    "whether it is WHAT IT CLAIMS TO BE, and to disclose what is contested.",
+    "",
+    "Two separate outputs:",
+    "  • integrityFlags — the credit is not the thing it claims to be at any",
+    "    price: already retired, fraudulent, methodology withdrawn. These block",
+    "    the retirement outright. Use only where the evidence supports it.",
+    "  • adverseFindings — everything contested about it that a buyer deserves",
+    "    to know. These are published on chain and do NOT block the purchase,",
+    "    so be thorough and direct.",
     "",
     "A retirement is irreversible: the credit is permanently burned, with no",
-    "refund and no dispute. Prefer an open question over a confident guess.",
+    "refund and no dispute. That is why integrity defects are absolute.",
     "",
     `Class name:      ${request.name ?? "(unidentified)"}`,
     `Category:        ${request.category ?? "(none stated)"}`,
@@ -128,8 +145,8 @@ export function buildCarbonPrompt(request: CarbonQualityRequest): string {
     `Liquidity:       ${request.liquidityTonnes} tonnes available`,
     `Requested:       ${request.tonnesRequested} tonnes`,
     "",
-    "Report only what the facts above support. If they are insufficient to",
-    "judge a dimension, say so in openQuestions rather than guessing.",
+    "Report only what the facts above support. Put anything you cannot judge",
+    "from them in openQuestions rather than guessing.",
   ].join("\n");
 }
 
@@ -215,8 +232,8 @@ export async function proposeCarbonQuality(
 /// Exported for testing, because this is where a malformed or adversarial
 /// response has to be contained. Every unusable field degrades toward refusal:
 /// an unreadable confidence becomes 0, an unreadable strength becomes `weak`,
-/// and a response missing its rationale gains an open question. None of those
-/// can produce an approval.
+/// and a response missing its rationale is stripped of its confidence
+/// entirely. None of those can produce an approval.
 export function parseCarbonProposal(input: Record<string, unknown>): CarbonProposal {
   const strength = input["methodologyStrength"];
   const methodologyStrength =
@@ -226,7 +243,7 @@ export function parseCarbonProposal(input: Record<string, unknown>): CarbonPropo
   const permanenceRisk = risk === "low" || risk === "medium" || risk === "high" ? risk : "high";
 
   const rawConfidence = input["confidence"];
-  const confidence =
+  let confidence =
     typeof rawConfidence === "number" && Number.isFinite(rawConfidence)
       ? roundConfidence(rawConfidence)
       : 0;
@@ -243,7 +260,11 @@ export function parseCarbonProposal(input: Record<string, unknown>): CarbonPropo
   const rationale = typeof input["rationale"] === "string" ? input["rationale"] : "";
   const openQuestions = [...strings(input["openQuestions"])];
   if (rationale === "") {
+    // A judgement with no stated reason is not publishable evidence, so it
+    // cannot carry confidence. Zeroing it is what keeps the degrade pointing
+    // at refusal now that open questions are disclosure rather than a veto.
     openQuestions.push("the model returned no rationale for this assessment");
+    confidence = 0;
   }
 
   return {
