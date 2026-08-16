@@ -15,18 +15,33 @@ performed a real fulfilment on the named chain.
 | `akash` | — | **Not started.** No implementation. | On-chain lease + ingress URL |
 | `shipbubble` | none | **Reference implementation. Not deployed.** Retained to demonstrate the contract set carries no vertical. | Carrier label + tracking |
 
-## Two carbon adapters, and which one ships
+## Two carbon adapters, and how access was obtained
 
-`CarbonmarkX402Adapter` is the one that ships. The Klima x402 endpoint needs no
-key and no onboarding, and its retirements are real. It settles on **Base
-mainnet** while the obligation, collateral, escrow and compliance record stay on
-X Layer; nothing is bridged and no credit is wrapped.
+**The access question comes first**, because it is what decides whether a
+retirement is real or described.
 
-`CarbonmarkAdapter` implements Carbonmark's standard REST API — corporate
-compliance review, a signed API Services Agreement, then dashboard access for
-live keys. It is retained rather than deleted because it is exercised as far as
-a test-mode key allows, and because it holds the finding that a test-mode
-retirement returns a shared placeholder and retires nothing. See
+Carbonmark's standard REST API is **KYB-gated**: corporate compliance review, a
+signed API Services Agreement, then dashboard access before a live key exists.
+That is a multi-week commercial process and cannot be cleared on a build
+timeline. `CarbonmarkAdapter` implements it and is exercised as far as a
+test-mode key allows, which is not far — see below.
+
+`CarbonmarkX402Adapter` is the one that ships. **Klima's x402 endpoint needs no
+API key, no account and no onboarding**: payment is authorised per request by an
+EIP-3009 signature, and the retirements are genuine. Keyless access is the whole
+reason an unonboarded project can retire a real credit, and it is why carbon
+could lead when the other two verticals could not.
+
+**Chain placement.** The entitlement, collateral, escrow, compliance decision and
+audit trail are on **X Layer** — that is everything this project deploys.
+Nothing of RouteLock is deployed on any other chain, nothing is bridged, and no
+credit is wrapped. The issuer's payment to the supplier crosses on Base because
+that is where the supplier's rails are; it is a cost of goods, not a settlement
+layer, and the buyer's escrowed funds never leave X Layer.
+
+The REST adapter is retained rather than deleted because it holds the finding
+that a test-mode retirement returns a shared placeholder and retires nothing —
+and because it is the evidence that the keyless route was chosen on merit. See
 [carbonmark-verification.md](./carbonmark-verification.md).
 
 The status vocabulary below gains one term for this: **Superseded** means built

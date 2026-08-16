@@ -1,10 +1,20 @@
 /**
  * CarbonmarkX402Adapter — CARBON RETIREMENT
  * Status:  IN DEVELOPMENT. Not deployed. No retirement has been performed.
- * Chain:   obligation on X Layer; retirement settles on Base mainnet (8453).
- * Purpose: The adapter X Layer leads with. Its fulfilment proof is a public
- *          Carbonmark certificate URL that a judge in any timezone can check in
- *          about ninety seconds without a key, a login or a wallet.
+ * Chain:   X Layer. The entitlement, collateral, escrow, compliance decision
+ *          and audit trail are all on X Layer, and nothing of RouteLock is
+ *          deployed anywhere else. The issuer's payment to the supplier crosses
+ *          on Base (8453) because that is where the supplier's rails are — a
+ *          cost of goods, not a settlement layer.
+ * Access:  Keyless. Carbonmark's REST API is KYB-gated (compliance review, a
+ *          signed API Services Agreement, then dashboard keys) and cannot be
+ *          cleared on a build timeline. The Klima x402 endpoint needs no key
+ *          and no account — payment is authorised per request by an EIP-3009
+ *          signature — which is what makes this retirement real rather than
+ *          described.
+ * Purpose: Its fulfilment proof is a public certificate at the registry that
+ *          issued the credit, checkable in about ninety seconds with no key,
+ *          no login and no wallet.
  * See docs/adapters.md
  */
 

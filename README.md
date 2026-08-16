@@ -120,27 +120,63 @@ compliance layer for a real-world service obligation — not yet a tokenised one
 
 ## The three adapters in detail
 
-### Carbon retirement — leads on X Layer
+### Carbon retirement — the entitlement X Layer settles
 
 The obligation tokenised here is **not the credit**. The credit is already a
 real-world asset custodied in a registry. It is the *obligation to retire one*,
 which is the part that is currently unenforceable: offsets sold at checkout are
-paid for immediately and retired later, in bulk, if at all.
+paid for immediately and retired later, in bulk, if at all. That obligation —
+issued, collateralised, escrowed, adjudicated and audited — lives entirely on
+X Layer.
 
-`CarbonmarkX402Adapter` retires through **Klima's x402 endpoint**, settling on
-Base mainnet while the obligation, the collateral, the escrow and the compliance
-record stay on X Layer. Nothing is bridged and no credit is wrapped or tokenised.
-Anyone can inspect X Layer state and then check the retirement certificate at the
-registry that issued it — which is stronger evidence than a self-contained system
-where every claim traces back to this project's own database.
+#### How access to a real registry was obtained, without an onboarding queue
 
-Exercised against the live endpoint on 16 August: **six credit classes in
-inventory**, priced from $0.067/t to $947/t, with registry, project ids, vintages
-and methodology read live rather than cached. A 0.001 t retirement prices at
-**0.028136 USDC** all-in. Reproduce it with `pnpm --filter @routelock/carbon
-smoke:x402` — the script performs discovery, quoting and authorisation-building,
-all of which are free, and **refuses to sign**, because the call after a
-signature burns a credit irreversibly.
+This is the first thing to explain, because it is the reason this adapter can
+retire a real credit at all rather than describing one.
+
+Carbonmark's standard REST API is **KYB-gated**: corporate compliance review, a
+signed API Services Agreement, then dashboard access before a live key is
+issued. That is a multi-week commercial process. It cannot be cleared on a build
+timeline, and a project that waited for it would have nothing real to show.
+
+The alternative used here is **Klima's x402 endpoint**, which needs **no API key,
+no account and no onboarding**. Payment is authorised per request by signature —
+an EIP-3009 authorisation the issuer signs — and the retirements it performs are
+genuine, landing on a public certificate at the registry that issued the credit.
+Keyless access is what makes an unonboarded project's retirement real instead of
+simulated, and it is why this vertical could lead when delivery and compute could
+not.
+
+#### Where each leg runs, and what is deployed where
+
+**Nothing of RouteLock is deployed on any chain other than X Layer.** Nothing is
+bridged, and no credit is wrapped or tokenised.
+
+| | Chain | What happens |
+|---|---|---|
+| The entitlement, collateral, escrow, compliance decision and audit trail | **X Layer** | Everything this project owns and deploys |
+| The issuer paying their supplier for the credit | Base | An external provider's own payment rails, touched by one signature |
+
+The second row is a **cost of goods**, not a settlement layer. A service provider
+pays its suppliers wherever those suppliers bank; a courier in Port Harcourt has
+costs in naira and is still paid by its customer in USDT. The buyer's money never
+goes near Base — it sits in `SettlementEscrow` on X Layer and is released against
+proof. What crosses to Base is the issuer's own ~0.028 USDC.
+
+The payoff for choosing a supplier with a public registry is verification:
+anyone can read X Layer state, then check the retirement certificate at the
+registry itself. That is stronger than a self-contained system where every claim
+traces back to this project's own database.
+
+#### Exercised against the live endpoint
+
+On 16 August: **six credit classes in inventory**, priced from $0.067/t to
+$947/t, with registry, project ids, vintages and methodology read live rather
+than cached. A 0.001 t retirement prices at **0.028136 USDC** all-in. Reproduce
+it with `pnpm --filter @routelock/carbon smoke:x402` — the script performs
+discovery, quoting and authorisation-building, all of which are free, and
+**refuses to sign**, because the call after a signature burns a credit
+irreversibly.
 
 That irreversibility is the justification for the refusal gate rather than a
 caveat attached to it: the cost of a wrong approval is unrecoverable and the cost
@@ -153,9 +189,12 @@ test-chain deployment cannot spend at all: `assertKeylessSpendAllowed` throws
 unless `ROUTELOCK_X402_ALLOW_LIVE_RETIREMENT` is deliberately set, because there
 is no sandbox in which a retirement can be rehearsed.
 
-**A second carbon adapter is retained deliberately.** `CarbonmarkAdapter`
-implements Carbonmark's standard REST API, which is KYB-gated. It is kept because
-it holds a finding worth publishing: a test-mode retirement returns
+#### The KYB-gated path is still in the tree, and why
+
+`CarbonmarkAdapter` implements the REST API described above. It is retained
+rather than deleted because it holds a finding worth publishing, and because it
+is the evidence that the keyless route was chosen on merit rather than for
+convenience: a test-mode retirement returns
 `status: COMPLETED`, a real Polygon transaction hash, a real certificate URL and
 an on-chain receipt reading SUCCESS — and **retires nothing**. The transaction is
 a shared placeholder from April 2024, beneficiary "Developer Tester". The tell

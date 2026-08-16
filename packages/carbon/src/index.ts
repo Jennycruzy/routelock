@@ -1,13 +1,22 @@
-/// Two carbon adapters, one vertical, and the difference matters.
+/// Two carbon adapters, one vertical, and the difference is how access to a
+/// real registry was obtained.
 ///
-/// `CarbonmarkX402Adapter` is the one that ships: the Klima x402 endpoint needs
-/// no key and no onboarding, and its retirements are real. `CarbonmarkAdapter`
-/// implements Carbonmark's standard REST API, which is KYB-gated — corporate
-/// compliance review, a signed API Services Agreement, then dashboard access
-/// for live keys. It is retained rather than deleted because it is exercised as
-/// far as a test-mode key allows and because it holds the finding that a
-/// test-mode retirement returns a shared placeholder and retires nothing.
-/// `docs/adapters.md` is authoritative on which is which.
+/// `CarbonmarkAdapter` speaks Carbonmark's standard REST API, which is
+/// **KYB-gated**: corporate compliance review, a signed API Services Agreement,
+/// then dashboard access before a live key exists. That is a multi-week
+/// commercial process, so it cannot produce a real retirement on a build
+/// timeline. It is retained rather than deleted because it is exercised as far
+/// as a test-mode key allows, and because it holds the finding that a test-mode
+/// retirement returns a shared placeholder and retires nothing.
+///
+/// `CarbonmarkX402Adapter` is the one that ships. The **Klima x402 endpoint
+/// needs no API key, no account and no onboarding** — payment is authorised per
+/// request by an EIP-3009 signature — and its retirements are genuine. Keyless
+/// access is precisely what lets an unonboarded project retire a real credit
+/// instead of describing one.
+///
+/// The obligation it discharges is issued, collateralised, escrowed, adjudicated
+/// and audited on **X Layer**. `docs/adapters.md` is authoritative.
 export {
   CarbonmarkX402Adapter,
   withSignature,
