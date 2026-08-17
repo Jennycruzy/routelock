@@ -13,13 +13,25 @@
 ///   pnpm --filter @routelock/attest e2e              # simulate, spend nothing
 ///   pnpm --filter @routelock/attest e2e --broadcast  # real transactions
 ///
-/// Two signers are needed and they are deliberately different keys:
-///   • the deployer/admin/oracle/issuer/buyer, from the Foundry keystore
-///   • the compliance service, from COMPLIANCE_PRIVATE_KEY
-/// The escrow structurally refuses to grant the compliance key authority over
-/// funds, so the second signer can open the activation gate and can never move
-/// money. Running them as one key would erase the property the whole pitch
-/// rests on.
+/// Signers, and why there are two or three depending on the chain:
+///
+///   • **deployer/admin/issuer/buyer** — Foundry keystore, `routelock-deployer`
+///   • **compliance** — `COMPLIANCE_PRIVATE_KEY`
+///   • **oracle** — the deployer on testnet; a *separate* keystore key
+///     (`routelock-oracle`) on mainnet
+///
+/// The compliance separation is the one the pitch rests on: the escrow
+/// structurally refuses to grant that key authority over funds, so it can open
+/// the activation gate and can never move money. Running it as one key would
+/// erase the property entirely.
+///
+/// The oracle separation is newer and chain-dependent. `ORACLE_ROLE` can call
+/// `releaseToIssuer` and `refundBuyer`, and the oracle signs unattended from a
+/// server — so on mainnet `Deploy.s.sol` refuses to let it also hold
+/// `ADMIN_ROLE`, and this script picks up the second key automatically. **Which
+/// address is the oracle is read from `deployments/<chain>.json`, not from the
+/// environment**, so a stale shell variable cannot point a run at a key the
+/// contracts never authorised.
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -133,6 +145,10 @@ const ESCROW_ABI = [
 ] as const;
 
 interface Deployment {
+  /// The address ORACLE_ROLE was granted to at deploy time. On testnet this is
+  /// the deployer; on mainnet Deploy.s.sol refuses to let it be.
+  readonly oracle: Address;
+  readonly admin: Address;
   readonly activationRegistry: Address;
   readonly serviceEntitlement: Address;
   readonly entitlementFactory: Address;
@@ -322,8 +338,6 @@ async function main(): Promise<void> {
     owner = { address: admin as Address, type: "json-rpc" } as Account;
     console.log(`  deployer    ${admin} (address only — a dry run needs no key)`);
   }
-  console.log(`  role        issuer, buyer, admin, oracle`);
-
   if (owner.address.toLowerCase() === complianceAccount.address.toLowerCase()) {
     throw new Error(
       "the compliance signer and the owner are the same key — that erases the " +
@@ -332,6 +346,119 @@ async function main(): Promise<void> {
   }
 
   const ownerWallet = createWalletClient({ account: owner, chain: viemChain, transport: http(rpc) });
+
+  // ---- the oracle, which may or may not be the same key ------------------
+  //
+  // On testnet `ADMIN` and `ORACLE` are deliberately one address, and
+  // `Deploy.s.sol` permits that. On mainnet it refuses: `ORACLE_ROLE` can call
+  // `releaseToIssuer` and `refundBuyer`, so a key that signs unattended must not
+  // also administer roles. That means a mainnet run has two signers where a
+  // testnet run has one, and this script has to work either way.
+  //
+  // **The deployment file decides, not the environment.** `deployments/<chain>.json`
+  // records the address the roles were actually granted to at deploy time.
+  // Reading `ROUTELOCK_ORACLE` instead would let a stale shell variable point
+  // this run at a key the contracts never authorised, which surfaces as an
+  // access-control revert halfway through a run that has already spent money.
+  let oracle: Account;
+  let oracleWallet = ownerWallet;
+  const oracleIsOwner = deployment.oracle.toLowerCase() === owner.address.toLowerCase();
+
+  if (oracleIsOwner) {
+    oracle = owner;
+    console.log(`  oracle      ${deployment.oracle} (same key as the deployer)`);
+  } else if (FORK) {
+    // A fork needs no secret for it either — impersonate and fund, as above.
+    for (const method of ["anvil_impersonateAccount", "anvil_setBalance"] as const) {
+      await fetch(rpc, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0", id: 1, method,
+          params: method === "anvil_setBalance"
+            ? [deployment.oracle, "0xde0b6b3a7640000"]
+            : [deployment.oracle],
+        }),
+      });
+    }
+    oracle = { address: deployment.oracle, type: "json-rpc" } as Account;
+    oracleWallet = createWalletClient({ account: oracle, chain: viemChain, transport: http(rpc) });
+    console.log(`  oracle      ${deployment.oracle} (impersonated on the fork)`);
+  } else if (BROADCAST) {
+    console.log(`  oracle      separate key — second password prompt follows`);
+    const unlocked = await unlockKeystoreAccount(
+      process.env.ROUTELOCK_ORACLE_KEYSTORE_ACCOUNT ?? "routelock-oracle",
+    );
+    // Unlocking *a* key proves nothing. This must be the key the contracts
+    // granted ORACLE_ROLE to, and the check is cheap and before any spending.
+    if (unlocked.address.toLowerCase() !== deployment.oracle.toLowerCase()) {
+      throw new Error(
+        `the unlocked oracle key is ${unlocked.address} but the deployment granted ` +
+          `ORACLE_ROLE to ${deployment.oracle} — refusing to start a run that would ` +
+          `revert once it has already spent money`,
+      );
+    }
+    oracle = unlocked;
+    oracleWallet = createWalletClient({ account: oracle, chain: viemChain, transport: http(rpc) });
+    console.log(`  oracle      ${oracle.address} (matches the deployment)`);
+  } else {
+    oracle = { address: deployment.oracle, type: "json-rpc" } as Account;
+    oracleWallet = createWalletClient({ account: oracle, chain: viemChain, transport: http(rpc) });
+    console.log(`  oracle      ${deployment.oracle} (address only — a dry run needs no key)`);
+  }
+
+  console.log(`  roles       deployer: issuer, buyer, admin${oracleIsOwner ? ", oracle" : ""}`);
+
+  // The oracle needs gas of its own the moment it stops being the deployer.
+  // Checked here rather than discovered at `recordCarrier`, which is step 9 of
+  // 10 and follows an irreversible retirement.
+  if (!oracleIsOwner && !FORK) {
+    const oracleGas = await publicClient.getBalance({ address: oracle.address });
+    if (oracleGas === 0n) {
+      throw new Error(
+        `the oracle ${oracle.address} holds no gas on ${chain.name}. It signs ` +
+          `recordCarrier and releaseToIssuer at the end of this run, after the ` +
+          `retirement — starting now would burn a real credit and then fail.`,
+      );
+    }
+    console.log(`  oracle gas  ${Number(oracleGas) / 1e18}`);
+  }
+
+  // Ask the contracts, not the deployment file.
+  //
+  // Everything above trusts `deployments/<chain>.json` about who the oracle is.
+  // That file records what the deploy *intended*; a role revoked or re-pointed
+  // afterwards would not show up in it. The two calls that matter arrive at
+  // steps 9 and 10 — **after** the irreversible retirement — so a stale role is
+  // the one failure that costs a real credit to discover.
+  //
+  // Both contracts are checked because the roles are granted separately and can
+  // therefore diverge.
+  if (!FORK) {
+    const HAS_ROLE_ABI = [
+      { type: "function", name: "hasRole", stateMutability: "view",
+        inputs: [{ name: "role", type: "bytes32" }, { name: "account", type: "address" }],
+        outputs: [{ name: "", type: "bool" }] },
+    ] as const;
+    const ORACLE_ROLE = keccak256(toHex("ORACLE_ROLE"));
+
+    for (const [what, address] of [
+      ["registry", deployment.activationRegistry],
+      ["escrow", deployment.settlementEscrow],
+    ] as const) {
+      const holds = await publicClient.readContract({
+        address, abi: HAS_ROLE_ABI, functionName: "hasRole", args: [ORACLE_ROLE, oracle.address],
+      });
+      if (!holds) {
+        throw new Error(
+          `${oracle.address} does not hold ORACLE_ROLE on the ${what} (${address}). ` +
+            `Steps 9 and 10 would revert after the retirement had already burned a ` +
+            `credit. Nothing has been sent.`,
+        );
+      }
+    }
+    console.log(`  oracle role verified on the registry and the escrow`);
+  }
   const complianceWallet = createWalletClient({
     account: FORK ? ({ address: complianceAccount.address, type: "json-rpc" } as Account) : complianceAccount,
     chain: viemChain,
@@ -525,9 +652,19 @@ async function main(): Promise<void> {
   };
 
   step(7, "Bind the work and commit the decision on X Layer");
+  // Two clients over the same contract, because two different roles write to it.
+  // `registry` is the token owner submitting work; `oracleRegistry` is the
+  // backend signer committing the provider's evidence. They are the same wallet
+  // only on a deployment where admin and oracle share a key.
   const registry = new ActivationRegistryClient(publicClient, {
     registry: deployment.activationRegistry, entitlement: deployment.serviceEntitlement,
   }, ownerWallet);
+
+  const oracleRegistry = oracleIsOwner
+    ? registry
+    : new ActivationRegistryClient(publicClient, {
+        registry: deployment.activationRegistry, entitlement: deployment.serviceEntitlement,
+      }, oracleWallet);
 
   // The hash commits to the decision whatever the verdict was — a refusal is
   // recorded exactly as an approval is. `approve()` is used further down, and
@@ -625,9 +762,10 @@ async function main(): Promise<void> {
   console.log(`  carrierRefHash  ${finalFields.carrierRefHash}`);
   console.log(`  carrierRawHash  ${finalFields.carrierRawHash}`);
 
-  // recordCarrier is ORACLE_ROLE, which the owner holds. The compliance key
-  // cannot reach it — it opens the activation gate and nothing else.
-  await registry.recordCarrier(tokenId, witnessed);
+  // recordCarrier is ORACLE_ROLE. The compliance key cannot reach it — that key
+  // opens the activation gate and nothing else. Sent from `oracleRegistry`,
+  // which is the owner's client only when the two share a key.
+  await oracleRegistry.recordCarrier(tokenId, witnessed);
   console.log(`    committed`);
 
   step(10, "Settle the escrow — the issuer performed, so the issuer is paid");
@@ -649,7 +787,9 @@ async function main(): Promise<void> {
   // it is being remembered. So the release belongs here, where the answer is
   // certain, and `recover-escrow.ts` stays what it should be — an operator tool
   // for runs that died partway.
-  await send(ownerWallet, publicClient, owner, {
+  // ORACLE_ROLE — the only call in this step that is not the issuer's. It pays
+  // the issuer; it is deliberately not signed by them.
+  await send(oracleWallet, publicClient, oracle, {
     address: deployment.settlementEscrow, abi: ESCROW_ABI, functionName: "releaseToIssuer",
     args: [tokenId],
   }, `releaseToIssuer(${tokenId}) — discharges the obligation, credits the issuer`);
