@@ -1,0 +1,24 @@
+{
+  "name": "@routelock/api",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/server.ts",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/**/*.test.ts"
+  },
+  "dependencies": {
+    "@routelock/attest": "workspace:*",
+    "@routelock/carbon": "workspace:*",
+    "@routelock/chain": "workspace:*",
+    "@routelock/compliance": "workspace:*",
+    "@routelock/fulfilment": "workspace:*",
+    "viem": "^2.21.55"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

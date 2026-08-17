@@ -12,6 +12,34 @@ importers:
         specifier: ^26.2.0
         version: 26.2.0
 
+  apps/api:
+    dependencies:
+      '@routelock/attest':
+        specifier: workspace:*
+        version: link:../../packages/attest
+      '@routelock/carbon':
+        specifier: workspace:*
+        version: link:../../packages/carbon
+      '@routelock/chain':
+        specifier: workspace:*
+        version: link:../../packages/chain
+      '@routelock/compliance':
+        specifier: workspace:*
+        version: link:../../packages/compliance
+      '@routelock/fulfilment':
+        specifier: workspace:*
+        version: link:../../packages/fulfilment
+      viem:
+        specifier: ^2.21.55
+        version: 2.55.16(typescript@5.9.3)
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.12
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   bench:
     dependencies:
       '@routelock/compliance':

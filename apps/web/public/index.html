@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RouteLock — a compliance engine that refuses</title>
+<meta name="description" content="Tokenised service obligations on X Layer, gated by an AI compliance engine that refuses when its confidence is insufficient. Every value on this page is read live from the chain.">
+<link rel="stylesheet" href="/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <span class="lock">🔒</span>
+      <div>
+        <h1>RouteLock</h1>
+        <p class="tagline">A service provider's obligation, tokenised on X Layer and gated by a compliance engine that <strong>refuses when it is not sure</strong>.</p>
+      </div>
+    </div>
+    <div id="live" class="pills" aria-live="polite">
+      <span class="pill loading">reading the chain…</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ─────────────────────────────────────────────────────────────
+       The guarantee. First, because it is the only claim here that
+       cannot be made by asserting it.
+       ───────────────────────────────────────────────────────────── -->
+  <section id="guarantee-section">
+    <h2>1. The engine cannot move money — check it, don't take it</h2>
+    <p class="lede">
+      <code>SettlementEscrow</code> does not merely withhold <code>COMPLIANCE_ROLE</code> from the
+      compliance service. It <strong>reverts when anyone tries to grant it</strong>, including its own
+      admin. The two calls below run against the live deployment when this page loads: one that must
+      fail, and a control from the same caller that must succeed — because a revert on its own could
+      just mean a wrong address.
+    </p>
+    <div id="guarantee" class="probe-list">
+      <p class="muted">probing…</p>
+    </div>
+    <details id="roles-details">
+      <summary>The full role graph, re-read live <span id="roles-summary" class="muted"></span></summary>
+      <div id="roles"></div>
+    </details>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       What was actually fulfilled. Second, because after the
+       guarantee this is the only other thing on the page that a
+       stranger can check at a third party rather than here.
+       ───────────────────────────────────────────────────────────── -->
+  <section id="fulfilment-section">
+    <h2>2. What has actually been fulfilled</h2>
+    <p class="lede">
+      An adapter counts as active here only when it is deployed <em>and</em> one real fulfilment
+      exists with a proof URL a stranger can open. Below is every retirement this system has
+      performed, re-verified against the provider when you loaded this page — not read from a stored
+      copy. The certificate lives at the registry that issued the credit, so it is checkable without
+      trusting anything here.
+    </p>
+    <div id="fulfilment">
+      <p class="muted">reading the ledger and re-verifying…</p>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       Ruling on the visitor's own goods. No route is hardcoded:
+       origin and destination are free text, anywhere to anywhere.
+       ───────────────────────────────────────────────────────────── -->
+  <section id="hs-section">
+    <h2>3. Rule on your own goods</h2>
+    <p class="lede">
+      Real inference against the HS nomenclature, right now. Describe anything, from anywhere to
+      anywhere. The model proposes a classification and a confidence; <strong>deterministic code
+      decides</strong> the verdict. A refusal and a request for more information are shown exactly as
+      prominently as an approval, because they are outcomes and not errors.
+    </p>
+
+    <form id="hs-form" class="card form">
+      <label class="full">
+        <span>What are the goods?</span>
+        <textarea id="hs-description" rows="3" maxlength="600" required
+          placeholder="e.g. Lithium-ion power bank, 20000 mAh, aluminium casing, for retail sale"></textarea>
+      </label>
+      <label>
+        <span>Origin</span>
+        <input id="hs-origin" required maxlength="2" size="2" placeholder="NG" autocapitalize="characters">
+      </label>
+      <label>
+        <span>Destination</span>
+        <input id="hs-destination" required maxlength="2" size="2" placeholder="GB" autocapitalize="characters">
+      </label>
+      <label>
+        <span>Declared value</span>
+        <input id="hs-value" type="number" min="1" step="any" value="120">
+      </label>
+      <label>
+        <span>Currency</span>
+        <input id="hs-currency" maxlength="3" size="3" value="USD" autocapitalize="characters">
+      </label>
+      <label>
+        <span>Weight (kg)</span>
+        <input id="hs-weight" type="number" min="0.01" step="any" value="0.6">
+      </label>
+      <div class="actions full">
+        <button type="submit" id="hs-submit">Rule on it</button>
+        <span class="muted small">Two ISO country codes. Same country in both fields is a domestic
+          lane and the confidence bar it has to clear is lower.</span>
+      </div>
+    </form>
+
+    <div id="hs-result"></div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       Carbon: the vertical that leads, because its fulfilment proof
+       is a public certificate rather than a parcel only two parties
+       can see.
+       ───────────────────────────────────────────────────────────── -->
+  <section id="carbon-section">
+    <h2>4. Rule on a real carbon credit</h2>
+    <p class="lede">
+      The obligation RouteLock tokenises here is not the credit — the credit is already a real-world
+      asset in a registry. It is the <em>obligation to retire one</em>, which is the unenforceable
+      part: offsets sold at checkout are paid for immediately and retired later, in bulk, if at all.
+      The inventory below is read live from the Klima x402 endpoint, which needs no API key and no
+      account. <strong>Pricing and discovery cost nothing; nothing on this page can spend or
+      retire.</strong>
+    </p>
+    <div class="actions">
+      <button id="carbon-load">Load live inventory</button>
+      <span id="carbon-status" class="muted small"></span>
+    </div>
+    <div id="carbon-inventory"></div>
+    <div id="carbon-result"></div>
+  </section>
+
+  <!-- ─────────────────────────────────────────────────────────────
+       The audit trail. This is the BOT Chain criterion and the
+       "don't trust us" half of the pitch in one endpoint.
+       ───────────────────────────────────────────────────────────── -->
+  <section id="replay-section">
+    <h2>5. Replay any decision on chain</h2>
+    <p class="lede">
+      <code>ActivationRegistry</code> stores five commitments, the engine version, the verdict and
+      the attempt count — and no plaintext, ever. Enter a token id to read what the chain holds. Every
+      response carries the <code>cast</code> command that reproduces it without this server.
+    </p>
+    <form id="replay-form" class="inline-form">
+      <label>
+        <span>Token id</span>
+        <input id="replay-token" type="number" min="0" step="1" value="4" required>
+      </label>
+      <button type="submit">Read the chain</button>
+    </form>
+    <div id="replay-result"></div>
+  </section>
+
+  <section id="honesty">
+    <h2>What this page does not do</h2>
+    <p class="lede">
+      Stated here rather than discovered later, because a demo that overstates itself is worse than a
+      smaller one that does not.
+    </p>
+    <ul class="plain" id="honesty-list">
+      <li><strong>Nothing here signs anything.</strong> This server holds no key. Minting, committing
+        a decision and retiring a credit are operator actions run from a terminal, each with its own
+        explicit opt-in.</li>
+      <li><strong>A ruling you request is not committed on chain.</strong> Writing to the registry
+        needs <code>COMPLIANCE_ROLE</code>, held by a key this process does not have. The decisions
+        that <em>are</em> on chain are readable in section 5.</li>
+      <li><strong>Model calls are capped and rate limited</strong>, from a ledger separate from the
+        operator's. When the cap is reached this API answers <code>402</code> and says so rather than
+        quietly degrading.</li>
+      <li id="honesty-budget" class="muted">budget: reading…</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <p id="foot" class="muted small"></p>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

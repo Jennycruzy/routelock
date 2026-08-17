@@ -1,0 +1,10 @@
+{
+  "name": "@routelock/web",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "The frontend. Static files with no build step, served by @routelock/api.",
+  "scripts": {
+    "start": "pnpm --filter @routelock/api start"
+  }
+}

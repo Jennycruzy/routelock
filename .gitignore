@@ -37,5 +37,7 @@ bench/data/.checkpoint-*.jsonl
 # script) rather than vendored, so the repo contains only RouteLock's own code.
 packages/contracts/lib/
 
-# The inference spend ledger. Local operational state, not evidence.
+# The inference spend ledgers — the operator's, and the served API's separate
+# one. Local operational state, not evidence.
 **/data/inference-calls.jsonl
+**/data/served-inference.jsonl
