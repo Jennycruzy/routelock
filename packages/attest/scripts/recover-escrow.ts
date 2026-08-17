@@ -60,7 +60,15 @@
 
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { createPublicClient, createWalletClient, http, formatUnits, getAddress } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  http,
+  formatUnits,
+  getAddress,
+  keccak256,
+  toHex,
+} from "viem";
 import type { Account, Address, PublicClient } from "viem";
 import { getChain, loadDotEnv, requireSettlementToken } from "@routelock/chain";
 
@@ -176,7 +184,17 @@ const REGISTRY_ACTIVATIONS_ABI = [
 ] as const;
 
 /// `keccak256("ORACLE_ROLE")`, matching `RouteLockTypes.sol`.
-const ORACLE_ROLE = "0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6";
+///
+/// ⛔ **Derived, never transcribed.** This was first written as a pasted literal
+/// and the literal was wrong — it was `keccak256("MINTER_ROLE")`, copied from an
+/// unrelated revert while debugging a different chain. A role hash is 32 bytes of
+/// hex that no reviewer will read, so the mistake is invisible on the page and
+/// only shows up as a confident, false "this account lacks the role".
+///
+/// Computing it from the string makes the constant self-evidently correct and
+/// removes the whole class of error. `roleHash.test.ts` pins the value against
+/// the Solidity source as well.
+export const ORACLE_ROLE = keccak256(toHex("ORACLE_ROLE"));
 
 interface Deployment {
   readonly chainId: number;
