@@ -396,22 +396,39 @@ async function main(): Promise<void> {
 
   /// Simulate always; send only with --broadcast. The simulation is the dry
   /// run's substance — it proves the call would succeed against live state.
+  ///
+  /// The simulation is retried for the reason `e2e.ts` documents: X Layer's
+  /// public RPC sits behind a load balancer, so a receipt confirmed on one node
+  /// can be followed by a simulation against another that has not seen the
+  /// block. A genuine revert still fails, a few seconds later.
   async function run(
     label: string,
     address: Address,
     functionName: string,
     args: readonly unknown[],
   ): Promise<void> {
-    try {
-      await publicClient.simulateContract({
-        address,
-        abi: ESCROW_ABI,
-        functionName: functionName as never,
-        args: args as never,
-        account: account?.address ?? (process.env.ROUTELOCK_ADMIN as Address),
-      });
-    } catch (err) {
-      console.log(`  FAIL  ${label}: ${(err as Error).message.split("\n")[0]}`);
+    let simulated = false;
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 5 && !simulated; attempt += 1) {
+      try {
+        await publicClient.simulateContract({
+          address,
+          abi: ESCROW_ABI,
+          functionName: functionName as never,
+          args: args as never,
+          account: account?.address ?? (process.env.ROUTELOCK_ADMIN as Address),
+        });
+        simulated = true;
+      } catch (err) {
+        lastError = err;
+        if (attempt < 4) {
+          console.log(`  ${label}: simulation failed, node may be behind — retrying`);
+          await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+        }
+      }
+    }
+    if (!simulated) {
+      console.log(`  FAIL  ${label}: ${(lastError as Error).message.split("\n")[0]}`);
       return;
     }
 
@@ -428,7 +445,10 @@ async function main(): Promise<void> {
       account,
       chain: null,
     });
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
+    // Two confirmations, matching e2e.ts. One is not enough here: the reads
+    // that follow decide whether more money moves, and a read served by a node
+    // that has not seen this block yet produces a wrong decision, not an error.
+    const receipt = await publicClient.waitForTransactionReceipt({ hash, confirmations: 2 });
     console.log(`  ${receipt.status === "success" ? "OK  " : "FAIL"}  ${label}  ${hash}`);
   }
 
@@ -446,18 +466,50 @@ async function main(): Promise<void> {
   }
 
   // ---- claim what releasing made claimable ------------------------------
-  // Read after the settlements, because that is what created the balance.
+  //
+  // ⛔ This block silently lost money on its first real run. It read `claimable`
+  // once, immediately after the release confirmed, got 0 from a node that had
+  // not seen the block, printed a reassuring "nothing claimable" and exited —
+  // stranding 0.1 USD₮0 in the escrow it had just been asked to empty.
+  //
+  // The lesson is not "retry the read". It is that **a money path must never
+  // report success from an absence.** We know exactly what to expect here: every
+  // release credits its deposit to the issuer. So the expectation is computed,
+  // and a zero that contradicts it is treated as a node being behind, not as
+  // nothing to do. If it never arrives, that is reported as unfinished business
+  // rather than passed over in silence.
   const beneficiary = account?.address ?? (process.env.ROUTELOCK_ADMIN as Address);
-  const claimable = await publicClient.readContract({
-    address: deployment.settlementEscrow,
-    abi: ESCROW_ABI,
-    functionName: "claimable",
-    args: [beneficiary, settlement],
-  });
+  const expectedFromReleases = actionable
+    .filter((s) => s.action === "release")
+    .reduce((sum, s) => sum + s.amount, 0n);
+
+  let claimable = 0n;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    claimable = await publicClient.readContract({
+      address: deployment.settlementEscrow,
+      abi: ESCROW_ABI,
+      functionName: "claimable",
+      args: [beneficiary, settlement],
+    });
+
+    // Good enough as soon as it reflects the releases, or if we expected none.
+    if (!BROADCAST || expectedFromReleases === 0n || claimable >= expectedFromReleases) break;
+
+    console.log(
+      `  claimable reads ${fmt(claimable, decimals, symbol)} but ` +
+        `${fmt(expectedFromReleases, decimals, symbol)} was just released — node may be behind, retrying`,
+    );
+    await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+  }
 
   if (claimable > 0n) {
     console.log(`\nclaiming ${fmt(claimable, decimals, symbol)}:`);
     await run(`claim`, deployment.settlementEscrow, "claim", [settlement]);
+  } else if (BROADCAST && expectedFromReleases > 0n) {
+    console.log(
+      `\n⛔ ${fmt(expectedFromReleases, decimals, symbol)} was released but never became ` +
+        `claimable for ${beneficiary}. NOT CLAIMED — re-run this script to sweep it.`,
+    );
   } else if (BROADCAST) {
     console.log(`\nnothing claimable for ${beneficiary}`);
   }
@@ -530,11 +582,20 @@ async function main(): Promise<void> {
     );
   }
 
-  const plannedDeposits = actionable.reduce((sum, x) => sum + x.amount, 0n);
-  const plannedTotal = plannedDeposits + plannedCollateral;
+  // Only three of the four operations actually move tokens out of the escrow.
+  // `releaseToIssuer` does not: it converts a deposit into a `claimable` balance
+  // that is still held here until `claim` withdraws it. Counting releases as
+  // outflow would have reported this run as moving 9.3 when it moved 9.2, and
+  // counting them as nothing reported 0 while a 0.1 claim was queued. Both are
+  // wrong in the same place, so the total names what leaves.
+  const plannedRefunds = actionable
+    .filter((x) => x.action === "refund")
+    .reduce((sum, x) => sum + x.amount, 0n);
+  const plannedTotal = plannedRefunds + claimable + plannedCollateral;
   console.log(
     `\nthis plan moves ${fmt(plannedTotal, decimals, symbol)} out of escrow ` +
-      `(${fmt(plannedDeposits, decimals, symbol)} deposits + ` +
+      `(${fmt(plannedRefunds, decimals, symbol)} refunds + ` +
+      `${fmt(claimable, decimals, symbol)} claimed + ` +
       `${fmt(plannedCollateral, decimals, symbol)} collateral) of ` +
       `${fmt(escrowHeld, decimals, symbol)} held`,
   );
@@ -546,6 +607,12 @@ async function main(): Promise<void> {
         `${refused.length > 0 ? ` — ${refused.length} refused token(s) and the collateral still backing them` : ""}`,
     );
   }
+
+  // The same staleness bit the closing figure: the first real run printed
+  // "escrow now holds 0.3" when the chain held 0.1, because the last withdrawal
+  // had not propagated. A wrong number in the last line of a money report is
+  // worth as little as a wrong number anywhere else, so settle before reading.
+  if (BROADCAST) await new Promise((r) => setTimeout(r, 3000));
 
   const escrowAfter = await publicClient.readContract({
     address: settlement,
