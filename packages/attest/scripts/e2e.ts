@@ -459,6 +459,29 @@ async function main(): Promise<void> {
     }
     console.log(`  oracle role verified on the registry and the escrow`);
   }
+
+  // The inference budget, checked here and not at step 6 where it is used.
+  //
+  // Step 6 is the ruling; step 4 mints the entitlement and moves the buyer's
+  // payment into escrow. A budget that is exhausted when step 6 asks for it
+  // therefore throws *after* real money is committed, stranding an entitlement
+  // that this script cannot then finish — which is precisely how the ledger got
+  // to 69 of a 25-call default without anyone noticing the mismatch.
+  //
+  // The same reasoning the collateral check above uses: fail before the mint,
+  // where it costs a message, not after, where it costs a broadcast.
+  const preflightBudget = new InferenceBudget(
+    process.env.ROUTELOCK_INFERENCE_LEDGER ?? "data/inference-calls.jsonl",
+    budgetCapsFromEnv(),
+  );
+  if (preflightBudget.callsRemaining < 1) {
+    throw new Error(
+      `the inference budget has no calls left (${preflightBudget.summary()}). The ruling ` +
+        `at step 6 would fail after step 4 had already put money in escrow. Raise ` +
+        `ROUTELOCK_MAX_MODEL_CALLS deliberately before starting.`,
+    );
+  }
+  console.log(`  budget      ${preflightBudget.summary()}`);
   const complianceWallet = createWalletClient({
     account: FORK ? ({ address: complianceAccount.address, type: "json-rpc" } as Account) : complianceAccount,
     chain: viemChain,
