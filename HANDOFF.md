@@ -613,10 +613,24 @@ The compute adapter (`AkashAdapter`). Nothing is stubbed or scaffolded.
 
 X Layer is finished completely before BOT Chain is started.
 
-1. **Carbon quality benchmark**, 80–150 rows, threshold derived from its
-   calibration curve rather than chosen. Now the largest remaining piece of the
-   differentiator, and the corpus needs no inference — only scoring does. The HS
-   benchmark's parked 101 rows stay parked.
+1. **Carbon quality benchmark** — **design done, corpus not built.** Read
+   [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) first; it
+   is executable from step 1 and steps 1–4 cost no inference.
+
+   Two things settled there that change the brief: **the threshold cannot be
+   derived from a calibration curve** (it gates "is the credit what it claims to
+   be", and listed inventory has no negative examples of that, so a curve would
+   report near-perfect calibration while measuring nothing) — so 0.7 stays picked
+   and stays labelled picked. And the ground truth is **ICVCM CCP methodology
+   decisions**, which score `methodologyStrength` and `adverseFindings`, both of
+   which are **disclosure and do not gate**. Measuring them is still worth it, and
+   §3 says why.
+
+   Verified reachable and keyless: `api.carbonmark.com/carbonProjects` carries
+   methodology ids, registry, vintages and a `registry.verra.org` URL per project
+   (193 VCS projects, 29 methodologies, 51 with supply — `ACM0002` alone is 96 of
+   them and ICVCM ruled that family **Does Not Meet**). The HS benchmark's parked
+   101 rows stay parked.
 2. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed. They
    share one key today, so a box compromise reaches role administration.
 3. **X Layer mainnet deploy**, after testnet, sequence provable. **Gas is

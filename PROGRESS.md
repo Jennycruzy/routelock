@@ -753,3 +753,41 @@ kind of number a README states and nobody rechecks.*
   *check the fork's block height, not merely that a fork is answering.*
 - The forked-chain rehearsal now passes steps 1–7 in one pass, which the previous
   session's notes recorded as unproven.
+
+### Carbon benchmark — designed, not built, no inference spent
+
+Full design in [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md).
+Paused here deliberately, with every data source verified live and the corpus not
+yet started.
+
+**The brief changes on one point:** v2 asked for the confidence threshold to be
+*derived* from a calibration curve. It cannot be. That threshold gates "is the
+credit what it claims to be and free of integrity defects", and listed inventory
+has essentially no negative examples of that question — a curve over it would
+report near-perfect calibration while measuring nothing. **0.7 stays picked, and
+stays labelled picked**, which is what `decide.ts` already says at length. Deriving
+a number from a curve measuring the wrong question would repeat the exact error the
+code caught once already, when the calibrated HS 0.9 was transplanted onto carbon
+and refused every class in inventory.
+
+**Checked first, because everything else depended on it:** `buildCarbonPrompt`
+leaks nothing — no named methodologies, no quality hints — so scoring the model on
+methodology quality is not circular.
+
+**Ground truth, verified reachable:** ICVCM's CCP assessment status — a published,
+dated, methodology-level determination by an independent body, with a decision PDF
+per row. It scores `methodologyStrength` and `adverseFindings`, which are
+**disclosure and do not gate**; §3 of the design argues why that is still worth
+measuring, including that it answers whether they *should* gate.
+
+**⛔ Two traps found while verifying, both recorded:**
+
+- **`/carbonProjects` default ordering is unrepresentative.** First 200 rows are
+  150 JCS / 44 PUR / 6 VCS, while what is purchasable is ~80% VCS. `JCS` is not in
+  `RECOGNISED_REGISTRIES`, so those rows refuse deterministically *before the model
+  is asked* — a corpus built from the first N would measure nothing. Same shape as
+  the ATaR `searchTerm` trap.
+- **"Does Not Meet CCP" is not "withdrawn".** A methodology can fail an ICVCM
+  assessment and stay active at its registry. Only registry withdrawal may score
+  the `withdrawn_methodology` integrity flag; conflating them would mark the engine
+  wrong for being right.
