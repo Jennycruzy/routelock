@@ -10,7 +10,7 @@ performed a real fulfilment on the named chain.
 
 | Adapter | Chain | Status | Fulfilment proof |
 |---|---|---|---|
-| `carbonmark-x402` | X Layer | **In development.** Not deployed. No retirement performed. Code complete and exercised against the live Klima endpoint; blocked on the issuer holding USDC on Base. | Public certificate URL |
+| `carbonmark-x402` | X Layer | **Active** since 17 August 2026. One real retirement, 0.001 t of UCR-437-2023, charged 0.027725 USDC on Base, committed against entitlement 4 on X Layer. | [Public certificate](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0) |
 | `carbonmark` (REST) | X Layer | **Superseded.** Retained, not shipped — Carbonmark's REST API is KYB-gated and a test-mode key retires nothing. | Public certificate URL |
 | `akash` | — | **Not started.** No implementation. | On-chain lease + ingress URL |
 | `shipbubble` | none | **Reference implementation. Not deployed.** Retained to demonstrate the contract set carries no vertical. | Carrier label + tracking |
@@ -47,6 +47,37 @@ and because it is the evidence that the keyless route was chosen on merit. See
 The status vocabulary below gains one term for this: **Superseded** means built
 and exercised, kept in the tree for the evidence it carries, and not on the path
 to Active.
+
+## What moved carbon to Active, 17 August 2026
+
+Recorded here in the form a stranger can re-check, because the table above claims
+a status and a claim needs its evidence next to it.
+
+| | |
+|---|---|
+| Credit | UCR-437-2023, Solar PV – Small Scale, India, class `0x1ff9bd464155d32fd2f9d302008d38544c0ae371` |
+| Amount | 0.001 t |
+| Charged | 0.027725 USDC, against 0.028125 authorised |
+| Payment transaction | [`0x8717eb0f…58d7b6d2`](https://basescan.org/tx/0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2) on Base, block 50,083,814, mined 08:56:15 UTC |
+| Certificate | [app.carbonmark.com/retirements/id/8453-0x8717eb0f…-0](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0) |
+| Obligation discharged | Entitlement **4** on X Layer testnet, `Activated`, verdict `APPROVED`, all five commitments recorded |
+
+**The checks that were run before calling it real**, because the last time every
+signal said success and nothing had been retired:
+
+- **The block is recent.** 50,083,814 against a head of 50,084,280 at the time of
+  checking — 466 blocks, about fifteen minutes. The placeholder that fooled an
+  earlier run sat 36 million blocks in the past.
+- **The retirement names this project.** The transaction's own logs carry
+  `RouteLock entitlement holder` and `RouteLock entitlement 4`, not the shared
+  `Developer Tester` beneficiary.
+- **The provider still confirms it.** `adapter.verify()` returns
+  `state: "retired"`, `found: true` against the live endpoint, not against a
+  stored copy.
+- **The money left.** The issuer's Base USDC went 2.990000 → 2.962275.
+
+`GET /api/fulfilment` serves all of this re-verified at request time, including
+the block distance, so the frontend cannot show a stale receipt as proof.
 
 ## Status vocabulary
 

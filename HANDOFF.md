@@ -1,23 +1,46 @@
 # RouteLock — Handoff
 
-**Last updated: 16 August 2026** — `packages/attest` built; the whole system runs
-end to end in one script. Steps 1–4 are proven on X Layer testnet; steps 5–9 have
-not completed a full pass yet.
+**Last updated: 17 August 2026** — **the whole system has run end to end for
+real.** All nine steps completed: a real carbon credit was retired, and the
+provider's evidence is committed on X Layer against entitlement 4. Carbon is
+**Active**. The frontend (`apps/web` + `apps/api`) is built and serves live values.
 
-**Paused mid-rehearsal, on nothing blocking.** The next run is ready to go and
-needs no faucet claim:
+The retirement, and how it was verified rather than assumed:
+
+| | |
+|---|---|
+| Certificate | `app.carbonmark.com/retirements/id/8453-0x8717eb0f…-0` |
+| Payment tx | `0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2` on Base, block 50,083,814, 466 blocks behind head when checked |
+| Charged | 0.027725 USDC against 0.028125 authorised |
+| Credit | 0.001 t UCR-437-2023, Solar PV – Small Scale, India |
+| On chain | Entitlement **4**, `Activated`, `APPROVED`, all five commitments recorded |
+
+The four checks that separated this from the 14 August placeholder: the block is
+**minutes** old rather than 36 million blocks; the transaction's logs name
+`RouteLock entitlement holder` and `RouteLock entitlement 4`; `verify()` returns
+`retired` live; the issuer's USDC moved 2.990000 → 2.962275. Detail in
+`docs/adapters.md`.
+
+**Run the frontend:**
 
 ```bash
 cd /root/routelock
+pnpm --filter @routelock/api start     # http://127.0.0.1:8787
+```
+
+**Another full e2e run costs 0.3 USD₮0** against the 0.7 remaining, so two more
+fit without a faucet claim. Retiring again is neither necessary nor free — one
+real fulfilment is what `docs/adapters.md` requires for Active:
+
+```bash
 export ROUTELOCK_CLASS_LABEL="carbon-retirement-0.001t-$(date +%s)"   # keep this
-echo "$ROUTELOCK_CLASS_LABEL"
 ROUTELOCK_PRICE=0.1 ROUTELOCK_COLLATERAL=0.2 ROUTELOCK_PAYOUT=0.1 \
   pnpm --filter @routelock/attest e2e --broadcast --retire
 ```
 
-That costs 0.3 USD₮0 against the 1 held, so it runs three times over without
-touching the faucet. Keystore password prompt at step 0. Save that label — a late
-failure is only recoverable with it. See §2 "End-to-end rehearsal".
+Keystore password prompt at step 0. Save that label — a late failure is only
+recoverable with it. **A dry rehearsal that costs nothing and needs no key** is
+`--fork` against a local anvil forked at the *current* head; see §2.
 
 Read this before touching anything. It covers the rules that are not negotiable,
 where the build actually stands, and what is blocked on a human.
@@ -437,7 +460,15 @@ Shipbubble's API, and `ShipbubbleAdapter` is the single adapter above it. Status
 lives in `docs/adapters.md` and is mirrored in the adapter's own fields, so the
 two move together.
 
-### Carbon — built against the real API, blocked on production access
+### Carbon — ACTIVE. One real retirement, 17 August 2026
+
+The heading of this section said "blocked on production access" until 17 August.
+It was never resolved and did not need to be: the keyless x402 path retired a
+real credit without a key or an account. Evidence and the four verification
+checks are at the top of this file and in `docs/adapters.md`.
+
+The REST notes below are retained because the finding is worth keeping and the
+adapter is still in the tree as `Superseded`.
 
 `packages/carbon` implements the shared port. Everything upstream of the
 retirement itself is exercised against real data with the test key: credential
@@ -516,10 +547,17 @@ assessment takes a `sign` that throws, so the code path that reads inventory
 physically cannot spend. Step 8 constructs a *second* adapter with a real signer
 under an explicit ceiling. **That throwing stub is not a TODO — do not "fix" it.**
 
-**Steps 1–4 are proven on the real chain. Steps 5–9 have not completed a full
-pass.** Step 8 — the EIP-3009 signature and the irreversible burn — has never
-executed; it is the first thing to watch on the next run and is exactly what the
-rehearsal exists to find out.
+**All nine steps have now completed on the real chain**, on 17 August, producing
+entitlement 4 and the retirement recorded at the top of this file. Step 8 — the
+EIP-3009 signature and the irreversible burn — executed for the first and so far
+only time.
+
+**A rehearsal that costs nothing is `--fork`**: a local anvil forked from the
+chain, where accounts are impersonated so no key and no gas are needed, and step 8
+refuses by design because the credit and the USDC on Base are real either way.
+Fork the chain at the **current** head — a fork left running from a previous
+session serves state that has since moved, and every read against it looks
+perfectly valid.
 
 **Run cost is now configurable and defaults unchanged.** `ROUTELOCK_PRICE`,
 `ROUTELOCK_COLLATERAL` and `ROUTELOCK_PAYOUT` default to 1/2/1 USD₮0. A 10×
@@ -538,43 +576,68 @@ on-chain parcel hash and refuses on a zero.
 **Token 3 is stranded** — minted, never submitted, 3 USD₮0 locked in escrow. Not
 recoverable by resume.
 
+### Frontend — built 17 August, serving live values
+
+`apps/api` is `node:http` + viem, no framework. `apps/web` is one HTML file, one
+stylesheet and one script, no build step. Start it with
+`pnpm --filter @routelock/api start`.
+
+| Endpoint | Serves |
+|---|---|
+| `GET /api/state` | addresses, bytecode lengths, totals, settlement token read from the token, and the **17-check role graph** — the same assertions `Deploy.s.sol` makes |
+| `GET /api/guarantee` | the `COMPLIANCE_ROLE` refusal probed live, **plus a control call** that must succeed |
+| `GET /api/fulfilment` | the retirement, re-verified against the provider per request, with the block distance published |
+| `GET /api/carbon/inventory` | live Klima x402 inventory — free, keyless |
+| `POST /api/rule/hs` | real HS ruling on the visitor's own description, any lane |
+| `POST /api/rule/carbon` | real carbon-quality ruling on a class from live inventory |
+| `GET /api/replay/:tokenId` | the on-chain audit trail, with the `cast` command to re-read it |
+| `GET /api/budget` | served-ledger spend and the three thresholds |
+
+Three things not to undo:
+
+- **The API holds no key and signs nothing.** `no-signing.test.ts` reads the
+  package's own source and fails if any of twelve signing symbols appears in
+  code. If an endpoint ever needs to write, that is an operator script, not a
+  route.
+- **A refusal is a 200.** The only 4xx are a malformed request and `402` for an
+  exhausted budget. The three verdict cards are identical in size and weight.
+- **Served endpoints spend from `data/served-inference.jsonl`**, capped separately
+  from the operator's 25 (`ROUTELOCK_SERVED_MAX_CALLS`, default 40) and rate
+  limited per address (`ROUTELOCK_RULE_LIMIT`, default 5/hour).
+
 ### Not started
 
-The compute adapter and the frontend. `apps/{web,api}` are empty — nothing in
-them is stubbed or scaffolded with placeholder behaviour.
+The compute adapter (`AkashAdapter`). Nothing is stubbed or scaffolded.
 
 ### Resume here — in this order
 
 X Layer is finished completely before BOT Chain is started.
 
-1. **Carbonmark access** — production form submitted, with the third-party
-   platform question in the same message; sandbox key obtained. Blocked on a
-   human: it needs a business email on a domain.
-2. **`CarbonmarkAdapter`** against the shared port, sandbox first —
-   `/prices` → `/quotes` → `/orders` → retirement → certificate URL.
-3. **Carbon quality benchmark**, 80–150 rows, and the threshold derived from its
-   calibration curve rather than chosen. This is the long-lead item and it gates
-   everything downstream, so it starts early. Building the corpus needs no
-   inference; only scoring it does.
-4. **Wire `ActivationRegistry`** using the mapping in `docs/adapter-mapping.md`.
+1. **Carbon quality benchmark**, 80–150 rows, threshold derived from its
+   calibration curve rather than chosen. Now the largest remaining piece of the
+   differentiator, and the corpus needs no inference — only scoring does. The HS
+   benchmark's parked 101 rows stay parked.
+2. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed. They
+   share one key today, so a box compromise reaches role administration.
+3. **X Layer mainnet deploy**, after testnet, sequence provable. **Gas is
+   affordable now** — 0.02 gwei, ~0.000144 OKB against 0.000450 held. What is
+   missing is **USDT on mainnet** (0, so no real issuance) and **OKB on the
+   compliance key** (0, so no `recordDecision`). A mainnet deploy with no issuance
+   satisfies the eligibility sequence but proves less than the testnet run does.
+4. **Submit X Layer.** Only then start BOT Chain: testnet deploy (funded, needs a
+   human at the keystore prompt), `AkashAdapter`, mainnet, submit.
 5. **Secondary market listing contract**, with a test asserting a bound
    entitlement cannot be listed.
-6. **Float `YieldAdapter`** into Aave V3 on X Layer, with a Foundry
-   `invariant_` test on the solvency property. Extend `verify:chains` to assert
-   the Aave pool, the USD₮0 reserve and the aToken live, before wiring anything.
-7. **Frontend a judge can drive from any location.** Own origin, own
-   destination, own goods description; see the verdict, the reason, and the
-   on-chain record. Two of the seven judging criteria are product completeness
-   and user value, and this is how both are won. The owner is explicit that
-   **no route may be hardcoded** — Hong Kong and everywhere else stay available.
-8. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed.
-   They share one key today, so a box compromise reaches role administration.
-9. **X Layer mainnet deploy**, after testnet, sequence provable. Then a real
-   issuer, real collateral, a real retirement, and `totalMinted()` ≠ 0.
-10. **Submit X Layer.** Only then start BOT Chain: testnet deploy (funded,
-    needs a human at the keystore prompt), `AkashAdapter`, mainnet, submit.
+6. **Float `YieldAdapter`** into Aave V3 on X Layer, with a Foundry `invariant_`
+   test on the solvency property. Extend `verify:chains` to assert the Aave pool,
+   the USD₮0 reserve and the aToken live, before wiring anything.
 
 `ClassShares` remains wanted and remains last.
+
+**Done and struck from this list:** Carbonmark production access (routed around
+entirely — the keyless x402 path made KYB irrelevant), the `CarbonmarkAdapter`
+REST path (superseded, retained for the evidence it carries), wiring
+`ActivationRegistry` (done, and exercised by a real fulfilment), and the frontend.
 
 ---
 
@@ -613,13 +676,12 @@ stops an unverified token address reaching a deployment.
 
 These cannot be resolved from this box and are listed in the order they block work.
 
-1. **Carbonmark production access.** This is now *the* blocker for a real
-   retirement, and therefore for the X Layer demo. A test-mode key returns a
-   shared placeholder and retires nothing (see §2). Needs a business email on a
-   domain. **Ask in the same submission whether retiring on behalf of third
-   parties as a platform is permitted** — the same question that stalled
-   Shipbubble, asked once and early this time. State the 21 August deadline;
-   naming it is a legitimate expedite reason and costs nothing.
+1. ~~**Carbonmark production access.**~~ **No longer blocking anything, and it
+   never has to be resolved.** The keyless Klima x402 path performed a real
+   retirement on 17 August without a key, an account or an onboarding queue, so
+   KYB review is off the critical path entirely. The question about retiring on
+   behalf of third parties becomes live again only if the REST adapter is ever
+   shipped, which `docs/adapters.md` records as Superseded.
 
 2. **Dedicated X account** must be created and posting daily from day 1, with the
    submission post mentioning **@XLayerOfficial**. This is a hard eligibility
@@ -647,11 +709,23 @@ These cannot be resolved from this box and are listed in the order they block wo
    only 5 free live shipments exist, and cancellation is **scheduled shipments
    only, before the processing date, refund behaviour unconfirmed.**
 
-6. **Mainnet gas, for both mainnets.** Testnet funding is done (see §2). What
-   remains is X Layer mainnet, which holds 0.00045 OKB, and BOT Chain mainnet,
-   which holds 0. Neither is needed until the mainnet deploys, but X Layer's
-   eligibility gate requires mainnet *after* testnet, so this cannot be left to
-   the final day.
+6. **Mainnet funding — and this entry was wrong until 17 August.** It listed
+   X Layer mainnet gas as blocking. It is not: gas there is **0.02 gwei**
+   (20,000,001 wei, read live), the testnet deploy cost 7,178,201 gas ≈ 0.000144
+   OKB, and the deployer holds **0.000450 OKB** — about 3× headroom. *The mainnet
+   deploy can be broadcast today.*
+
+   What is actually missing, and what each thing blocks:
+
+   | Missing | Blocks |
+   |---|---|
+   | **USDT on X Layer mainnet** (holds 0) | any real mainnet issuance — collateral and price both settle in it |
+   | **OKB on the compliance key on mainnet** (holds 0) | `recordDecision` on mainnet, so the audit trail cannot be written there |
+   | **BOT Chain mainnet gas** (holds 0) | the BOT Chain mainnet deploy |
+
+   So a mainnet deployment that satisfies X Layer's testnet-then-mainnet sequence
+   is available now, while a mainnet deployment that *demonstrates* anything is
+   not. Do not conflate the two in the submission.
 
    Also still open from the original setup: `ADMIN` and `ORACLE` currently share
    one key as a testnet shortcut. **Re-point them before mainnet.** The oracle

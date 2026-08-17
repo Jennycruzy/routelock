@@ -1,6 +1,9 @@
 /**
  * CarbonmarkX402Adapter — CARBON RETIREMENT
- * Status:  IN DEVELOPMENT. Not deployed. No retirement has been performed.
+ * Status:  ACTIVE since 17 August 2026. One real retirement — 0.001 t of
+ *          UCR-437-2023, 0.027725 USDC on Base, discharging entitlement 4 on
+ *          X Layer. Certificate and the checks that confirmed it are in
+ *          docs/adapters.md.
  * Chain:   X Layer. The entitlement, collateral, escrow, compliance decision
  *          and audit trail are all on X Layer, and nothing of RouteLock is
  *          deployed anywhere else. The issuer's payment to the supplier crosses

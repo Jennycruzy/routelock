@@ -32,7 +32,7 @@ gate that can refuse. Three adapters sit above one unchanged contract set:
 
 | Adapter | Vertical | Chain | Status | Fulfilment proof |
 |---|---|---|---|---|
-| `carbonmark-x402` | Carbon retirement | X Layer | **In development.** Code complete and exercised against the live endpoint. No retirement performed. | Public Carbonmark certificate URL |
+| `carbonmark-x402` | Carbon retirement | X Layer | **Active** since 17 Aug 2026. One real retirement, discharging entitlement 4. | [Public certificate](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0) |
 | `shipbubble` | Delivery | none | **Reference implementation.** Built against the real API, deliberately not deployed. | Carrier label + tracking number |
 | `akash` | Compute leasing | — | **Not started.** Named here because the port it will implement already exists, not because any of it is built. | On-chain lease + ingress URL |
 
@@ -168,15 +168,31 @@ anyone can read X Layer state, then check the retirement certificate at the
 registry itself. That is stronger than a self-contained system where every claim
 traces back to this project's own database.
 
-#### Exercised against the live endpoint
+#### One real credit, retired — 17 August 2026
 
-On 16 August: **six credit classes in inventory**, priced from $0.067/t to
-$947/t, with registry, project ids, vintages and methodology read live rather
-than cached. A 0.001 t retirement prices at **0.028136 USDC** all-in. Reproduce
-it with `pnpm --filter @routelock/carbon smoke:x402` — the script performs
-discovery, quoting and authorisation-building, all of which are free, and
-**refuses to sign**, because the call after a signature burns a credit
-irreversibly.
+**0.001 t of UCR-437-2023** (Solar PV – Small Scale, India), charged **0.027725
+USDC** on Base, discharging **entitlement 4** on X Layer testnet. The engine
+ruled `APPROVED` — the verdict the chain records, against the 0.7 carbon
+threshold — the decision was committed on chain by the compliance key, the credit
+was retired, and the provider's own evidence was committed back:
+
+**[Open the certificate ↗](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0)**
+· [payment tx on Base](https://basescan.org/tx/0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2)
+· `cast call 0x38D8a1e9bC45378E4019320ECa4fc5431BeF40Bb 'activations(uint256)(bytes32,bytes32,bytes32,bytes32,bytes32,string,uint64,uint64,uint32,uint8)' 4 --rpc-url https://testrpc.xlayer.tech`
+
+Four things were checked before calling it real, because the last time every
+signal said success and nothing had been retired: the transaction sits **466
+blocks** behind the head rather than 36 million; its logs name `RouteLock
+entitlement holder` and `RouteLock entitlement 4` rather than a shared
+`Developer Tester`; `verify()` still returns `retired` against the live endpoint;
+and the issuer's USDC went 2.990000 → 2.962275. Full evidence in
+[`docs/adapters.md`](docs/adapters.md).
+
+Inventory is read live, not cached — on 17 August, **six credit classes** priced
+from $0.023/t to $284/t. Reproduce the free half with
+`pnpm --filter @routelock/carbon smoke:x402`: discovery, quoting and
+authorisation-building all cost nothing, and the script **refuses to sign**,
+because the call after a signature burns a credit irreversibly.
 
 That irreversibility is the justification for the refusal gate rather than a
 caveat attached to it: the cost of a wrong approval is unrecoverable and the cost
@@ -380,15 +396,17 @@ prose.
 
 Stated as absent rather than stubbed:
 
-- **No fulfilment has been performed by any adapter.** The carbon retirement is
-  wired end to end and funded — the paying address holds 2.99 USDC on Base
-  against the ~0.03 USDC a 0.001 t retirement costs, and EIP-3009 needs no ETH —
-  but it **has never executed**. Until it does, no credit has been retired.
-- **The end-to-end script exists and has not completed a full pass.**
-  `packages/attest/scripts/e2e.ts` runs all nine steps; steps 1–4 are proven on
-  X Layer testnet, steps 5–9 are not. The public replay endpoint is not built.
-- **The frontend** (`apps/web`, `apps/api`) — empty, nothing scaffolded.
+- **Only one of the three adapters has fulfilled anything.** Carbon has, once —
+  see above. Delivery is deliberately not deployed and compute is not built, so
+  two of the three rows in the adapter table are honest absences rather than work
+  in progress.
+- **The X Layer deployment is testnet only.** Mainnet holds 0.00045 OKB, which at
+  the current 0.02 gwei covers the ~0.000144 OKB deploy about three times over,
+  but it holds no USDT — so a mainnet deployment could exist today while a real
+  mainnet *issuance* could not.
 - **The compute adapter** — not started.
+- **The HS benchmark stands at 253 of 354 rows**, and the figures published here
+  say so. The remaining rows are parked deliberately, not pending.
 - **`ADMIN` and `ORACLE` share one key**, as a testnet shortcut. They are
   separated before any mainnet deploy.
 
@@ -421,10 +439,24 @@ asserts it on every run so a stale value cannot reach a deploy.
 ```bash
 pnpm install
 pnpm verify:chains    # re-verify all four chains against live RPC
-pnpm -r test          # 190 tests across six packages
+pnpm -r test          # 290 tests across seven packages
 
 cd packages/contracts && forge test    # 159 tests
 ```
+
+Run the frontend a judge can drive:
+
+```bash
+pnpm --filter @routelock/api start     # http://127.0.0.1:8787
+```
+
+It serves live chain state, the live `COMPLIANCE_ROLE` refusal probe, the
+retirement and its certificate, the compliance engine on your own goods, and the
+on-chain audit trail for any token. **It holds no key and signs nothing** — a
+test reads the API's own source and fails if a signing symbol appears in it.
+Model-backed endpoints are rate limited and spend from their own capped ledger,
+separate from the operator's, and answer `402` when that cap is reached rather
+than degrading quietly.
 
 Exercise the carbon adapter against the live endpoint, for free, with no
 possibility of spending:

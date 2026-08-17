@@ -630,3 +630,122 @@ the obligation, rather than discovering it at the mint.
   reached `submitParcel`, so `ROUTELOCK_RESUME_TOKEN` cannot recover it — the
   resume path reads the on-chain parcel hash and refuses on a zero. Its 3 USD₮0
   sits in escrow.
+
+---
+
+## Day 5 — 17 August 2026
+
+### A real credit was retired. Carbon is Active.
+
+The full nine-step run completed for the first time, scaled to the balance
+(0.1 / 0.2 / 0.1 USD₮0). **Step 8 had never executed before today.**
+
+| | |
+|---|---|
+| Entitlement | **4** on X Layer testnet — `Activated`, verdict `APPROVED`, all five commitments recorded |
+| Credit | UCR-437-2023, Solar PV – Small Scale, India |
+| Amount / charged | 0.001 t / **0.027725 USDC** on Base, against 0.028125 authorised |
+| Payment tx | `0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2`, block 50,083,814, mined 08:56:15 UTC |
+| Certificate | `app.carbonmark.com/retirements/id/8453-0x8717eb0f…-0` |
+
+**Verified rather than assumed, using exactly the checks that caught the fake one
+on 14 August:**
+
+- **Block distance.** 50,083,814 against a head of 50,084,280 — 466 blocks, about
+  fifteen minutes. The placeholder that fooled the earlier run sat 36 million
+  blocks in the past. *The block being recent is the check; the transaction
+  existing is not.*
+- **The logs name this project.** Decoding the transaction's 22 logs yields
+  `RouteLock entitlement holder`, `RouteLock entitlement 4` and `UCR-437-2023` —
+  not the shared `Developer Tester` beneficiary.
+- **The provider still confirms it.** `adapter.verify()` returns
+  `state: "retired"`, `found: true`, `live: true`.
+- **The money left.** Issuer's Base USDC 2.990000 → 2.962275.
+
+Status updated in `docs/adapters.md`, `README.md` and the adapter's own source
+header, which all previously said no retirement had been performed.
+
+### Frontend built — `apps/web` + `apps/api`
+
+Both directories were empty at the start of the day. The API is `node:http` and
+viem, no framework; the page is one HTML file, one stylesheet and one script,
+with no build step.
+
+Endpoints, all serving live values: `/api/state` (addresses, bytecode lengths,
+totals, the 17-check role graph), `/api/guarantee` (the `COMPLIANCE_ROLE` refusal
+probed live, with a control call), `/api/fulfilment` (the retirement, re-verified
+per request), `/api/carbon/inventory`, `/api/rule/hs`, `/api/rule/carbon`,
+`/api/replay/:tokenId`, `/api/budget`.
+
+Three decisions worth not re-litigating:
+
+- **The API holds no key and signs nothing**, and that is asserted structurally:
+  `no-signing.test.ts` reads the package's own source and fails if
+  `createWalletClient`, `privateKeyToAccount`, `writeContract`,
+  `COMPLIANCE_PRIVATE_KEY` or nine other symbols appear in code. A grep, not a
+  runtime check, because a runtime check can only fail once the dangerous code
+  exists and runs.
+- **A refusal returns 200.** `NEEDS_INFORMATION` and `REFUSED` are outcomes, so
+  the only 4xx are a malformed request and — as `402` — an exhausted budget. The
+  three verdict cards on the page are deliberately identical in size and weight;
+  only the accent colour differs.
+- **The served endpoints spend from their own ledger**, `data/served-inference.jsonl`,
+  capped separately from the operator's 25. A visitor cannot drain the budget the
+  e2e run needs, and the e2e run cannot be starved by a visitor.
+
+### The HS path was spending without a cap
+
+Found while wiring the ruling endpoint: `InferenceBudget` guarded the carbon path
+only. `ComplianceEngine.classify` made one or two model calls with nothing
+counting them — fine while its only caller was a supervised benchmark, not fine
+behind an HTTP endpoint on an account that has run out of credit twice.
+
+`propose` and `ground` now report the token counts **the API itself returns**, and
+the engine records them. Three details that are the substance of it:
+
+- **Usage is reported before the response is parsed.** A 200 whose content is
+  unusable has still been charged; recording only successful parses would let a
+  run pay repeatedly while the ledger insisted nothing had happened.
+- **The grounding pass records even when its answer is discarded.** It throws away
+  codes the model invented rather than chose, and those calls cost money anyway.
+- **A grounded ruling refuses unless it can afford *both* passes.** Checking for
+  one call would let a ruling spend, then fail to ground, and record a decision
+  whose `engineVersion` still says `+grounded`. A decision hash that misdescribes
+  what produced it is worse than a refusal.
+
+`InferenceBudgetExceeded` now carries `callsNeeded`, so "exhausted" and "cannot
+afford the whole ruling" read differently. The benchmark stays deliberately
+unbudgeted: a 25-call cap in front of a job whose purpose is hundreds of calls
+would only teach the operator to raise caps.
+
+**Known inaccuracy, not introduced today and not yet fixed:** when `ground()`
+returns `null` because a non-200 came back or no candidate chapters were named,
+the decision still records `ENGINE_VERSION` = `…+grounded`. The benchmark works
+around it by recording a separate `grounding` boolean. Fixing it properly changes
+decision hashes, so it is not a mid-submission change.
+
+### `.env` loading moved to `@routelock/chain`
+
+Two entry points now need it — the e2e script and the API — so
+`packages/attest/scripts/env.ts` is a re-export and there is one parser rather
+than two that can drift.
+
+### Suite
+
+**290 TypeScript tests across seven packages, 0 failing** (chain 28, fulfilment 2,
+carbon 45, carrier 31, compliance 125, attest 57, api 2). **159 Solidity tests,
+0 failing.** No contract was modified.
+
+### Also confirmed today
+
+- **X Layer mainnet gas is affordable now**, and `HANDOFF.md` §4.6 was wrong to
+  list it as blocking. Gas is 0.02 gwei (20,000,001 wei) and the testnet deploy
+  cost 7,178,201 gas ≈ 0.000144 OKB against a balance of 0.000450 — roughly 3×
+  headroom. What is genuinely missing on mainnet: **0 USDT** (so no real
+  issuance) and **0 OKB on the compliance key** (so no `recordDecision`).
+- **A stale `anvil` fork was still running from the previous session**, forked at
+  a 12-hour-old block. A rehearsal against it would have read state that no
+  longer matched the chain. Killed and re-forked at the current head before use —
+  *check the fork's block height, not merely that a fork is answering.*
+- The forked-chain rehearsal now passes steps 1–7 in one pass, which the previous
+  session's notes recorded as unproven.
