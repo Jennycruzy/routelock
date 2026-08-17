@@ -113,6 +113,23 @@ const FACTORY_ABI = [
 const ESCROW_ABI = [
   { type: "function", name: "postCollateral", stateMutability: "nonpayable",
     inputs: [{ name: "classId", type: "bytes32" }, { name: "amount", type: "uint256" }], outputs: [] },
+  // Step 10. The lifecycle this script opens, it now also closes.
+  { type: "function", name: "releaseToIssuer", stateMutability: "nonpayable",
+    inputs: [{ name: "tokenId", type: "uint256" }], outputs: [] },
+  { type: "function", name: "claim", stateMutability: "nonpayable",
+    inputs: [{ name: "token", type: "address" }], outputs: [] },
+  { type: "function", name: "withdrawCollateral", stateMutability: "nonpayable",
+    inputs: [{ name: "classId", type: "bytes32" }, { name: "amount", type: "uint256" }], outputs: [] },
+  { type: "function", name: "claimable", stateMutability: "view",
+    inputs: [{ name: "account", type: "address" }, { name: "token", type: "address" }],
+    outputs: [{ name: "", type: "uint256" }] },
+  { type: "function", name: "classEscrow", stateMutability: "view",
+    inputs: [{ name: "classId", type: "bytes32" }],
+    outputs: [
+      { name: "issuer", type: "address" }, { name: "token", type: "address" },
+      { name: "payoutObligation", type: "uint256" }, { name: "collateral", type: "uint256" },
+      { name: "obligation", type: "uint256" }, { name: "registered", type: "bool" },
+    ] },
 ] as const;
 
 interface Deployment {
@@ -613,9 +630,84 @@ async function main(): Promise<void> {
   await registry.recordCarrier(tokenId, witnessed);
   console.log(`    committed`);
 
+  step(10, "Settle the escrow — the issuer performed, so the issuer is paid");
+  // ## Why this is here and not in a sweeper
+  //
+  // Steps 3 and 4 move money *in*. Until 17 August nothing moved it out, and
+  // four runs had left 9.3 USD₮0 sitting in escrow — not lost, merely never
+  // reclaimed, because no code was responsible for the second half.
+  //
+  // A periodic sweeper is the wrong shape for that job. From on-chain state
+  // alone, an entitlement awaiting a compliance ruling is indistinguishable
+  // from an abandoned one, so a sweeper on a timer eventually refunds live work
+  // and writes a permanent, false `BuyerRefunded` about a job that was
+  // proceeding. There is no threshold that fixes it — the information simply is
+  // not on chain.
+  //
+  // This moment carries what a sweeper never has: the retirement happened three
+  // lines ago and its evidence is committed. Fulfilment is not being inferred,
+  // it is being remembered. So the release belongs here, where the answer is
+  // certain, and `recover-escrow.ts` stays what it should be — an operator tool
+  // for runs that died partway.
+  await send(ownerWallet, publicClient, owner, {
+    address: deployment.settlementEscrow, abi: ESCROW_ABI, functionName: "releaseToIssuer",
+    args: [tokenId],
+  }, `releaseToIssuer(${tokenId}) — discharges the obligation, credits the issuer`);
+
+  // `releaseToIssuer` credits `claimable`; it does not transfer. Read the credit
+  // back rather than assuming PRICE: on a resumed run the deposit on chain is
+  // whatever the original run paid, which this invocation's env may not match.
+  //
+  // Retried for the reason step 3 documents. This read decides whether a
+  // transfer happens, and a stale zero here is how the recovery script silently
+  // stranded 0.1 USD₮0 on its first run — it read once, saw nothing, and
+  // reported success.
+  let credited = 0n;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    credited = (await publicClient.readContract({
+      address: deployment.settlementEscrow, abi: ESCROW_ABI, functionName: "claimable",
+      args: [owner.address, deployment.settlementToken],
+    })) as bigint;
+    if (credited > 0n) break;
+    console.log(`  claimable still reads 0 after the release — node may be behind, retrying`);
+    await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+  }
+
+  if (credited === 0n) {
+    // Not fatal: the release is on chain and the money is safe in escrow. Say
+    // so precisely, and name the tool that finishes the job.
+    console.log(
+      `  ⛔ released but claimable never appeared. Nothing is lost — run\n` +
+        `     pnpm --filter @routelock/attest recover --broadcast`,
+    );
+  } else {
+    await send(ownerWallet, publicClient, owner, {
+      address: deployment.settlementEscrow, abi: ESCROW_ABI, functionName: "claim",
+      args: [deployment.settlementToken],
+    }, `claim ${Number(credited) / 1e6} USD₮0 to the issuer`);
+  }
+
+  // Collateral is freed only by the discharge above, so it is read after it.
+  // Left behind otherwise, this is the larger half of what accumulated.
+  const [, , , collateral, obligation] = (await publicClient.readContract({
+    address: deployment.settlementEscrow, abi: ESCROW_ABI, functionName: "classEscrow",
+    args: [classId],
+  })) as readonly [Address, Address, bigint, bigint, bigint, boolean];
+
+  const freed = collateral > obligation ? collateral - obligation : 0n;
+  if (freed > 0n) {
+    await send(ownerWallet, publicClient, owner, {
+      address: deployment.settlementEscrow, abi: ESCROW_ABI, functionName: "withdrawCollateral",
+      args: [classId, freed],
+    }, `withdrawCollateral ${Number(freed) / 1e6} USD₮0 — above the ${Number(obligation) / 1e6} still owed`);
+  } else {
+    console.log(`  no collateral free — ${Number(obligation) / 1e6} USD₮0 still backs open entitlements`);
+  }
+
   console.log(
     `\n${"═".repeat(66)}\nCOMPLETE. A real carbon credit was retired against an\n` +
-      `on-chain entitlement, and the provider's own evidence is committed.\n` +
+      `on-chain entitlement, the provider's own evidence is committed, and the\n` +
+      `escrow settled to the party the chain says earned it.\n` +
       `Check it yourself: ${receipt.proofUrl}\n${"═".repeat(66)}`,
   );
 }

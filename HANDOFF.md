@@ -72,6 +72,27 @@ longer a constraint. Tokens 1–3 refunded, token 4 released, 6.2 collateral
 withdrawn. Entitlement 4's `carrierRefHash` is untouched: the fulfilment evidence
 the submission rests on survives the unwind.
 
+**`e2e.ts` now closes what it opens — step 10.** After the carrier evidence is
+committed it calls `releaseToIssuer`, reads the credit back, `claim`s it, and
+withdraws whatever collateral the discharge freed. So a normal run no longer
+leaves anything behind and the recovery script is only for runs that died
+partway.
+
+Why there and not on a timer: from on-chain state an entitlement awaiting a
+compliance ruling is indistinguishable from an abandoned one, so a sweeper on a
+schedule eventually refunds live work and writes a permanent, false
+`BuyerRefunded`. No threshold fixes that — the information is not on chain. Step
+10 has what a sweeper never does: the retirement happened three lines earlier.
+Fulfilment is remembered, not inferred.
+
+⛔ **Step 10 is written and typechecked but has not yet executed.** It only runs
+under `--broadcast --retire`, and fork mode returns at step 8, so exercising it
+costs a real retirement. The three calls themselves *are* proven — `recover`
+made exactly these against this deployment on 17 August. What is unexercised is
+their placement in the run. **The failure mode is safe:** if the claim does not
+appear, the release is still on chain, the money is still in escrow, and the
+script says to run `recover`. Nothing is lost, and the next real run is the test.
+
 ⛔ **Two bugs it hit on the first real run, both the stale-RPC trap this repo
 already knew about.** X Layer's public RPC is load-balanced, so a read after a
 confirmed write can be served by a node that has not seen the block.
