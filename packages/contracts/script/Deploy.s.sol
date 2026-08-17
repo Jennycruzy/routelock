@@ -43,6 +43,7 @@ contract Deploy is Script {
     error SettlementTokenUnreadable(address token);
     error UnexpectedDecimals(address token, uint8 got, uint8 expected);
     error WiringAssertionFailed(string what);
+    error RolesNotSeparated(string what, address shared);
 
     /// @dev Every settlement token below was verified live over RPC on
     ///      2026-08-13 and matches `packages/chain/src/chains.ts`. The address is
@@ -78,6 +79,7 @@ contract Deploy is Script {
         address oracle = _envAddress("ROUTELOCK_ORACLE");
         address compliance = _envAddress("ROUTELOCK_COMPLIANCE");
 
+        _assertRoleSeparation(block.chainid, admin, oracle, compliance);
         _assertSettlementToken(target.settlementToken);
 
         address deployer = msg.sender;
@@ -174,6 +176,53 @@ contract Deploy is Script {
         } catch {
             revert SettlementTokenUnreadable(token);
         }
+    }
+
+    /// @notice Refuse a deployment whose roles collapse into one key.
+    ///
+    /// Runs **before** `startBroadcast`. `_assertWiring` would already catch the
+    /// compliance collision, but only after the contracts are deployed and the
+    /// gas is spent — which leaves an operator holding a half-built deployment
+    /// and a revert to interpret. A precondition belongs before the money.
+    ///
+    /// Three separations, and they are not equally severe:
+    ///
+    /// **`oracle != compliance` — every chain, no exception.** `ORACLE_ROLE`
+    /// holds `releaseToIssuer` and `refundBuyer`. Pointing compliance at that
+    /// key hands the model's signer the ability to move escrowed funds, which
+    /// erases the one guarantee the whole design is built to make structural.
+    /// `SettlementEscrow` refusing to grant `COMPLIANCE_ROLE` protects against
+    /// granting the wrong role; it cannot protect against reusing the address.
+    ///
+    /// **`admin != oracle` — mainnet only.** The oracle signs unattended from a
+    /// server, so its key lives where a compromise can reach it. Sharing it with
+    /// `ADMIN_ROLE` means that same compromise can also grant roles, revoke
+    /// them, and re-point the contracts. On a testnet whose funds are faucet
+    /// tokens that is an accepted shortcut. On mainnet it is not, so it is
+    /// enforced here rather than left to a line in a handoff document that
+    /// somebody has to remember at the wrong hour.
+    ///
+    /// **`admin != compliance` — every chain.** Same reasoning as the first,
+    /// arrived at from the other side.
+    function _assertRoleSeparation(
+        uint256 chainId,
+        address admin,
+        address oracle,
+        address compliance
+    ) internal pure {
+        if (oracle == compliance) revert RolesNotSeparated("oracle==compliance", oracle);
+        if (admin == compliance) revert RolesNotSeparated("admin==compliance", admin);
+
+        if (admin == oracle && _isMainnet(chainId)) {
+            revert RolesNotSeparated("admin==oracle on mainnet", admin);
+        }
+    }
+
+    /// @dev The two mainnets, named rather than inferred. A chain absent from
+    ///      `_target` never reaches this function, so an unknown id defaulting
+    ///      to "testnet" here cannot weaken anything.
+    function _isMainnet(uint256 chainId) internal pure returns (bool) {
+        return chainId == 196 || chainId == 677;
     }
 
     /// @notice Prove the role graph, including the negative half.

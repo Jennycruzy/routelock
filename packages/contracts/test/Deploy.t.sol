@@ -37,6 +37,15 @@ contract DeployHarness is Deploy {
         return _target(chainId);
     }
 
+    function checkRoleSeparation(
+        uint256 chainId,
+        address admin,
+        address oracle,
+        address compliance
+    ) external pure {
+        _assertRoleSeparation(chainId, admin, oracle, compliance);
+    }
+
     function checkSettlementToken(address token) external view {
         _assertSettlementToken(token);
     }
@@ -73,6 +82,63 @@ contract DeployTest is Test {
     function test_wiringPassesItsOwnAssertions() public {
         harness.deployAndWire(oracle, compliance);
         harness.assertWiring(address(harness), oracle, compliance);
+    }
+
+    // ---------------------------------------------------------------------
+    // Role separation, checked before anything is broadcast
+    // ---------------------------------------------------------------------
+
+    function test_separatedRolesPassOnEveryChain() public view {
+        uint256[4] memory chains = [uint256(1952), 196, 968, 677];
+        for (uint256 i = 0; i < chains.length; i++) {
+            harness.checkRoleSeparation(chains[i], admin, oracle, compliance);
+        }
+    }
+
+    /// The severe one. `ORACLE_ROLE` can call `releaseToIssuer` and
+    /// `refundBuyer`, so an oracle that is also the compliance signer hands the
+    /// model's key the ability to move escrowed money — the exact thing the
+    /// escrow's `COMPLIANCE_ROLE` refusal exists to make impossible. Refusing to
+    /// grant a role cannot defend against reusing an address, so this must.
+    function test_complianceSharingTheOracleKeyIsRefusedOnEveryChain() public {
+        uint256[4] memory chains = [uint256(1952), 196, 968, 677];
+        for (uint256 i = 0; i < chains.length; i++) {
+            vm.expectRevert(
+                abi.encodeWithSelector(Deploy.RolesNotSeparated.selector, "oracle==compliance", oracle)
+            );
+            harness.checkRoleSeparation(chains[i], admin, oracle, oracle);
+        }
+    }
+
+    function test_adminSharingTheComplianceKeyIsRefusedOnEveryChain() public {
+        uint256[4] memory chains = [uint256(1952), 196, 968, 677];
+        for (uint256 i = 0; i < chains.length; i++) {
+            vm.expectRevert(
+                abi.encodeWithSelector(Deploy.RolesNotSeparated.selector, "admin==compliance", admin)
+            );
+            harness.checkRoleSeparation(chains[i], admin, oracle, admin);
+        }
+    }
+
+    /// The testnet shortcut this project actually took, and is allowed to keep.
+    function test_adminMayShareTheOracleKeyOnTestnet() public view {
+        harness.checkRoleSeparation(1952, admin, admin, compliance);
+        harness.checkRoleSeparation(968, admin, admin, compliance);
+    }
+
+    /// ...and may not carry it to mainnet. The oracle signs unattended from a
+    /// server, so sharing its key with ADMIN_ROLE means a box compromise reaches
+    /// role administration too.
+    function test_adminSharingTheOracleKeyIsRefusedOnMainnet() public {
+        vm.expectRevert(
+            abi.encodeWithSelector(Deploy.RolesNotSeparated.selector, "admin==oracle on mainnet", admin)
+        );
+        harness.checkRoleSeparation(196, admin, admin, compliance);
+
+        vm.expectRevert(
+            abi.encodeWithSelector(Deploy.RolesNotSeparated.selector, "admin==oracle on mainnet", admin)
+        );
+        harness.checkRoleSeparation(677, admin, admin, compliance);
     }
 
     function test_adminHandoverLeavesTheDeployerWithNothing() public {

@@ -686,8 +686,25 @@ X Layer is finished completely before BOT Chain is started.
    purchasable universe is **28 projects, 18 on a recognised registry**. Trust
    `bench/data/icvcm-join-count.json`, which is rebuildable, over any number
    quoted in prose. The HS benchmark's parked 101 rows stay parked.
-2. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed. They
-   share one key today, so a box compromise reaches role administration.
+2. **Separate `ADMIN` from `ORACLE`** before mainnet — **now enforced in code, so
+   this can no longer be forgotten.** `Deploy.s.sol` refuses a mainnet deploy
+   (196, 677) where `ROUTELOCK_ADMIN == ROUTELOCK_ORACLE`, as a precondition
+   checked *before* `startBroadcast` rather than an assertion discovered after
+   the gas is spent. `oracle != compliance` and `admin != compliance` are
+   refused on every chain, testnet included. Five tests in `Deploy.t.sol`.
+
+   Testnet 1952 still runs them on one key, deliberately and now explicitly
+   permitted — `test_adminMayShareTheOracleKeyOnTestnet` names it as a shortcut
+   rather than leaving it as an accident.
+
+   **What is still open, and it needs a human:** the mainnet deploy needs a
+   *second* keystore key for the oracle, and `packages/attest/scripts/e2e.ts`
+   signs as issuer, buyer, admin **and** oracle from one unlocked account
+   (`e2e.ts:307`). Splitting the roles for real means a second keystore entry, a
+   second interactive password prompt, and moving every `ORACLE_ROLE` call
+   (`recordLabel`, `recordPickup`, `recordDelivery`, `recordCarrier`,
+   `releaseToIssuer`, `refundBuyer`, `mintReceipt`) onto the oracle wallet.
+   Nothing on chain has been rotated — the live 1952 deployment is untouched.
 3. **X Layer mainnet deploy**, after testnet, sequence provable. **Gas is
    affordable now** — 0.02 gwei, ~0.000144 OKB against 0.000450 held. What is
    missing is **USDT on mainnet** (0, so no real issuance) and **OKB on the
