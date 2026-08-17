@@ -202,3 +202,52 @@ deployed to mainnet, not an official bridged asset.
   indexer in `packages/chain` must not depend on it there — use WebSocket
   subscriptions or a third-party endpoint. This is a real constraint on the
   indexer design, worth knowing before it is written rather than after.
+
+## Yield venues, verified 2026-08-17
+
+Added because "Aave is on X Layer" and "RouteLock can float its collateral into
+Aave on X Layer" turned out to be different claims, and only the first one is
+true.
+
+Aave V3 launched on X Layer on 30 March 2026. Every address below was read off
+the chain rather than off the announcement, and the addresses themselves came
+from `bgd-labs/aave-address-book` rather than from a search result.
+
+```
+$ cast call 0xdFf435BCcf782f11187D3a4454d96702eD78e092 'getPool()(address)' --rpc-url https://rpc.xlayer.tech
+0xE3F3Caefdd7180F884c01E57f65Df979Af84f116          # provider agrees with the configured pool
+
+$ cast call 0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297 'symbol()(string)' --rpc-url https://rpc.xlayer.tech
+"aXlrUSDT0"
+
+$ cast call 0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297 'UNDERLYING_ASSET_ADDRESS()(address)' --rpc-url https://rpc.xlayer.tech
+0x779Ded0c9e1022225f8E0630b35a9b54bE713736          # NOT RouteLock's settlement token
+
+$ cast call 0x779Ded0c9e1022225f8E0630b35a9b54bE713736 'symbol()(string)' --rpc-url https://rpc.xlayer.tech
+"USD₮0"                                             # supply 113,309,004,080,663
+
+$ cast call 0x1E4a5963aBFD975d8c9021ce480b42188849D41d 'symbol()(string)' --rpc-url https://rpc.xlayer.tech
+"USDT"                                              # supply 3,829,200,805,666 — what RouteLock settles in
+
+$ cast call 0xE3F3Caefdd7180F884c01E57f65Df979Af84f116 'getReservesList()(address[])' --rpc-url https://rpc.xlayer.tech
+[0x779Ded0c…, 0x4ae46a50…, 0xb7C00000…, 0xe538905c…, 0xE7B00000…,
+ 0x50500000…, 0xAFeab3B8…, 0x14a68610…, 0xDe653901…]                # 0x1E4a5963… is not in it
+```
+
+**The conclusion: Aave's X Layer market does not list RouteLock's settlement
+token.** Nine reserves, and the one RouteLock holds is not among them.
+
+On X Layer **testnet** the pool and provider both return `0x` — Aave is not
+deployed there at all, so there is no environment in which a yield adapter could
+be rehearsed before touching mainnet.
+
+### The general lesson, worth more than the specific addresses
+
+A protocol being deployed on a chain says nothing about whether *your* asset is
+listed on it. The chain-verification habit this file exists for — ask the chain,
+do not trust the docs page — extends one step further than it first appeared:
+ask the chain about the specific pair, not about the protocol.
+
+`verify:chains` now performs this check on every run, including the
+`settlesInVenueAsset` claim, which is cross-checked against the two addresses it
+describes rather than believed.

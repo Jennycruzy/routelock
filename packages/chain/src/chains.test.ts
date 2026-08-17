@@ -297,3 +297,60 @@ describe("Base is a fulfilment chain, not a deployment target", () => {
     );
   });
 });
+
+describe("Yield venues are configured from the chain, not from announcements", () => {
+  test("every chain states a venue, so 'unknown' cannot masquerade as 'none'", () => {
+    for (const [key, chain] of Object.entries(CHAINS) as [string, ChainConfig][]) {
+      assert.ok(chain.yieldVenue, `${key} has no yieldVenue`);
+      assert.ok(
+        chain.yieldVenue.kind === "none" || chain.yieldVenue.kind === "aave-v3",
+        `${key} has an unrecognised venue kind`,
+      );
+    }
+  });
+
+  test("an absent venue must say why", () => {
+    for (const [key, chain] of Object.entries(CHAINS) as [string, ChainConfig][]) {
+      if (chain.yieldVenue.kind === "none") {
+        assert.notEqual(chain.yieldVenue.reason.trim(), "", `${key} gives no reason`);
+      }
+    }
+  });
+
+  // The finding that stopped the YieldAdapter from being built. Aave V3 is live
+  // on X Layer and lists USD₮0; RouteLock settles mainnet in USDT. Two different
+  // contracts, and Aave's reserve list does not contain ours. If this assertion
+  // ever fails it means the settlement token or the reserve changed, and the
+  // adapter question genuinely reopens — which is exactly when someone should be
+  // made to look.
+  test("X Layer mainnet settles in a token Aave's market does not list", () => {
+    const chain = CHAINS.xlayer_mainnet;
+    assert.equal(chain.yieldVenue.kind, "aave-v3");
+    if (chain.yieldVenue.kind !== "aave-v3") return;
+    if (chain.settlement.kind !== "erc20") throw new Error("expected an erc20 settlement");
+
+    assert.notEqual(
+      chain.yieldVenue.asset.toLowerCase(),
+      chain.settlement.token.toLowerCase(),
+      "the venue asset and the settlement token are now the same — re-read the adapter decision",
+    );
+    assert.equal(chain.yieldVenue.settlesInVenueAsset, false);
+  });
+
+  // `settlesInVenueAsset` is a claim, and a claim that can drift from the two
+  // addresses it describes is a lie waiting to happen. verify:chains re-checks
+  // it against the live chain; this checks it against the config itself, so a
+  // mistake is caught without a network round trip.
+  test("settlesInVenueAsset agrees with the addresses it describes", () => {
+    for (const [key, chain] of Object.entries(CHAINS) as [string, ChainConfig][]) {
+      if (chain.yieldVenue.kind !== "aave-v3") continue;
+
+      const settlement = chain.settlement.kind === "erc20" ? chain.settlement.token.toLowerCase() : null;
+      assert.equal(
+        chain.yieldVenue.settlesInVenueAsset,
+        settlement === chain.yieldVenue.asset.toLowerCase(),
+        `${key} claims settlesInVenueAsset=${chain.yieldVenue.settlesInVenueAsset} and its addresses disagree`,
+      );
+    }
+  });
+});

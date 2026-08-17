@@ -732,9 +732,42 @@ X Layer is finished completely before BOT Chain is started.
    Also covered: `expectedPrice` on `buy` so a relist cannot fill a pending
    purchase at a new number, a seller who has moved the token, a revoked
    approval, and a settlement token that calls back mid-transfer.
-6. **Float `YieldAdapter`** into Aave V3 on X Layer, with a Foundry `invariant_`
-   test on the solvency property. Extend `verify:chains` to assert the Aave pool,
-   the USD₮0 reserve and the aToken live, before wiring anything.
+6. **`YieldAdapter` — the verification was done first, and it says do not build
+   this.** `verify:chains` now probes the venue on all four chains. **No adapter
+   was written**, because the probe found it cannot be built for real:
+
+   | | |
+   |---|---|
+   | Aave V3 on X Layer mainnet | **live** — pool `0xE3F3Caef…`, provider `0xdFf435BC…`, provider `getPool()` agrees |
+   | Its stablecoin reserve | **USD₮0** `0x779Ded0c…`, aToken `aXlrUSDT0`, supply 113.3M |
+   | RouteLock's mainnet settlement | **USDT** `0x1E4a5963…`, supply 3.8M |
+   | RouteLock's token in Aave's reserve list | **absent** |
+   | Aave V3 on X Layer **testnet** | **not deployed** — pool and provider return `0x` at 1952 |
+
+   So "float idle collateral into Aave on X Layer" is not a wiring job. The
+   protocol is on the chain; **the asset RouteLock holds is not listed on it**.
+   Closing that needs either a settlement change (mainnet to USD₮0, which is what
+   testnet already settles in) or a swap — and a swap is a different product
+   carrying slippage and price risk that the solvency invariant would then have
+   to cover. Neither is a two-day task, and the second is arguably not worth
+   doing at all.
+
+   And there is **nowhere to rehearse it**: Aave is mainnet-only on X Layer,
+   where RouteLock holds 0 USDT. A yield adapter could not be exercised for real
+   before submission even if the asset matched.
+
+   **Do not "fix" this by pointing an adapter at USD₮0 on mainnet** — RouteLock
+   would then be floating a token it does not settle in, which is a swap wearing
+   a wiring diagram.
+
+   What is committed: `yieldVenue` on every chain in `chains.ts` (a discriminated
+   union, so "no venue" and "a venue" are different shapes and `none` must carry
+   a reason), the live probe in `verify:chains`, and four tests. The venue's
+   `settlesInVenueAsset` claim is cross-checked against the two addresses it
+   describes both offline and against the chain, so it cannot drift.
+
+   The invariant test on the solvency property stays wanted, and has nothing to
+   attach to until an asset matches.
 
 `ClassShares` remains wanted and remains last.
 

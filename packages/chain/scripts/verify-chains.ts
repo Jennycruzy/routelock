@@ -13,6 +13,11 @@ import { CHAINS, type ChainConfig } from "../src/chains.ts";
 const ERC20_SYMBOL = "0x95d89b41";
 const ERC20_DECIMALS = "0x313ce567";
 
+/** `getPool()` on Aave's PoolAddressesProvider. */
+const AAVE_GET_POOL = "0x026b1d5f";
+/** `UNDERLYING_ASSET_ADDRESS()` on an aToken. */
+const ATOKEN_UNDERLYING = "0xb16a19de";
+
 interface RpcResult {
   result?: string;
   error?: { message: string };
@@ -128,6 +133,103 @@ async function verifyChain(key: string, chain: ChainConfig): Promise<Check[]> {
       label: "settlement",
       detail: `token probe failed: ${(err as Error).message}`,
     });
+  }
+
+  checks.push(...(await verifyYieldVenue(url, chain)));
+
+  return checks;
+}
+
+/** Decode the trailing 20 bytes of a 32-byte word as an address, lowercased. */
+function decodeAddress(hex: string): string {
+  return `0x${hex.slice(-40)}`.toLowerCase();
+}
+
+/**
+ * Probe the yield venue, before anything is wired to it.
+ *
+ * This exists because of what it found the first time it ran. Aave V3 launched
+ * on X Layer in March 2026, which made "float idle collateral into Aave" look
+ * like a wiring task. It is not: the market lists USD₮0 and RouteLock settles
+ * mainnet in USDT, two different contracts, and Aave's reserve list does not
+ * contain RouteLock's token at all.
+ *
+ * An announcement says a protocol is on a chain. It does not say the asset you
+ * hold is listed on it, and that is the fact an adapter actually depends on.
+ */
+async function verifyYieldVenue(url: string, chain: ChainConfig): Promise<Check[]> {
+  const venue = chain.yieldVenue;
+
+  if (venue.kind === "none") {
+    // Not a failure. A chain with no venue is a fact about the chain, and
+    // recording it is the point — it is what stops the question being reopened
+    // every time somebody remembers that Aave is multi-chain.
+    return [{ ok: true, label: "yield", detail: `none — ${venue.reason}` }];
+  }
+
+  const checks: Check[] = [];
+
+  try {
+    for (const [label, address] of [
+      ["pool", venue.pool],
+      ["provider", venue.addressesProvider],
+      ["aToken", venue.aToken],
+      ["asset", venue.asset],
+    ] as const) {
+      if ((await rpc(url, "eth_getCode", [address, "latest"])) === "0x") {
+        return [{ ok: false, label: "yield", detail: `NO CONTRACT DEPLOYED at ${label} ${address}` }];
+      }
+    }
+
+    // The provider must agree about the pool. A pool address that the protocol's
+    // own registry does not point at is either stale or a different market.
+    const resolvedPool = decodeAddress(
+      await rpc(url, "eth_call", [{ to: venue.addressesProvider, data: AAVE_GET_POOL }, "latest"]),
+    );
+    if (resolvedPool !== venue.pool.toLowerCase()) {
+      checks.push({
+        ok: false,
+        label: "yield",
+        detail: `provider resolves pool ${resolvedPool}, config says ${venue.pool}`,
+      });
+    } else {
+      checks.push({ ok: true, label: "yield", detail: `${venue.kind} pool ${venue.pool}` });
+    }
+
+    // The aToken must be the receipt for the asset we think it is.
+    const underlying = decodeAddress(
+      await rpc(url, "eth_call", [{ to: venue.aToken, data: ATOKEN_UNDERLYING }, "latest"]),
+    );
+    const aTokenSymbol = decodeString(
+      await rpc(url, "eth_call", [{ to: venue.aToken, data: ERC20_SYMBOL }, "latest"]),
+    );
+    const underlyingMatches = underlying === venue.asset.toLowerCase();
+
+    checks.push({
+      ok: underlyingMatches && aTokenSymbol === venue.aTokenSymbol,
+      label: "yield asset",
+      detail: underlyingMatches
+        ? `${aTokenSymbol} receipts ${venue.assetSymbol} at ${venue.asset}`
+        : `aToken underlying is ${underlying}, config says ${venue.asset}`,
+    });
+
+    // The claim that matters to an adapter, checked against the chain rather
+    // than trusted from the config that asserts it.
+    const settlementToken =
+      chain.settlement.kind === "erc20" ? chain.settlement.token.toLowerCase() : null;
+    const actuallySettlesInVenueAsset = settlementToken === venue.asset.toLowerCase();
+
+    checks.push({
+      ok: actuallySettlesInVenueAsset === venue.settlesInVenueAsset,
+      label: "yield match",
+      detail: actuallySettlesInVenueAsset
+        ? `venue accepts the settlement token — an adapter can float it directly`
+        : `venue accepts ${venue.assetSymbol} ${venue.asset}, settlement is ` +
+          `${chain.settlement.kind === "erc20" ? `${chain.settlement.symbol} ${chain.settlement.token}` : chain.settlement.kind} ` +
+          `— NO ADAPTER CAN FLOAT SETTLEMENT HERE without a swap`,
+    });
+  } catch (err) {
+    checks.push({ ok: false, label: "yield", detail: `venue probe failed: ${(err as Error).message}` });
   }
 
   return checks;

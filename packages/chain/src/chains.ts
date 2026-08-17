@@ -26,6 +26,38 @@ export type Settlement =
   | { kind: "native"; symbol: string; decimals: number }
   | { kind: "unresolved"; reason: string };
 
+/**
+ * Where idle collateral could be floated to earn yield.
+ *
+ * Modelled the same way settlement is, and for the same reason: "there is no
+ * venue here" and "there is a venue and here is its address" must be different
+ * shapes, so that the absent case cannot be mistaken for a configured one.
+ *
+ * `asset` is the token the venue actually accepts. It is stored separately from
+ * the chain's `settlement.token` and **deliberately not assumed equal** — on
+ * X Layer they are not. Collapsing them into one field is precisely the mistake
+ * that would produce an adapter that compiles, deploys, and reverts on its first
+ * real deposit.
+ */
+export type YieldVenue =
+  | {
+      kind: "aave-v3";
+      pool: `0x${string}`;
+      addressesProvider: `0x${string}`;
+      /** The venue's reserve asset. */
+      asset: `0x${string}`;
+      assetSymbol: string;
+      aToken: `0x${string}`;
+      aTokenSymbol: string;
+      /**
+       * Whether `asset` is this chain's settlement token. When false, no
+       * adapter can float settlement here without a swap, and a swap is a
+       * different product with a different risk.
+       */
+      settlesInVenueAsset: boolean;
+    }
+  | { kind: "none"; reason: string };
+
 export interface ChainConfig {
   readonly name: string;
   readonly chainId: number;
@@ -33,6 +65,7 @@ export interface ChainConfig {
   readonly defaultRpc: string;
   readonly explorer: string;
   readonly settlement: Settlement;
+  readonly yieldVenue: YieldVenue;
   readonly env: ChainEnv;
   readonly carrierMode: CarrierMode;
 }
@@ -55,6 +88,14 @@ export const CHAINS = {
       symbol: "USD₮0",
       decimals: 6,
     },
+    // Probed live 2026-08-17: Aave's X Layer Pool and PoolAddressesProvider both
+    // return empty code (`0x`) on 1952. The market exists on mainnet only, so
+    // there is nowhere on testnet to exercise a yield adapter against the real
+    // thing — and a mock one would be worth nothing.
+    yieldVenue: {
+      kind: "none",
+      reason: "Aave V3 is not deployed on X Layer testnet — Pool and provider have no code at 1952",
+    },
     env: "test",
     carrierMode: "sandbox",
   },
@@ -71,6 +112,25 @@ export const CHAINS = {
       token: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d",
       symbol: "USDT",
       decimals: 6,
+    },
+    // Aave V3 launched on X Layer on 30 March 2026 and every address below was
+    // read off the chain on 2026-08-17, not off the announcement.
+    //
+    // ⛔ `settlesInVenueAsset` is FALSE, and it is the whole finding. Aave's
+    // X Layer market lists **USD₮0** (`0x779Ded…`, supply 113.3M). RouteLock
+    // settles mainnet in **USDT** (`0x1E4a59…`, supply 3.8M). They are different
+    // contracts and Aave's reserve list does not contain RouteLock's token at
+    // all, so floating mainnet collateral into Aave is not a wiring job — it
+    // needs either a settlement change or a swap.
+    yieldVenue: {
+      kind: "aave-v3",
+      pool: "0xE3F3Caefdd7180F884c01E57f65Df979Af84f116",
+      addressesProvider: "0xdFf435BCcf782f11187D3a4454d96702eD78e092",
+      asset: "0x779Ded0c9e1022225f8E0630b35a9b54bE713736",
+      assetSymbol: "USD₮0",
+      aToken: "0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297",
+      aTokenSymbol: "aXlrUSDT0",
+      settlesInVenueAsset: false,
     },
     env: "live",
     carrierMode: "live",
@@ -89,6 +149,10 @@ export const CHAINS = {
       symbol: "USDT",
       decimals: 6,
     },
+    yieldVenue: {
+      kind: "none",
+      reason: "Aave V3 has no BOT Chain deployment — no market has been announced or found on 968",
+    },
     env: "test",
     carrierMode: "sandbox",
   },
@@ -105,6 +169,10 @@ export const CHAINS = {
       token: "0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C",
       symbol: "USDT",
       decimals: 6,
+    },
+    yieldVenue: {
+      kind: "none",
+      reason: "Aave V3 has no BOT Chain deployment — no market has been announced or found on 677",
     },
     env: "live",
     carrierMode: "live",
