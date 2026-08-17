@@ -287,6 +287,45 @@ Three things not to undo when picking this back up:
   re-attempts the forbidden `COMPLIANCE_ROLE` grant on every deployment. That
   assertion failing means the central guarantee has been lost; it is not noise.
 
+### DEPLOYED — X Layer mainnet (196), 17 August 2026
+
+**X Layer's qualification requirement is met**: deployed on testnet, then
+launched on mainnet. The broadcast record at
+`packages/contracts/broadcast/Deploy.s.sol/196/` is the evidence for both halves
+of the sequence. Do not delete or rewrite it.
+
+| Contract | Address |
+|---|---|
+| `ServiceEntitlement` | `0x9DDFA913D42E52826100BDd0978Fd8a150Fc478a` |
+| `SettlementEscrow` | `0x573fCA3A981218d1C148a63D9B27Bf1ef5867171` |
+| `EntitlementFactory` | `0x87A78Cf1e419B9C707bA2848001DB2B3889afAf3` |
+| `ActivationRegistry` | `0x9BedF0917d6E3e6f0A66F93a4086c381f7D3A3D6` |
+| `FulfilmentReceipt` | `0x89e02FF1045727Bb557Bd4Eec6085dcaBa78945f` |
+
+Block 68,234,300. Cost **0.0001436 OKB** (7,178,141 gas at 0.02 gwei) — within
+0.05% of the figure estimated from the testnet run. Settlement is **USD₮0**
+`0x779Ded0c…`.
+
+**`ADMIN` and `ORACLE` are separate keys here, and that is the point.** The
+oracle is `0x25CE528149563c217167b9cE148604FEbeCC151e`, a key created for this
+deployment and nothing else. Verified from the chain rather than from the deploy
+script's own assertions:
+
+| Checked live on 196 | Result |
+|---|---|
+| `ORACLE_ROLE` → `0x25CE…` on entitlement, escrow, registry, receipt | **true** on all four |
+| `ORACLE_ROLE` → the admin key | **false** on all four — the separation is real |
+| `ADMIN_ROLE` → `0x69eb…` on all five | true |
+| `COMPLIANCE_ROLE` → `0xA30D…` on the registry | true |
+| Compliance holds anything on the escrow | **false** — both `COMPLIANCE_ROLE` and `ORACLE_ROLE` |
+| `escrow.grantRole(COMPLIANCE_ROLE, …)` called as admin | **reverts `0xa3dd6e91`** = `ComplianceRoleForbiddenHere()` |
+| Inter-contract wiring (classes, entitlement, escrow, registry) | all four resolve to the right addresses |
+
+`totalMinted()` is **0**. Nothing has been issued on mainnet, and the README must
+not imply otherwise. The oracle holds **no gas**, so a mainnet e2e cannot run
+until it is funded — `e2e.ts` refuses to start without it rather than stranding a
+credit at step 9.
+
 ### Deployed — X Layer testnet (1952), 13 August 2026
 
 Live at block 38195716. Addresses in `deployments/xlayer_testnet.json`; the
