@@ -10,6 +10,7 @@
     "count:join": "tsx scripts/count-icvcm-join.ts",
     "build:carbon-corpus": "tsx scripts/build-carbon-corpus.ts",
     "score:carbon": "tsx scripts/score-carbon.ts",
+    "rescore:disclosure": "tsx scripts/rescore-disclosure.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/*.test.ts",
     "score": "tsx scripts/score.ts"

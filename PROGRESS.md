@@ -870,7 +870,7 @@ answering `weak` to everything would score full marks.
 
 **Steps 4 and 5 executed anyway, because §3.3 needs no control.** 15 rows scored
 with `claude-sonnet-5`, 15 calls, every outcome in
-`bench/data/results-carbon-claude-sonnet-5.json` with the findings text included
+`bench/data/results-carbon-claude-sonnet-5-uncited.json` with the findings text included
 so the keyword scoring can be disagreed with.
 
 | | Result |
@@ -901,3 +901,48 @@ Klima x402 path returns six classes whose methodology strings are
 `LM_V1_Storage`, `C03000000` — sectoral scopes and provider-local names that join
 to **no** ICVCM decision. On the inventory RouteLock can actually retire from,
 this measurement is unanswerable by construction. Every figure carries that.
+
+### Disclosures now cite a source — and still never cite ICVCM
+
+The one carbon task left from 17 August is done. `buildCarbonPrompt` and the
+`adverseFindings` tool description now require every finding to name the source
+behind it, and to say when a concern is the model's own reading instead. 15 calls,
+$0.184; the ledger stands at 69 of 70 and $0.79 against the $1 soft limit.
+
+Full before/after in [§11 of the design](docs/carbon-benchmark-design.md).
+The two numbers that matter, and they point in opposite directions:
+
+| | Before | After |
+|---|---|---|
+| Findings carrying a named source | 4 of 46 | **23 of 31** |
+| Rows naming ICVCM or the CCPs | 0 of 15 | **0 of 15** |
+
+So the traceability defect is fixed — a buyer can now open Öko-Institut's *How
+additional is the CDM?*, Verra's post-2015 rule change or a Berkeley review from
+nearly three-quarters of findings, against one in eleven before — and the defect
+as §10 *named* it is not. The engine cites other bodies fluently and never cites
+the authority whose dated determination covers the exact methodology in front of
+it. Closing that last gap means naming ICVCM in the prompt, which buys the number
+by destroying its meaning, so it is deliberately not done.
+
+**The prompt is now barred from naming the terms the benchmark scores on**, by a
+test rather than by reviewer discipline (`propose.test.ts`). A future edit that
+adds "ICVCM" to the prompt to lift the number fails the suite. This is the trap
+worth not repeating: the metric and the instruction cannot share a vocabulary, or
+the measurement quietly becomes a test of copying.
+
+Two things also worth carrying:
+
+- **Re-scoring must never cost money.** Every result file carries its findings
+  verbatim, so `pnpm --filter @routelock/bench rescore:disclosure` recomputes the
+  whole disclosure arm offline. Re-running the model to change an instrument
+  would also confound a new metric with fresh sampling noise.
+- **Findings per row fell 3.07 → 2.07.** The vague ones went (11 unattributed
+  gestures → 1), which is the intended direction, but nothing here proves the
+  dropped findings were the weak ones. A prompt that suppressed real concerns by
+  demanding paperwork would look identical in that table. Watch it.
+
+⛔ n=15, one sampling draw per arm, and `SOURCE_TERMS` was written after reading
+the outputs — a post-hoc instrument applied to both arms, not a pre-registered
+test. It does not zero the baseline (4 of 15 rows, not 0), but it is a
+description of a change, not proof of one.

@@ -68,6 +68,32 @@ test("the prompt states the irreversibility, because that shapes the answer", ()
   assert.match(buildCarbonPrompt(request), /irreversible/i);
 });
 
+test("the prompt requires each adverse finding to name its source", () => {
+  const prompt = buildCarbonPrompt(request);
+
+  assert.match(prompt, /must name the source it comes from/i);
+  assert.match(prompt, /own reading rather than a published finding/i);
+});
+
+/// The measurement this protects is `scoreDisclosure`'s `namesAuthority` arm in
+/// `bench/src/carbon-metrics.ts`, which counts how often the engine cites the
+/// body behind a finding. That number means something only while the model is
+/// asked to cite *a* source and supplies the name itself. The moment the prompt
+/// says "ICVCM", the benchmark stops measuring what the model knows and starts
+/// measuring whether it can copy a word out of its instructions — and the
+/// published figure silently becomes a different, worthless claim.
+///
+/// So the ban is asserted here rather than left to reviewer discipline. These
+/// are exactly the terms `AUTHORITY_TERMS` matches on; if that list gains a
+/// term, this list must gain it too.
+test("the prompt never names the authority the benchmark scores on", () => {
+  const prompt = buildCarbonPrompt(request).toLowerCase();
+
+  for (const term of ["icvcm", "ccp", "core carbon", "integrity council"]) {
+    assert.equal(prompt.includes(term), false, `prompt leaks the scored term "${term}"`);
+  }
+});
+
 test("an unidentified class is rendered as unidentified, not as an empty field", () => {
   const prompt = buildCarbonPrompt({ ...request, name: null, category: null });
 

@@ -46,7 +46,56 @@ test("naming the authority and voicing a concern are counted separately", () => 
 
 test("an empty disclosure scores nothing rather than being skipped", () => {
   const none = scoreDisclosure([]);
-  assert.deepEqual(none, { namesAuthority: false, namesConcern: false, findingCount: 0 });
+  assert.deepEqual(none, {
+    namesAuthority: false,
+    namesSource: false,
+    namesConcern: false,
+    findingCount: 0,
+    findingsWithSource: 0,
+  });
+});
+
+test("naming some other body counts as a source but not as the authority", () => {
+  // The distinction the whole re-score turns on. The engine cites Öko-Institut
+  // and Berkeley freely and never cites ICVCM, so a metric that collapsed these
+  // two would report the §10 defect as fixed when it is not.
+  const other = scoreDisclosure([
+    "Öko-Institut's 'How additional is the CDM?' report challenges additionality here",
+  ]);
+
+  assert.equal(other.namesSource, true);
+  assert.equal(other.namesAuthority, false);
+});
+
+test("the authority is always also a source", () => {
+  const cited = scoreDisclosure(["ICVCM ruled this methodology does not meet the CCPs"]);
+
+  assert.equal(cited.namesAuthority, true);
+  assert.equal(cited.namesSource, true);
+});
+
+test("a gesture at unnamed studies is not a source", () => {
+  // This is the exact wording the prompt change exists to eliminate: a buyer
+  // cannot open "academic studies". Counting it would report success for the
+  // failure being measured.
+  const vague = scoreDisclosure([
+    "Academic studies and NGO analyses have questioned additionality for this project type",
+  ]);
+
+  assert.equal(vague.namesSource, false);
+  assert.equal(vague.namesConcern, true);
+});
+
+test("attribution is counted per finding, not once per row", () => {
+  const mixed = scoreDisclosure([
+    "Verra tightened hydro additionality rules after 2015",
+    "Additionality is contested",
+    "Carbon Market Watch has criticised this project type",
+  ]);
+
+  assert.equal(mixed.namesSource, true);
+  assert.equal(mixed.findingCount, 3);
+  assert.equal(mixed.findingsWithSource, 2);
 });
 
 const row = (over: Partial<ScoredCarbonRow> & { determination: string }): ScoredCarbonRow & {
@@ -61,7 +110,13 @@ const row = (over: Partial<ScoredCarbonRow> & { determination: string }): Scored
   strengthOutcome: "correct",
   integrityFlags: [],
   confidence: 0.8,
-  disclosure: { namesAuthority: false, namesConcern: true, findingCount: 1 },
+  disclosure: {
+    namesAuthority: false,
+    namesSource: false,
+    namesConcern: true,
+    findingCount: 1,
+    findingsWithSource: 0,
+  },
   adverseFindings: ["Additionality is questioned"],
   verdict: "Approved",
   ...over,

@@ -85,16 +85,56 @@ export function scoreStrength(
 /// them as one number would let the weaker one carry the stronger:
 ///
 ///   `namesAuthority` — the text names ICVCM or the CCP assessment itself. This
-///   is what makes a disclosure checkable: a buyer can open the decision
-///   document from it.
+///   is what makes a disclosure checkable *against the ground truth this
+///   benchmark holds*: a buyer can open the decision document from it.
+///
+///   `namesSource`    — the text names **any** identifiable body or publication
+///   behind the finding: a reviewer, a regulator, a standard-setter, a named
+///   report. Weaker than `namesAuthority` and deliberately so — it asks whether
+///   a buyer can trace the concern to *something*, not to the specific
+///   determination this corpus was built from.
 ///
 ///   `namesConcern`   — the text says something specific about the methodology's
-///   integrity at all. Weaker, but not nothing.
+///   integrity at all. Weakest, but not nothing.
 ///
 /// Keyword matching, and stated as keyword matching. It can only ever be a lower
 /// bound on `namesConcern`; a finding phrased in words not on the list is
 /// counted as absent.
 const AUTHORITY_TERMS = ["icvcm", "ccp", "core carbon", "integrity council"];
+
+/// Named sources, for `namesSource`.
+///
+/// ⛔ **This list was written after reading the 17 August outputs, and that has
+/// to travel with any figure derived from it.** It is a post-hoc instrument, so
+/// it describes a change rather than testing a pre-registered prediction.
+///
+/// Two things keep it honest, and neither makes it pre-registered:
+///
+///   1. It is applied identically to both runs, and the earlier run was already
+///      fixed and committed before the list existed.
+///   2. It is not fitted to zero the baseline — Öko-Institut, Berkeley and
+///      Carbon Market Watch all appear in the earlier run too, which is why that
+///      run scores 4 of 15 rather than 0 of 15.
+///
+/// Vague gestures are deliberately **excluded**: "academic studies", "NGO
+/// analyses" and "third-party reviews" name nothing a buyer can open, which is
+/// the entire failure being measured. Including them would let the metric report
+/// success for the exact wording that caused the problem.
+const SOURCE_TERMS = [
+  ...AUTHORITY_TERMS,
+  "öko-institut",
+  "oko-institut",
+  "berkeley",
+  "carbon market watch",
+  "verra",
+  "european commission",
+  "world bank",
+  "guardian",
+  "stockholm environment",
+  "international energy agency",
+  "gold standard",
+  "cdm executive board",
+];
 const CONCERN_TERMS = [
   "additionality",
   "over-credit",
@@ -113,16 +153,29 @@ const CONCERN_TERMS = [
 
 export interface DisclosureScore {
   readonly namesAuthority: boolean;
+  readonly namesSource: boolean;
   readonly namesConcern: boolean;
   readonly findingCount: number;
+  /// How many individual findings carry a named source — not just whether the
+  /// row has one somewhere. A row where one finding of four is attributed is
+  /// not the same disclosure as a row where three of four are, and collapsing
+  /// both to `true` would hide exactly the change worth reporting.
+  readonly findingsWithSource: number;
 }
 
 export function scoreDisclosure(adverseFindings: readonly string[]): DisclosureScore {
   const text = adverseFindings.join(" ").toLowerCase();
+  const hasSource = (finding: string): boolean => {
+    const lower = finding.toLowerCase();
+    return SOURCE_TERMS.some((term) => lower.includes(term));
+  };
+
   return {
     namesAuthority: AUTHORITY_TERMS.some((term) => text.includes(term)),
+    namesSource: adverseFindings.some(hasSource),
     namesConcern: CONCERN_TERMS.some((term) => text.includes(term)),
     findingCount: adverseFindings.length,
+    findingsWithSource: adverseFindings.filter(hasSource).length,
   };
 }
 
@@ -156,7 +209,10 @@ export interface DeterminationMetrics {
   readonly partial: number;
   readonly incorrect: number;
   readonly namesAuthority: number;
+  readonly namesSource: number;
   readonly namesConcern: number;
+  readonly findings: number;
+  readonly findingsWithSource: number;
   readonly integrityFlagged: number;
 }
 
@@ -190,7 +246,10 @@ export function byDetermination(
       partial: count(group, (row) => row.strengthOutcome === "partial"),
       incorrect: count(group, (row) => row.strengthOutcome === "incorrect"),
       namesAuthority: count(group, (row) => row.disclosure.namesAuthority),
+      namesSource: count(group, (row) => row.disclosure.namesSource),
       namesConcern: count(group, (row) => row.disclosure.namesConcern),
+      findings: group.reduce((sum, row) => sum + row.disclosure.findingCount, 0),
+      findingsWithSource: group.reduce((sum, row) => sum + row.disclosure.findingsWithSource, 0),
       integrityFlagged: count(group, (row) => row.integrityFlags.length > 0),
     }))
     .sort((a, b) => b.rows - a.rows);

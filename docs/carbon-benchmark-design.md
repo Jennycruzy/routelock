@@ -448,7 +448,12 @@ Corpus: `bench/data/carbon-corpus.jsonl`, 15 projects, every one purchasable wit
 real supply, every one carrying its Verra registry page as `sourceUrl` and its
 ICVCM decision document as the label's citation. Scored with `claude-sonnet-5`,
 15 model calls, results and every individual outcome in
-`bench/data/results-carbon-claude-sonnet-5.json`.
+`bench/data/results-carbon-claude-sonnet-5-uncited.json`.
+
+⛔ **Note the file name.** This section's figures describe the run made *before*
+the prompt asked for attribution, which is preserved under the `-uncited`
+suffix. `results-carbon-claude-sonnet-5.json` now holds the run made after —
+see §11.
 
 ```bash
 pnpm --filter @routelock/bench build:carbon-corpus
@@ -494,3 +499,78 @@ bar is right — §1 stands.
 - `namesAuthority` and `namesConcern` are keyword matches. The findings text is
   published in full in the results file precisely so a reader can disagree with
   the scoring rather than take it.
+
+---
+
+## 11. The citation fix, and what it did not fix
+
+§10 named one actionable defect: every row produced substantive adverse findings
+and **none of them named the authority behind the concern**, so a buyer reading
+the disclosure on chain had nothing to open. The fix was the one §10 predicted —
+a prompt change, not an architecture change.
+
+`buildCarbonPrompt` and the `adverseFindings` tool description now require each
+finding to name the source it comes from, and to say so plainly where a concern
+is the model's own reading rather than a published finding.
+
+**The prompt does not name ICVCM, CCP or Core Carbon Principles**, and
+`propose.test.ts` fails if it ever does. Naming them would convert §3.1 from a
+test of what the model knows into a test of whether it can copy a word out of
+its instructions, and the published figure would silently become a different and
+worthless claim.
+
+### Before and after
+
+Same corpus, same model, same 15 rows, one variable changed. Re-scored with
+`pnpm --filter @routelock/bench rescore:disclosure`, which **spends nothing** —
+both result files carry their findings text verbatim, so a change to the
+instrument never requires paying for the answers again.
+
+| | Before | After |
+|---|---|---|
+| Rows naming **ICVCM/CCP** (`namesAuthority`) | 0 / 15 | **0 / 15** |
+| Rows naming **any** identifiable source | 4 / 15 | **15 / 15** |
+| Rows naming a concern | 15 / 15 | 15 / 15 |
+| Adverse findings, total | 46 | 31 |
+| Findings carrying a named source | 4 (9%) | **23 (74%)** |
+| Findings per row | 3.07 | 2.07 |
+
+Before: `Öko-Institut`, `Berkeley` and `Carbon Market Watch` (2 rows each);
+`academic studies` / `NGO analyses` with nothing named, 11 findings.
+After: those three plus `Verra`, the `European Commission`, the `World Bank`,
+`Stockholm Environment Institute` and named reports such as *How additional is
+the CDM?* — with 18 findings explicitly self-labelled as the model's own reading
+rather than a published one.
+
+### What this is, honestly
+
+**The traceability defect is fixed.** Nearly three-quarters of findings now point
+at something a buyer can open, against one in eleven before, and the engine
+volunteers when it is reasoning rather than citing — which it did once before and
+eighteen times after.
+
+**The defect §10 actually named is not fixed. `namesAuthority` is unchanged at
+zero.** The engine cites other bodies fluently and still never cites the one
+authority holding a published, dated determination on the exact methodology it is
+discussing. Whether that is worth another prompt change is a real question: the
+alternative is naming ICVCM in the prompt, which buys the number by destroying
+its meaning. **It should not be done.**
+
+**The finding count fell, 46 to 31.** Read as a trade, not as a loss: the
+findings that disappeared are disproportionately the unattributed gestures, and
+11 vague-only findings became 1. But nothing here proves the dropped findings
+were the weak ones, and a prompt that suppresses real concerns by demanding
+paperwork for them would look identical in this table. It is worth watching.
+
+⛔ **Four limits travel with every figure above.**
+
+1. **n=15, one sampling draw per arm.** The same prompt was never run twice, so
+   nothing separates the prompt change from ordinary run-to-run variation.
+2. **`SOURCE_TERMS` is post-hoc** — written after reading the outputs, so this
+   describes a change rather than testing a prediction. It is applied identically
+   to both arms, and it does not zero the baseline (the baseline scores 4/15,
+   not 0/15), but it is not pre-registered and must not be presented as such.
+3. Every §9 and §10 limit still stands: no positive control, two determinations,
+   and the corpus is not the deployed x402 inventory.
+4. Disclosure does not gate a retirement. Only `integrityFlags` do. Nothing in
+   this table is a pass rate for the gate.

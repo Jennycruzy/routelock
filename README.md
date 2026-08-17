@@ -348,12 +348,37 @@ document that supports it. That is a defect in RouteLock, found by measuring
 RouteLock, and it is published here rather than fixed quietly before anyone saw
 it.
 
-Two limits stated with the table, not beneath it: there is **no positive control**,
-so this cannot show the engine discriminates, only that it did not err in the
-costly direction; and the corpus is Carbonmark's REST catalogue, while the
+### Fixing it, and the half that stayed broken
+
+The prompt now requires every adverse finding to name the source behind it. Same
+corpus, same model, 15 more calls:
+
+| | Before | After |
+|---|---|---|
+| Findings carrying a named source | 4 of 46 | **23 of 31** |
+| Rows naming ICVCM or the CCPs | 0 of 15 | **0 of 15** |
+
+Nearly three-quarters of findings now point at something a buyer can open —
+Öko-Institut's *How additional is the CDM?*, Verra's post-2015 hydro rule change,
+a Berkeley review — against one in eleven before, and the engine now volunteers
+when it is reasoning rather than citing. **The specific defect above is still not
+fixed**: it cites other bodies fluently and never ICVCM.
+
+It could be fixed in one word, by naming ICVCM in the prompt. **That is refused,
+and a test enforces the refusal** — the prompt is barred from containing the
+terms the benchmark scores on, because a metric that shares a vocabulary with the
+instruction stops measuring what the model knows and starts measuring whether it
+can copy. The number would go to 15 of 15 and mean nothing.
+
+Three limits stated with the table, not beneath it: there is **no positive
+control**, so this cannot show the engine discriminates, only that it did not err
+in the costly direction; the corpus is Carbonmark's REST catalogue, while the
 deployed x402 inventory names sectoral scopes that match no ICVCM decision at all
-— so **none of this describes the live retirement path**. Full reasoning in
-[`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) §9–§10.
+— so **none of this describes the live retirement path**; and the before/after is
+**n=15 with one sampling draw per arm**, scored by a keyword list written after
+the outputs were read, so it describes a change rather than proving one. Full
+reasoning in
+[`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) §9–§11.
 
 ---
 

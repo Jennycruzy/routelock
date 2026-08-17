@@ -1,0 +1,31 @@
+{
+  "scoredAt": "2026-08-17T19:21:37.860Z",
+  "model": "claude-sonnet-5",
+  "corpus": "bench/data/carbon-corpus.jsonl",
+  "change": "buildCarbonPrompt requires each adverse finding to name its source",
+  "caveats": [
+    "n=15, one sampling draw per arm. The same prompt was never run twice, so run-to-run variation is not separated from the prompt change.",
+    "SOURCE_TERMS was written after reading the outputs. Post-hoc instrument, applied identically to both arms; it describes a change rather than testing a prediction.",
+    "namesAuthority is unchanged at 0. The engine cites other bodies, never ICVCM, so the specific defect named in the design's §10 is not fixed.",
+    "Vague attributions ('academic studies', 'NGO analyses') are deliberately excluded from namesSource — they name nothing a buyer can open.",
+    "Disclosure does not gate a retirement. Only integrityFlags do."
+  ],
+  "before": {
+    "rows": 15,
+    "findings": 46,
+    "findingsPerRow": 3.07,
+    "rowsNamingAuthority": 0,
+    "rowsNamingSource": 4,
+    "rowsNamingConcern": 15,
+    "findingsWithSource": 4
+  },
+  "after": {
+    "rows": 15,
+    "findings": 31,
+    "findingsPerRow": 2.07,
+    "rowsNamingAuthority": 0,
+    "rowsNamingSource": 15,
+    "rowsNamingConcern": 15,
+    "findingsWithSource": 23
+  }
+}

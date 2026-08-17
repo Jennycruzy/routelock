@@ -130,7 +130,7 @@ From §1.2 of the specification, restated because they get tested under time pre
 
 ## 2. Where the build actually stands
 
-Day 2 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
+Day 5 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 **BOT Chain Aug 22 23:59 UTC+8** (submit Aug 20).
 
 ### Done and verified
@@ -613,17 +613,48 @@ The compute adapter (`AkashAdapter`). Nothing is stubbed or scaffolded.
 
 X Layer is finished completely before BOT Chain is started.
 
-1. **Carbon quality benchmark — DONE, all five steps, 17 August.** Nothing here
-   is pending; it is kept because the *next* carbon task falls out of it. Read
-   [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) §9–§10.
+1. **Carbon quality benchmark — DONE, all five steps plus the citation fix.**
+   **Nothing here is pending. There is no carbon task left, and the budget could
+   not fund one anyway: 69 of 70 calls are used, $0.79 of the $1 soft limit.**
+   Read [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md)
+   §9–§11.
 
-   **→ The one carbon task left: make the disclosure cite its authority.** The
-   engine produced 2–4 substantive adverse findings on every row and named ICVCM
-   in **none** of them, so a buyer cannot follow an on-chain concern to the
-   document behind it. Fix is a line in `buildCarbonPrompt`, then re-run
-   `pnpm --filter @routelock/bench score:carbon` — **15 calls, ~$0.15** — and
-   publish before/after. Raise `ROUTELOCK_MAX_MODEL_CALLS` deliberately; 54 of 70
-   are used.
+   **The citation fix is applied and published.** `buildCarbonPrompt` now
+   requires every adverse finding to name its source. Re-scored for 15 calls,
+   $0.184; before/after in §11 and in
+   `bench/data/disclosure-citation-comparison.json`.
+
+   | | Before | After |
+   |---|---|---|
+   | Findings carrying a named source | 4 of 46 | **23 of 31** |
+   | Rows naming ICVCM or the CCPs | 0 of 15 | **0 of 15** |
+
+   So the *traceability* defect is fixed and the defect **as §10 named it is
+   not**. The engine cites Öko-Institut, Verra, Berkeley and the European
+   Commission fluently, and still never cites the one authority holding a dated
+   determination on the methodology in front of it.
+
+   ⛔ **Do not close that last gap by naming ICVCM in the prompt.** It would buy
+   the number by destroying its meaning — `namesAuthority` would become a test of
+   whether the model can copy a word out of its instructions. `propose.test.ts`
+   **fails if the prompt ever contains `icvcm`, `ccp`, `core carbon` or
+   `integrity council`.** That test is the point, not an obstacle to route
+   around; if a future edit wants to lift the number, the answer is no.
+
+   Two things worth carrying out of this:
+
+   - **Re-scoring is free and must stay free.** Result files carry their findings
+     verbatim, so `pnpm --filter @routelock/bench rescore:disclosure` recomputes
+     the whole disclosure arm with no model calls. Re-running the model to change
+     an instrument also confounds the new metric with fresh sampling noise.
+   - **Findings per row fell 3.07 → 2.07**, and the vague ones are what went (11
+     unattributed gestures → 1). Intended direction, but unproven: a prompt that
+     suppressed real concerns by demanding paperwork for them would look
+     identical in that table.
+
+   ⛔ n=15, one sampling draw per arm, and `SOURCE_TERMS` is post-hoc — written
+   after reading the outputs, applied identically to both arms, not
+   pre-registered. It describes a change; it does not prove one.
 
    The ICVCM decision table is built and committed (181 rows,
    `bench/data/icvcm-decisions.json`), and the join is counted
@@ -635,13 +666,11 @@ X Layer is finished completely before BOT Chain is started.
    on liquidity before the model is asked. The constraint is what is tokenised
    for sale, not the ground truth.
 
-   **Steps 4 and 5 are done too** — 15 rows scored for 15 calls, in
-   `bench/data/results-carbon-claude-sonnet-5.json`. The engine never rated a
-   rejected methodology `strong` (0 of 15) and **never named ICVCM in a
-   disclosure (0 of 15)**, which is a real defect with a cheap fix: a prompt
-   change telling the model to cite the authority behind a finding. See §10 of
-   the design. Re-scoring after that change is the obvious next carbon task, and
-   it costs 15 calls.
+   **Steps 4 and 5 are done too** — 15 rows scored for 15 calls. The engine never
+   rated a rejected methodology `strong`, in either run. **Mind which file you
+   read:** `results-carbon-claude-sonnet-5-uncited.json` is the pre-fix run that
+   §10's figures describe, and `results-carbon-claude-sonnet-5.json` is the run
+   after the prompt change.
 
    ⛔ **Two limits that must travel with any figure:** no positive control, and
    the corpus is Carbonmark's REST catalogue while the deployed x402 inventory

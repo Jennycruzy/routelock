@@ -1,7 +1,7 @@
 {
   "model": "claude-sonnet-5",
   "engineVersion": "compliance-0.2.0/carbon-registry-v1",
-  "scoredAt": "2026-08-17T16:24:38.640Z",
+  "scoredAt": "2026-08-17T19:19:07.354Z",
   "corpus": {
     "rows": 15,
     "skipped": [],
@@ -34,8 +34,8 @@
       "decision": "Does not meet",
       "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
       "rows": 2,
-      "correct": 1,
-      "partial": 1,
+      "correct": 0,
+      "partial": 2,
       "incorrect": 0,
       "namesAuthority": 0,
       "namesConcern": 2,
@@ -56,17 +56,15 @@
       "strength": "moderate",
       "strengthOutcome": "partial",
       "integrityFlags": [],
-      "confidence": 0.62,
+      "confidence": 0.68,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 4
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Large hydroelectric dam projects, including grid-connected hydro under ACM0002, have been widely and repeatedly challenged in the carbon market literature on additionality grounds — many such projects were found likely to have been built regardless of carbon finance given favorable economics and government support for hydropower in Türkiye during this period.",
-        "The credits are from 2012-2014 vintages (10-14 years old), which predates significant tightening of additionality and financial-barrier testing standards for hydro projects under VCS; older vintages of this type have faced particular scrutiny for being 'zombie credits' from projects that would have proceeded without carbon revenue.",
-        "ACM0002 is a large, generic methodology applied across thousands of renewable projects globally, and hydro applications specifically have been flagged in third-party analyses (e.g. academic and NGO studies of CDM/VCS hydro credits) as having some of the weakest additionality evidence among renewable energy credit types.",
-        "Dams and hydroelectric facilities can carry contested co-benefit and environmental-impact profiles (e.g. river ecology, displacement, downstream effects) that are separate from the carbon accounting itself but relevant to overall project quality perception."
+        "Large hydro projects under ACM0002 have been repeatedly flagged by academic and NGO reviews (e.g. Berkeley Carbon Trading Project's 'Carbon Credit Quality Initiative' and Öko-Institut/Carbon Market Watch reports on CDM/VCS hydro projects) as carrying high risk of non-additionality, since large dams in grid-connected markets like Türkiye are often financially viable without carbon revenue — this is a general methodology-level concern from these reviewers, not a project-specific finding for Sanibey Dam specifically.",
+        "The vintages (2012-2014) predate current VCS/Verra scrutiny standards for hydro additionality; Verra's own post-2015 tightening of rules around hydropower additionality implies these older vintages were approved under a less rigorous additionality test than would apply today — this is my own reading of the timeline, not a specific Verra finding on this project."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -87,9 +85,9 @@
         "findingCount": 3
       },
       "adverseFindings": [
-        "Small/medium hydro projects under ACM0002 have been widely and publicly challenged on additionality grounds, particularly for projects in upper-middle-income countries like Türkiye where grid-connected hydro was frequently found to be financially viable without carbon credit revenue, raising questions about whether this project genuinely required carbon finance to proceed.",
-        "The project has a large gap between vintages (2014 and 2018 only listed, despite the project being 12 years old), which is not explained in the data provided and could reflect issuance irregularities, verification gaps, or non-continuous crediting periods.",
-        "Hydroelectric projects, including run-of-river and reservoir plants, are sometimes associated with contested claims about baseline grid emission factor assumptions under ACM0002, which can inflate calculated emission reductions if grid factors are outdated or optimistically modeled."
+        "Small hydropower projects under ACM0002 have been widely criticized by researchers (e.g., studies cited in academic and NGO reviews such as the 2016 European Commission-commissioned 'Cook' study on CDM offset quality) as frequently lacking additionality, since grid-connected hydro in countries like Turkey was often already financially viable without carbon credit revenue — this is a general methodological concern about ACM0002 hydro projects, not a project-specific finding verified against this project's own documentation.",
+        "Verra (VCS) has faced broader scrutiny from journalistic investigations (e.g., Guardian/Die Zeit/SourceMaterial 2023 reporting on VCS-registered credits) questioning the rigor of additionality and baseline assumptions across various VCS project types, though no finding specifically naming this Akcay project (ID 1174) has been identified in the facts provided.",
+        "The project's oldest vintage (2014) is 12 years old, meaning the emission reductions being claimed predate verification/issuance by a significant span; this is my own reading of the timeline given, not a published finding, and may raise questions about the currency of monitoring data typical of older VCS vintages."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -103,16 +101,15 @@
       "strength": "moderate",
       "strengthOutcome": "partial",
       "integrityFlags": [],
-      "confidence": 0.72,
+      "confidence": 0.75,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Hydropower grid-connected projects under ACM0002 in Türkiye and similar mid-size hydro projects have been widely challenged in the literature and by various analysts on additionality grounds — Turkish hydro has benefited from feed-in tariffs and other regulatory support that raises questions as to whether many such projects would have been built anyway absent carbon revenue.",
-        "Vintages offered (2014-2018) are old (up to 12 years), meaning the emission reductions being monetized now are historical rather than current, which some buyers view as a quality concern given the age gap between generation and retirement.",
-        "Grid-connected renewable energy credits generally, including run-of-river and small hydro in Turkey, have faced sector-wide scrutiny regarding over-crediting relative to true counterfactual grid emission factors."
+        "Hydropower projects under ACM0002 have been widely criticized for weak additionality by CDM's own Executive Board and academic reviews (e.g. Cames et al. 2016 study for the European Commission on CDM credit quality), which found that a large share of grid-connected renewable energy projects, particularly hydro, would likely have been built regardless of carbon credit revenue, making additionality contestable — this is a general methodology concern, not a project-specific finding, as no project-specific adverse finding for Tatar Hydro (VCS ID 1205) is available in the facts provided.",
+        "The oldest vintage (2014) is 12 years old; Verra (VCS registry) and third-party analyses have generally flagged that older, unretired vintages from grid-connected renewable projects carry higher uncertainty about whether the underlying emission reductions still reflect current grid conditions, though no specific Verra finding against this project is cited here."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -126,15 +123,15 @@
       "strength": "moderate",
       "strengthOutcome": "partial",
       "integrityFlags": [],
-      "confidence": 0.75,
+      "confidence": 0.88,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
         "findingCount": 2
       },
       "adverseFindings": [
-        "Grid-connected wind projects under ACM0002 are commonly contested on additionality grounds, particularly for projects reaching financial close after wind became cost-competitive with conventional generation in many grids, including EU markets like Bulgaria — buyers should independently verify the project's additionality case (e.g., financial analysis, regulatory drivers at time of investment) rather than assume it.",
-        "Oldest vintage (2017) is 9 years old; older vintages of renewable energy credits have drawn criticism in voluntary carbon markets for representing emission reductions from a period when grid decarbonisation and policy support were already reducing the counterfactual emissions baseline, potentially overstating avoided emissions."
+        "Wind power grid-connection projects under ACM0002 have been widely challenged on additionality grounds by academic and policy reviewers (e.g., studies cited in the 2016 Öko-Institut/European Commission 'How additional is the CDM?' report) because falling wind technology costs and existing renewable energy support policies in many countries mean such projects are often argued to be financially viable without carbon credit revenue. This is a general methodological critique of ACM0002 wind projects rather than a specific finding against the Saint Nikola project itself.",
+        "Bulgaria operated feed-in-tariff and renewable energy support schemes for wind generation during the project's development period (a matter of public record in EU/Bulgarian energy policy), which raises a question — not a specific published finding on this project — about the degree to which carbon credits were the deciding factor in the investment decision."
       ],
       "verdict": "APPROVED",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -148,16 +145,15 @@
       "strength": "moderate",
       "strengthOutcome": "partial",
       "integrityFlags": [],
-      "confidence": 0.72,
+      "confidence": 0.75,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Hydroelectric projects under ACM0002 in Türkiye have been widely questioned for additionality, since Turkish feed-in-tariff and other renewable-support policies during the 2010s arguably made many such projects financially viable without carbon finance — this is a documented, sector-wide critique of Turkish hydro/wind VCS credits and applies to this project class as well.",
-        "Large hydroelectric power plants (particularly run-of-river and reservoir hydro) carry recognized environmental and social concerns (river ecosystem disruption, downstream water flow impacts) that are separate from the carbon accounting question but are commonly raised for Turkish hydro projects on VCS.",
-        "The credit vintages (2017-2018) are now 8-9 years old, meaning the emissions reduction claim is significantly time-lagged relative to issuance/retirement date, which is a general critique applied to older vintages in the market."
+        "CDM/VCS-registered large hydropower projects using ACM0002 have been repeatedly flagged by academic and NGO analyses (e.g., studies cited by Carbon Market Watch and the CDM's own Executive Board reviews of ACM0002 hydro projects) as having weak additionality claims, since grid-connected hydro in many countries, including Türkiye, was often already financially viable without carbon credit revenue — this is a general critique of the methodology class and hydro projects registered under it, not a specific finding against Alkumru published by VCS.",
+        "Türkiye's hydropower sector benefited from feed-in tariff support schemes during the 2010s, which independent researchers (referenced in various academic critiques of CDM/VCS hydro additionality, not a specific Alkumru audit) have argued undermines the 'additionality' case for many Turkish run-of-river and dam hydro projects registered in this period; no project-specific finding against Alkumru has been identified in the data provided."
       ],
       "verdict": "APPROVED",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -175,12 +171,11 @@
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "This is a wind power project (VCS ID 1525) with vintages from 2011-2012, making the credits approximately 14-15 years old at time of assessment, which is well past the typical vintage age preferred by many buyers seeking recent-vintage credits.",
-        "Grid-connected renewable energy projects under ACM0002 (particularly older wind projects in India) have been the subject of widespread, published additionality concerns from researchers and analysts, on the grounds that wind power in India had already reached grid-parity/commercial viability in this period, weakening the case that carbon credit revenue was needed to make the project viable.",
-        "One listed vintage identifier ('20110311') appears anomalous/non-standard compared to the other two vintages (2011, 2012), suggesting a possible data or date-formatting inconsistency in the registry listing that a buyer may wish to reconcile."
+        "Verra's ACM0002 methodology (grid-connected renewable electricity generation) has been the subject of published additionality concerns for pre-2013 Indian wind projects, notably in the 2014-2016 CDM/VCS academic and NGO literature (e.g. Cames et al. 2016 study for the European Commission on CDM credit quality) arguing that many grid-connected wind projects in India from this era were likely to have been built regardless of carbon revenue, given supportive state renewable energy policies and feed-in tariffs at the time. This is a general finding about the vintage/methodology/country combination, not a project-specific determination by Verra about this credit.",
+        "The credit's oldest vintage (2011) is 15 years old; no published re-validation or updated monitoring report is evident from the details provided, which is a general transparency limitation of older VCS wind vintages rather than a specific adverse finding against this project."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -198,12 +193,11 @@
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Renewable energy grid-connected projects under ACM0002/AMS-ID have been widely criticized (including by academic studies and CDM/VCS reviews) for weak additionality claims in contexts like India, where grid-connected solar has increasingly been competitive without carbon finance, especially for vintages from 2016-2017 onward.",
-        "The credit vintages (2016, 2017) are approximately 8-10 years old, meaning the emission reductions occurred long before any retirement, which raises standard concerns about the temporal relevance and ongoing additionality of older renewable energy credits.",
-        "Grouped/bundled project structures (as with this Acme Group project) can obscure individual facility-level data, making independent verification of specific generation and additionality claims more difficult for buyers."
+        "Grid-connected renewable energy (solar) projects under ACM0002/AMS-ID have been widely questioned for additionality by academics and by the CDM's own Executive Board discussions, on the grounds that falling solar costs and supportive Indian renewable energy policy mean many such projects would likely have proceeded without carbon credit revenue; this is a general methodological concern raised in third-party academic reviews (e.g. studies commissioned for the European Commission on CDM/VCS additionality, such as the 2016 Oeko-Institut 'How additional is the CDM' report) rather than a specific finding against this project, and applies broadly to grid-connected renewable energy credits of this vintage and type.",
+        "The oldest vintage (2016) is now 10 years old; VCS itself does not publish an adverse finding specific to this project, but aged vintages of this type have drawn general scrutiny regarding whether emission reductions claimed at issuance still reflect current grid emission factors used in ACM0002 baseline calculations — this is my own reading of the methodology's reliance on periodically updated grid emission factors, not a published finding against this specific project."
       ],
       "verdict": "APPROVED",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -221,12 +215,11 @@
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Large hydropower projects (this is a 4×50 MW, 200 MW cascade project) using ACM0002 have been widely and repeatedly challenged in the carbon market literature on additionality grounds, since large hydro in China was frequently found to be financially viable and policy-driven independent of carbon revenue.",
-        "The oldest vintage (2008) is 18 years old; credits from this era, particularly Chinese hydropower under CDM/VCS, are among the project types most criticized by academic and NGO reviews (e.g. Berkeley/Öko-Institut CDM assessments) for over-crediting and low additionality confidence.",
-        "Grid emission factor assumptions embedded in ACM0002 baselines from this period have been criticized as static and potentially overstating avoided emissions relative to China's actual evolving grid mix."
+        "Large hydropower projects (including grid-connected hydro under ACM0002) have been repeatedly flagged by academic and NGO reviews (e.g., studies cited in the CDM/VCS additionality debate, such as those discussed by the Öko-Institut and I4CE analyses of CDM hydropower projects) as having weak additionality claims, since large hydro is often financially viable without carbon revenue — this is a general methodological concern about ACM0002 hydropower projects rather than a specific finding published about this project.",
+        "This project's vintages (2008, 2011) are significantly older than the current date (18+ years), and older CDM/VCS-era hydropower credits have been the subject of concern from Carbon Market Watch and similar observers regarding the risk that emission reductions claimed do not reflect a genuine 'additional' baseline scenario for large Chinese hydropower built in an era of rapid grid decarbonization — again a class-level concern, not a project-specific published finding."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -244,12 +237,11 @@
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Grid-connected wind projects under ACM0002 have been widely challenged on additionality grounds, particularly for India post-2010-2015, as falling wind turbine costs, renewable purchase obligations, and feed-in tariffs are argued by some analysts to have made such projects financially viable without carbon credit revenue.",
-        "The 2020 vintage was issued for a project whose crediting period likely began years earlier, meaning the underlying investment decision may predate the credited vintage by a substantial margin, raising questions about whether the credit revenue was decisive at the time of construction.",
-        "ACM0002 is a widely used but frequently scrutinized methodology for grid-connected renewables, with academic and NGO critiques (e.g., from the Öko-Institut and Carbon Market Watch) questioning the additionality of large-scale wind in India specifically."
+        "Grid-connected wind projects under ACM0002 in India, including large-scale projects like this one, have been repeatedly flagged by academic and NGO analyses (e.g. the Berkeley Carbon Trading Project's CDM/VCS additionality reviews) as facing weak additionality arguments, since wind power in India has been commercially viable and supported by feed-in tariffs and policy mandates independent of carbon finance — this is a general critique of the methodology/country combination, not a project-specific finding, and I have not located a project-specific adverse determination for Project ID 292.",
+        "VCS (Verra) registry documentation for ACM0002-based projects generally relies on a deemed grid emission factor and standardized baseline assumptions; Verra's own methodology revisions to ACM0002 over time (multiple version updates) reflect acknowledged weaknesses in baseline/additionality demonstration for grid-connected renewables, per Verra's published methodology change logs."
       ],
       "verdict": "APPROVED",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -263,17 +255,15 @@
       "strength": "moderate",
       "strengthOutcome": "partial",
       "integrityFlags": [],
-      "confidence": 0.72,
+      "confidence": 0.7,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 4
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Project (VCS ID 426) is an older palm oil mill wastewater biogas/methane recovery project with oldest vintage from 2011, meaning credits being retired now are up to 15 years old — a long lag between claimed emission reduction and retirement.",
-        "Methane avoidance and renewable electricity generation projects of this type (AMS-III.H and AMS-I.D) in the palm oil sector have been subject to broader sector-level scrutiny regarding additionality, since methane capture and electricity sales can generate revenue streams that arguably would justify the investment absent carbon credit revenue.",
-        "Vintage listing includes an unusual duplicate/format entry ('20160101' alongside '2016'), which is a data hygiene issue in the registry listing that a buyer should be aware of even though it likely refers to the same crediting period.",
-        "Very small liquidity remaining (0.89 tonnes), suggesting this project's supply is largely exhausted or near delisting, which may indicate limited ongoing verification activity."
+        "Methane avoidance / renewable electricity projects under AMS-I.D and AMS-III.H (grid-connected renewable electricity and methane recovery in wastewater treatment) have been subject to broad additionality concerns raised by the CDM Executive Board and academic reviews (e.g. Cames et al. 2016 study for the European Commission) regarding over-crediting in POME (palm oil mill effluent) biogas projects specifically, on grounds that methane capture is often already required or economically viable without carbon finance in this sector — this is a general methodology-class concern, not a project-specific finding, and I have not located a project-specific audit result for VCS project 426.",
+        "Vintages listed include 2011 and 2012 issuances now being retired roughly 13-15 years after generation, which VCS itself has flagged in policy discussions as raising questions about the continued environmental relevance of very old vintages, though no VCS finding specific to this project's vintages was located."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0"
@@ -291,12 +281,11 @@
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "This is a grid-connected wind power project under ACM0002, a methodology category (renewable energy grid-connected generation) that has been widely criticized for weak additionality arguments, particularly for projects built after grid-connected renewables became commercially competitive in India.",
-        "The vintage is from 2016, meaning the credited emission reduction is now 10 years old at time of retirement — a long gap between claimed avoidance and retirement, which is a common critique of older renewable energy credits (delayed issuance/retirement can raise questions about ongoing project operation and real-time relevance).",
-        "Single-project wind installations of this scale (24.8 MW) in India have frequently been challenged in academic and NGO literature (e.g. studies on CDM/VCS wind additionality in India) on grounds that they would likely have been built regardless of carbon finance, given supportive state renewable energy policies and feed-in tariffs in Karnataka during the mid-2010s."
+        "Grid-connected wind projects under ACM0002 in India have been widely challenged on additionality grounds by academic and civil-society reviews (e.g., Cames et al. 2016, 'How Additional is the Clean Development Mechanism?', commissioned by the European Commission/DG CLIMA), which found many Indian wind projects registered post-2012 likely did not need carbon credit revenue to be financially viable given falling technology costs and supportive state policies — this is a general methodology/sector-level finding, not a project-specific determination against this credit.",
+        "This is a small single-project VCS wind credit (24.8 MW) with only a 2016 vintage and no subsequent vintages listed, which is consistent with (but does not itself prove) the pattern of single-crediting-period wind projects flagged in the above additionality critiques; this observation is my own reading of the data given, not a published finding specific to project id 655."
       ],
       "verdict": "APPROVED",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -310,16 +299,15 @@
       "strength": "moderate",
       "strengthOutcome": "partial",
       "integrityFlags": [],
-      "confidence": 0.75,
+      "confidence": 0.72,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "This is a small hydropower (SHP) grid-connected renewable energy project under ACM0002 — a methodology and project type widely criticized in the literature (e.g. by researchers and Carbon Market Watch/CDM Watch analyses) for weak additionality, since grid-connected renewable power in Brazil has often been found to be financially viable without carbon revenue.",
-        "The oldest vintage (2012) is 14 years old, and there is a large vintage gap (2012 and 2016 only), suggesting inconsistent issuance history or gaps in monitoring/verification during intervening years.",
-        "Brazil's grid mix and renewable energy sector have historically raised questions about additionality for hydropower projects, given the country's already high baseline share of hydro and renewables."
+        "Small hydro (SHP) grid-connected renewable energy projects under ACM0002 in Brazil have been subject to widespread additionality concerns raised by academic and NGO analyses (e.g. Cames et al. 2016 study for the European Commission (Öko-Institut), 'How additional is the CDM?') which found that many Brazilian hydro projects registered under similar baselines were likely not additional, given favorable grid economics and pre-existing policy support for renewables in Brazil.",
+        "The Clean Development Mechanism (CDM) Executive Board and later VCS-adopted ACM0002 methodology has been criticized generally by Carbon Market Watch and similar bodies for weak demonstration of financial additionality in grid-connected renewable projects in middle-income countries such as Brazil, though no specific finding against this project (id 708) has been published."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -333,16 +321,15 @@
       "strength": "moderate",
       "strengthOutcome": "partial",
       "integrityFlags": [],
-      "confidence": 0.72,
+      "confidence": 0.75,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Hydropower projects under ACM0002 have been widely challenged in the literature (e.g. studies by researchers at Berkeley/CarbonPlan and others) on additionality grounds, since large hydro is often financially viable without carbon revenue and many Chinese hydro projects registered pre-2017 have been flagged as likely non-additional or subject to weak counterfactual baselines.",
-        "The project is a single small-to-mid hydropower station in China, a category and vintage cohort (pre-2017 Chinese hydro under VCS/CDM-derived methodologies) that has drawn systematic scrutiny for over-crediting relative to grid emission factor assumptions.",
-        "The credit vintage (2016) is 10 years old, meaning it was generated under earlier grid emission factor baselines that may not reflect current, more decarbonized grid conditions, raising questions about the emissions counterfactual used at issuance."
+        "Hydropower projects under ACM0002 have been repeatedly flagged by academic and NGO reviews (e.g. Berkeley Carbon Trading Project's 'Voluntary Registry Offsets Database' analyses and studies cited in the 2021 Bloomberg/Corporate Accountability investigations of Chinese hydropower CDM-to-VCS transitions) as having weak additionality, since large grid-connected hydropower in China was often built regardless of carbon credit revenue due to state energy policy mandates predating the crediting period.",
+        "The project vintage (2016) predates issuance by up to a decade, which the Voluntary Carbon Market Integrity Initiative (VCMI) and other market commentators have generally noted as a marker of 'zombie' or legacy credits whose original additionality case was weaker under older baseline assumptions than under current VCS/ACM0002 revisions."
       ],
       "verdict": "APPROVED",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"
@@ -353,19 +340,18 @@
       "methodologyId": "AMS-I.D.",
       "decision": "Does not meet",
       "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
-      "strength": "weak",
-      "strengthOutcome": "correct",
+      "strength": "moderate",
+      "strengthOutcome": "partial",
       "integrityFlags": [],
       "confidence": 0.72,
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Hydropower grid-connected renewable energy projects under AMS-I.D face widespread, well-documented additionality concerns, as large hydro in particular has been repeatedly flagged by academic and NGO analyses (e.g., studies on CDM/VCS hydropower) as often financially viable without carbon credit revenue, especially for projects built after 2010 in countries like Vietnam with supportive renewable energy policies and feed-in tariffs.",
-        "The credit vintages span 2012-2018, with the oldest vintage being 14 years old; older vintages are widely regarded by buyers and analysts as carrying higher risk of having been issued under less rigorous baseline and monitoring standards compared to more recent methodology revisions.",
-        "Grid-connected renewable energy methodologies (AMS-I.D and similar) have faced broader scrutiny in the voluntary carbon market for potentially overstating avoided emissions due to overly conservative or outdated grid emission factor assumptions in some host countries."
+        "CDM/VCS AMS-I.D (grid-connected renewable electricity generation) methodologies have been widely questioned for additionality by academic reviewers and by the CDM Executive Board's own periodic reviews, on grounds that many grid-connected hydropower projects in this size class would likely have been built regardless of carbon finance, particularly in countries like Vietnam with strong hydropower investment incentives independent of carbon markets — this is a general methodological concern raised in third-party academic literature (e.g. studies cited by the Öko-Institut/CDM Watch analyses of AMS-I.D projects), not a specific finding against this project.",
+        "The oldest vintages (2012) are 14 years old; the European Commission-commissioned 'Ex-post evaluation of the CDM' study (Öko-Institut/Stockholm Environment Institute, 2016/2017 for DG CLIMA) found a large share of hydropower CDM/VCS projects it sampled had a low likelihood of additionality — this is a sector/methodology-level finding, not a determination specific to Song Ong Hydropower Project 836."
       ],
       "verdict": "NEEDS_INFORMATION",
       "determination": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0"
@@ -383,12 +369,11 @@
       "disclosure": {
         "namesAuthority": false,
         "namesConcern": true,
-        "findingCount": 3
+        "findingCount": 2
       },
       "adverseFindings": [
-        "Grid-connected wind projects under ACM0002 in China have been widely challenged on additionality grounds: many such projects were already financially viable due to national feed-in tariff support and mandatory renewable portfolio obligations, raising questions about whether carbon credit revenue was actually necessary to induce construction.",
-        "The project's vintage (2016) predates or coincides with tightening scrutiny of Chinese renewable energy CDM/VCS projects by researchers and NGOs, who have flagged large numbers of pre-2017 Chinese wind and hydro projects as likely non-additional.",
-        "Wind energy projects generally carry low reversal/permanence risk relative to nature-based credits, but this also means buyers should note the credit's value rests almost entirely on the additionality claim rather than on storage permanence."
+        "Berkeley Carbon Trading Project's 'Voluntary Registry Offsets Database' and multiple academic studies (e.g. Cames et al. 2016 for the European Commission, and Calel et al. research on Chinese wind CDM/VCS projects) have found that grid-connected wind projects in China under ACM0002 frequently show weak additionality, as wind capacity in China expanded rapidly due to national mandates and feed-in tariff policy independent of carbon credit revenue — implying many such projects may not be additional. This is a general finding about the project class/methodology in China, not a specific finding against this project (VCS ID 850).",
+        "The World Bank Group and other analysts have noted that China's national feed-in-tariff policy for wind power (in effect well before and during this project's 2016 vintage) provided strong independent economic incentive for wind development, which is a contextual factor bearing on additionality claims for Chinese wind projects generally; this is not a project-specific finding but a sector-level observation applicable to this project's country and technology."
       ],
       "verdict": "APPROVED",
       "determination": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0"

@@ -67,9 +67,14 @@ const ASSESS_TOOL = {
         items: { type: "string" },
         description:
           "Published, checkable concerns about this project or methodology. " +
-          "Each must be a claim a reader could go and verify. These are " +
-          "DISCLOSED to the buyer and committed on chain — they do not block " +
-          "the purchase, so report them fully and without hedging. Empty if none.",
+          "Each must be a claim a reader could go and verify, and each must " +
+          "NAME THE SOURCE IT COMES FROM — the standard-setter, assessment " +
+          "body, regulator or publication that made the finding — so a buyer " +
+          "can open the document behind it. Where a concern is your own " +
+          "reading rather than a published finding, say so in the same " +
+          "sentence. These are DISCLOSED to the buyer and committed on chain " +
+          "— they do not block the purchase, so report them fully and without " +
+          "hedging. Empty if none.",
       },
       integrityFlags: {
         type: "array",
@@ -130,6 +135,16 @@ export function buildCarbonPrompt(request: CarbonQualityRequest): string {
     "  • adverseFindings — everything contested about it that a buyer deserves",
     "    to know. These are published on chain and do NOT block the purchase,",
     "    so be thorough and direct.",
+    "",
+    "Every adverse finding must name the source it comes from — the",
+    "standard-setter, assessment body, regulator or publication that made it.",
+    "A buyer reads these on chain, months later, with no way to ask you a",
+    "follow-up question: an unattributed concern is one they can neither check",
+    "nor act on. If a methodology has been assessed against a published",
+    "framework, name the framework and what it concluded. If a concern is your",
+    "own reading rather than a published finding, say that in the same sentence",
+    "— an honest \"no published assessment, my own reading\" is worth more than",
+    "a borrowed authority.",
     "",
     "A retirement is irreversible: the credit is permanently burned, with no",
     "refund and no dispute. That is why integrity defects are absolute.",
