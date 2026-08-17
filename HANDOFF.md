@@ -158,6 +158,15 @@ Day 5 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 | BOT Chain testnet | 968 (`0x3c8`) | `https://rpc.bohr.life` | USDT `0x75edC9335175Fc0552D51D48439F229c10420fe3` (6 dp) |
 | BOT Chain mainnet | 677 (`0x2a5`) | `https://rpc.botchain.ai` | USDT `0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C` (6 dp) |
 
+**The same faucet also dispenses tUSDT**, resolved 2026-08-17 — so BOT testnet
+issuance is *not* blocked on acquiring a stablecoin, and none needs buying. The
+token it hands out is the configured `0x75edC933…`; its distributor
+`0xf534f5c4…` is an EOA holding 9.99e9 tUSDT and does **not** hold `MINTER_ROLE`,
+so it is a pre-funded hot wallet rather than a mint. `mint(address,uint256)`
+exists on the token but is `MINTER_ROLE`-gated — simulating it from both project
+addresses reverts `AccessControlUnauthorizedAccount`, so there is no
+self-service path and the CAPTCHA means a human has to claim it.
+
 BOT Chain testnet faucet: `https://faucet.bohr.life/en/basic` — 10 tBOT per address
 per 24h. Testnet explorer `https://scan.bohr.life`, mainnet `https://scan.botchain.ai`.
 
