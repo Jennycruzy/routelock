@@ -613,10 +613,17 @@ The compute adapter (`AkashAdapter`). Nothing is stubbed or scaffolded.
 
 X Layer is finished completely before BOT Chain is started.
 
-1. **Carbon quality benchmark** — **steps 1 and 2 done, 17 August; step 2 stopped
-   one arm and shrank the other two.** Read
-   [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) §9 first,
-   because it changes what steps 3–5 are worth doing.
+1. **Carbon quality benchmark — DONE, all five steps, 17 August.** Nothing here
+   is pending; it is kept because the *next* carbon task falls out of it. Read
+   [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) §9–§10.
+
+   **→ The one carbon task left: make the disclosure cite its authority.** The
+   engine produced 2–4 substantive adverse findings on every row and named ICVCM
+   in **none** of them, so a buyer cannot follow an on-chain concern to the
+   document behind it. Fix is a line in `buildCarbonPrompt`, then re-run
+   `pnpm --filter @routelock/bench score:carbon` — **15 calls, ~$0.15** — and
+   publish before/after. Raise `ROUTELOCK_MAX_MODEL_CALLS` deliberately; 54 of 70
+   are used.
 
    The ICVCM decision table is built and committed (181 rows,
    `bench/data/icvcm-decisions.json`), and the join is counted
@@ -640,20 +647,16 @@ X Layer is finished completely before BOT Chain is started.
    the corpus is Carbonmark's REST catalogue while the deployed x402 inventory
    names sectoral scopes that join to no ICVCM decision at all.
 
-   Two things settled there that change the brief: **the threshold cannot be
-   derived from a calibration curve** (it gates "is the credit what it claims to
-   be", and listed inventory has no negative examples of that, so a curve would
-   report near-perfect calibration while measuring nothing) — so 0.7 stays picked
-   and stays labelled picked. And the ground truth is **ICVCM CCP methodology
-   decisions**, which score `methodologyStrength` and `adverseFindings`, both of
-   which are **disclosure and do not gate**. Measuring them is still worth it, and
-   §3 says why.
+   Still true and still binding: **the threshold cannot be derived from a
+   calibration curve** — 0.7 stays picked and stays labelled picked, for the
+   reason in §1, which none of the above touches.
 
-   Verified reachable and keyless: `api.carbonmark.com/carbonProjects` carries
-   methodology ids, registry, vintages and a `registry.verra.org` URL per project
-   (193 VCS projects, 29 methodologies, 51 with supply — `ACM0002` alone is 96 of
-   them and ICVCM ruled that family **Does Not Meet**). The HS benchmark's parked
-   101 rows stay parked.
+   ⛔ **One figure in this file was wrong and is corrected here:** an earlier
+   note said "51 VCS projects with supply". `hasSupply` and a `/prices` row both
+   overstate it — 678 of 753 price rows hold **zero** supply. The real
+   purchasable universe is **28 projects, 18 on a recognised registry**. Trust
+   `bench/data/icvcm-join-count.json`, which is rebuildable, over any number
+   quoted in prose. The HS benchmark's parked 101 rows stay parked.
 2. **Separate `ADMIN` from `ORACLE`** before mainnet — the owner has agreed. They
    share one key today, so a box compromise reaches role administration.
 3. **X Layer mainnet deploy**, after testnet, sequence provable. **Gas is
