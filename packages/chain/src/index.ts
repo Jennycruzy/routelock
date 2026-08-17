@@ -12,6 +12,8 @@ export {
   KLIMA_X402_SPEND,
 } from "./chains.ts";
 
+export { loadDotEnv, repoRoot } from "./env.ts";
+
 export type {
   ChainConfig,
   ChainKey,
