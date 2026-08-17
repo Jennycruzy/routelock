@@ -847,3 +847,57 @@ Also worth keeping: identifiers are read **only from the start of the ICVCM
 cell**. `VMR0017 - … (ACM0002 revision)` is CCP-Approved while `ACM0002` is Does
 not meet, so a substring match would have credited the engine for the wrong
 answer on 27 projects.
+
+### ⛔ Correction to the numbers above, and the carbon benchmark scored
+
+**"Appears in `/prices`" is not "purchasable", and the join count published
+earlier in this file used the loose definition.** 678 of 753 live price rows carry
+`supply: 0` *and* `liquidSupply: 0` — priced, still listed, holding nothing.
+Counting them put purchasable projects at 68 when the true figure is 28, and the
+recognised-registry universe at 52 when it is **18**.
+
+Caught the honest way: the corpus builder produced 39 rows, and 24 of them would
+have been skipped by `deterministicGround` on liquidity before the model was
+asked — including the single CCP-Approved row and both `Very Unlikely To Meet`
+rows. `purchasableProjectKeys` now requires supply, with a test naming the
+inflation it caused.
+
+**Corrected step 2:** 18 purchasable projects on a recognised registry, **16
+joined pairs, all `Does not meet`, over two determinations** (`ACM0002` ×13,
+`AMS-I.D.` ×3). CCP-Approved: **zero**. So §3.2 has no rows at all — worse than
+the n=1 first reported — and §3.1 has **no positive control**, meaning a model
+answering `weak` to everything would score full marks.
+
+**Steps 4 and 5 executed anyway, because §3.3 needs no control.** 15 rows scored
+with `claude-sonnet-5`, 15 calls, every outcome in
+`bench/data/results-carbon-claude-sonnet-5.json` with the findings text included
+so the keyword scoring can be disagreed with.
+
+| | Result |
+|---|---|
+| Rated a CCP-rejected methodology `strong` | **0 of 15** |
+| Rated it `moderate` / `weak` | 14 / 1 |
+| Produced a specific integrity concern | **15 of 15** (2–4 findings each) |
+| **Named ICVCM, CCP or the determination** | **0 of 15** |
+| Verdicts | 7 `APPROVED`, 8 `NEEDS_INFORMATION`, confidence 0.62–0.82 |
+
+**The actionable finding is the zero.** The disclosures are substantive —
+additionality of grid-connected hydro under `ACM0002`, vintage age, sector-wide
+over-crediting — and every one of them concerns a methodology with a published,
+dated ICVCM determination that the disclosure does not point at. The prompt tells
+the model these findings are published on chain and do not block, and it still
+does not cite the authority that would make them checkable. Fixing that is a
+prompt change, not an architecture change.
+
+**Also corrected: `buildCarbonPrompt` does pass named methodologies.**
+`propose.ts:144` renders `Methodologies:   …` and has since 16 August; the design
+doc asserted the opposite on 17 August. The non-circularity conclusion survives —
+naming the methodology states the question, not the answer — but §3.1 is a
+knowledge task, not an inference-from-description task.
+
+**⛔ And the sharpest limit: the corpus is not the live inventory.** The deployed
+Klima x402 path returns six classes whose methodology strings are
+`Energy Industries (renewable / non-renewable sources)`, `Tree-Preservation-Protocol`,
+`LM_V1_Storage`, `C03000000` — sectoral scopes and provider-local names that join
+to **no** ICVCM decision. On the inventory RouteLock can actually retire from,
+this measurement is unanswerable by construction. Every figure carries that.

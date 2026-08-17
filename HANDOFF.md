@@ -621,18 +621,24 @@ X Layer is finished completely before BOT Chain is started.
    The ICVCM decision table is built and committed (181 rows,
    `bench/data/icvcm-decisions.json`), and the join is counted
    (`bench/data/icvcm-join-count.json`). **Purchasable inventory on a recognised
-   registry is 52 projects; 40 pairs join to an ICVCM decision; exactly one of
-   them is CCP-Approved.** So §3.2 — false integrity flags on sound credits — is
-   not measurable, and §3.1/§3.3 are five distinct determinations rather than
-   forty rows. Ignoring purchasability does not fix it: 157 rows, still 9
-   determinations, still 3 approved projects, and all refused on liquidity before
-   the model is asked. The constraint is what is tokenised for sale, not the
-   ground truth.
+   registry is 18 projects; 16 pairs join to an ICVCM decision; all 16 are on
+   methodologies ICVCM rejected and none is CCP-Approved.** So §3.2 has no rows
+   at all, and §3.1 has no positive control. Ignoring purchasability does not fix
+   it: 157 rows, still 9 determinations, still 3 approved projects, all refused
+   on liquidity before the model is asked. The constraint is what is tokenised
+   for sale, not the ground truth.
 
-   **This is a decision for the owner, not a coding step**, and it is stated at
-   the top of §9 rather than buried: score the five determinations and report
-   n=5 honestly, source purchasable approved credits somewhere other than
-   Carbonmark, or spend the remaining time on the deploy sequence instead.
+   **Steps 4 and 5 are done too** — 15 rows scored for 15 calls, in
+   `bench/data/results-carbon-claude-sonnet-5.json`. The engine never rated a
+   rejected methodology `strong` (0 of 15) and **never named ICVCM in a
+   disclosure (0 of 15)**, which is a real defect with a cheap fix: a prompt
+   change telling the model to cite the authority behind a finding. See §10 of
+   the design. Re-scoring after that change is the obvious next carbon task, and
+   it costs 15 calls.
+
+   ⛔ **Two limits that must travel with any figure:** no positive control, and
+   the corpus is Carbonmark's REST catalogue while the deployed x402 inventory
+   names sectoral scopes that join to no ICVCM decision at all.
 
    Two things settled there that change the brief: **the threshold cannot be
    derived from a calibration curve** (it gates "is the credit what it claims to

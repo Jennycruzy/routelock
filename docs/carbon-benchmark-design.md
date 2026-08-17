@@ -1,10 +1,11 @@
 # Carbon quality benchmark — design, and what it can honestly measure
 
-**Status: steps 1 and 2 executed, 17 August 2026. Still no inference spent, and
-still no accuracy numbers anywhere in the repo — because step 2's own gate fired.**
-The ground truth is built and committed; the count that decides whether it can be
-scored says one arm of §3 is not measurable and the other two are thinner than
-they look. See [§9](#9-steps-1-and-2-executed--what-the-count-says).
+**Status: executed end to end, 17 August 2026.** Ground truth built (§9), the join
+counted before anything was bought (§9), and 15 rows scored for 15 model calls
+(§10). §3.2 was **stopped by the count** — purchasable inventory holds no
+CCP-Approved methodology, so there is nothing to measure a false-positive rate on.
+What did come out: the engine never rated a rejected methodology `strong`, and
+**never once named the authority behind the finding it disclosed**.
 
 Written 17 August 2026, from reading the engine's own source and verifying every
 data source live.
@@ -72,12 +73,29 @@ Plus three checks that need no model at all (`deterministicGround`): unknown
 identity, no recognised registry, insufficient liquidity — and a vintage older
 than 10 years, which refers rather than refuses.
 
-**The prompt leaks nothing.** `buildCarbonPrompt` passes only name, category,
-country, registries, project ids, vintages, oldest vintage and age, liquidity and
-tonnage. No named methodologies, no quality hints, no list of weak categories. So
-a methodology-quality benchmark is **not** circular — the model is not being told
-the answer it is scored on. This was checked before anything else, because if it
-had failed, nothing else in this document would be worth building.
+**The prompt leaks no answer — but it does name the methodology, and this
+paragraph said otherwise until 17 August.**
+
+⛔ **Correction.** The original text here claimed `buildCarbonPrompt` passes "no
+named methodologies". It does:
+[`propose.ts:144`](../packages/compliance/src/carbon/propose.ts) renders
+`Methodologies:   …`, and has since the carbon engine was written on 16 August —
+a day before this document asserted otherwise. The claim was wrong when written,
+not overtaken by a change.
+
+The conclusion survives, for a different reason than the one first given. Naming
+the methodology states the **question**, not the answer: the model is told which
+methodology the credits were issued under and must supply its own judgement of
+that methodology's strength. Nothing in the prompt carries ICVCM's determination,
+a quality hint, or a list of weak categories. So the benchmark is still not
+circular — but §3.1 measures whether the model **knows what an authority has said
+about a methodology it has been named**, which is a knowledge task, and not
+whether it can infer the methodology from a project description, which is what
+the wrong version of this paragraph implied.
+
+Everything else the prompt passes: name, category, country, registries, project
+ids, vintages, oldest vintage and age, liquidity and requested tonnage. No buyer,
+no wallet, no price.
 
 ---
 
@@ -333,33 +351,77 @@ registry and a class without supply are **both refused before the model is asked
 so neither can measure the model. Benchmark-eligible therefore means *purchasable
 in `/prices`, on a registry in `RECOGNISED_REGISTRIES`*.
 
+⛔ **"Appears in `/prices`" is not "purchasable", and the first version of this
+count got that wrong.** On 17 August, **678 of 753** price rows carried
+`supply: 0` **and** `liquidSupply: 0` — priced, still published, holding nothing.
+Counting them put purchasable projects at 68 when the real figure is 28, and it
+filled a corpus with credits that `deterministicGround` then refused on liquidity
+before the model was ever asked. Caught by building the corpus and noticing 24 of
+39 rows would be skipped, including every non-negative label. The numbers below
+are the corrected ones; supply is the test.
+
 | | Count |
 |---|---|
-| Purchasable on a recognised registry | **52 projects** (51 VCS, 1 PUR) |
-| Project/methodology pairs | 55 |
-| Joined to an ICVCM decision | **40** |
-| Of those, carrying a decision document | 38 |
-| **Distinct determinations behind those 40 rows** | **5** |
+| Purchasable on a recognised registry | **18 projects** (all VCS) |
+| Joined to an ICVCM decision | **16** pairs, all with a decision document |
+| **Distinct determinations behind them** | **2** |
 
 | Decision | Rows | Methodologies |
 |---|---|---|
-| Does not meet | 37 | `ACM0002` (27), `AMS-I.D.` (8), `ACM0006` (2) |
-| Very Unlikely To Meet | 2 | `ACM0012` — **no document** |
-| CCP-Approved | **1** | `AMS-III.G.` |
+| Does not meet | 16 | `ACM0002` (13), `AMS-I.D.` (3) |
+| Very Unlikely To Meet | 0 | — |
+| **CCP-Approved** | **0** | — |
+
+### ⛔ The corpus is not the live inventory, and the write-up must say so
+
+Found while wiring step 4, and it is the sharpest limit on anything scored here.
+
+The deployed carbon path is the **Klima x402 adapter**, and `discover` returns
+**six classes** whose methodology strings are not methodology identifiers at all:
+
+| Class | `methodologies` as the provider states it |
+|---|---|
+| Solar PV – Small Scale | `Energy Industries (renewable / non-renewable sources)` |
+| Wind Energy – Small Scale | `Energy Industries (renewable / non-renewable sources)` |
+| Regen Network – City Forest Credits | `Tree-Preservation-Protocol` |
+| Ocean Alkalinity Enhancement | `LM_V1_Storage` |
+| Biochar | `C03000000` |
+| (unidentified) | none |
+
+**None of them join to any ICVCM decision** — the first is a CDM *sectoral
+scope* covering an entire industry rather than a methodology, and the rest are
+provider-local names. So on the inventory RouteLock can actually retire from,
+§3.1 is unanswerable by construction: the model is never shown a methodology
+ICVCM has ruled on.
+
+The corpus is therefore built from **Carbonmark's REST catalogue**, whose
+projects are real, purchasable and carry real methodology codes — but which is
+the catalogue of the *superseded* adapter, not the live one. That is a genuine
+measurement of the engine, because the engine is provider-agnostic and rules on
+`CarbonQualityRequest` whatever fills it. It is **not** a measurement of what the
+deployed retirement path does today, and no figure from it may be presented as
+one.
 
 ### The verdict, per arm of §3
 
 **§3.2 — false integrity flags on sound credits — is not measurable. Stop.**
-It needs credits whose methodology an authority has approved, and there is
-**one** in purchasable inventory. A false-positive rate over n=1 is not a rate.
-This is the outcome step 2 exists to produce, and it is produced before any
-inference is bought rather than after.
+It needs credits whose methodology an authority has approved, and purchasable
+inventory contains **none**. This is the outcome step 2 exists to produce, and it
+is produced before any inference is bought rather than after.
 
-**§3.1 and §3.3 are measurable, but as five questions and not as forty.** A
-methodology carries one determination however many projects use it. Reporting
-"accuracy over 40 rows" would report the same three negative determinations
-thirty-seven times and call the repetition sample size. Any figure from this
-corpus has to be per determination, with the row count stated beside it.
+**⛔ There is no positive control, and that limits §3.1 more than thinness does.**
+Every scorable row sits on a methodology ICVCM rejected. A model that answered
+`weak` to everything would score full marks. So the strength arm can show that
+the engine does *not* call a rejected methodology strong — a real property, since
+that is the error a buyer would be misled by — but it cannot show that the engine
+discriminates. That distinction is stated wherever the figure appears.
+
+**§3.3 survives intact**, because it needs no control: it asks whether a
+disclosure names a finding that demonstrably exists, and every row has one.
+
+**Per determination, never per row.** A methodology carries one determination
+however many projects use it. Reporting "accuracy over 16 rows" would state one
+judgement thirteen times and call the repetition sample size.
 
 **Relaxing purchasability does not fix it, and the number is in the report rather
 than assumed.** Over the whole recognised-registry catalogue — 268 projects — the
@@ -377,3 +439,58 @@ credits that nobody has tokenised.
 
 **What this does not change:** the threshold still stays picked, for the reason in
 §1, which is unrelated to any of the above.
+
+---
+
+## 10. Steps 4 and 5, executed — the result
+
+Corpus: `bench/data/carbon-corpus.jsonl`, 15 projects, every one purchasable with
+real supply, every one carrying its Verra registry page as `sourceUrl` and its
+ICVCM decision document as the label's citation. Scored with `claude-sonnet-5`,
+15 model calls, results and every individual outcome in
+`bench/data/results-carbon-claude-sonnet-5.json`.
+
+```bash
+pnpm --filter @routelock/bench build:carbon-corpus
+pnpm --filter @routelock/bench score:carbon     # spends 15 calls
+```
+
+| Determination | Decision | n | `strong` | `moderate` | `weak` | Names ICVCM | Names a concern |
+|---|---|---|---|---|---|---|---|
+| `ACM0002` Grid-connected electricity from renewable sources | Does not meet | 13 | 0 | 13 | 0 | **0** | 13 |
+| `AMS-I.D.` Grid connected renewable electricity generation | Does not meet | 2 | 0 | 1 | 1 | **0** | 2 |
+
+### What this says
+
+**The engine never rated a CCP-rejected methodology `strong`** — 14 of 15
+`moderate`, 1 `weak`, none `strong`. That is the error direction that would
+mislead a buyer, and it did not occur. It is **not** evidence that the engine
+discriminates: with no approved methodology in purchasable inventory there is no
+positive control, and a constant answer would produce the same table.
+
+**⛔ The disclosure never once named the authority. 0 of 15.** Every row produced
+two to four adverse findings, and they are substantive — additionality of
+grid-connected hydro under `ACM0002`, vintage age, sector-wide over-crediting.
+None of them said *ICVCM*, *CCP*, or *Core Carbon Principles*, so a buyer reading
+the on-chain disclosure has a concern they cannot follow to a document. There is
+a published, dated determination for the exact methodology named in each of those
+findings, and the disclosure does not point at it. **This is the actionable
+finding of the whole exercise**: the prompt tells the model these findings are
+published on chain and do not block, and it still does not cite the authority
+that would make them checkable.
+
+**Verdicts split 7 `APPROVED` / 8 `NEEDS_INFORMATION`** on confidence 0.62–0.82
+against the picked 0.7 bar. Reported as observed behaviour, not as evidence the
+bar is right — §1 stands.
+
+### What must not be said about this table
+
+- Not "the engine is accurate on carbon". Two determinations, one direction, no
+  control.
+- Not a false-positive rate for integrity flags. Zero approved rows were
+  available to test one on.
+- Not a statement about the deployed retirement path. See the live-inventory
+  caveat above.
+- `namesAuthority` and `namesConcern` are keyword matches. The findings text is
+  published in full in the results file precisely so a reader can disagree with
+  the scoring rather than take it.

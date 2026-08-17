@@ -85,9 +85,15 @@ export async function fetchPrices(): Promise<readonly CarbonmarkPrice[]> {
 /// The project keys a buyer could choose right now.
 ///
 /// A price row can be a listing or a pool holding, and both name the project the
-/// same way. Rows are counted whatever their supply figure says, because the
-/// figure is a snapshot and the set is what the join needs; a corpus row that
-/// depends on a specific quantity would go stale between building and scoring.
+/// same way.
+///
+/// ⛔ **A price row is not an offer.** On 17 August, **678 of 753** rows carried
+/// `supply: 0` and `liquidSupply: 0` — priced, still published, and holding
+/// nothing. An earlier version of this function counted every row that named a
+/// project, which inflated "purchasable" from 28 projects to 68 and put credits
+/// into a benchmark corpus that the engine's own `deterministicGround` then
+/// refused on liquidity before the model was ever asked. Supply is the test,
+/// and the engine's agreement with that is the reason to trust it.
 export function purchasableProjectKeys(
   prices: readonly CarbonmarkPrice[],
 ): ReadonlySet<string> {
@@ -95,7 +101,9 @@ export function purchasableProjectKeys(
   for (const price of prices) {
     const projectId =
       price.listing?.creditId?.projectId ?? price.pool?.creditId?.projectId;
-    if (projectId) keys.add(projectId);
+    if (!projectId) continue;
+    if ((price.supply ?? 0) <= 0 && (price.liquidSupply ?? 0) <= 0) continue;
+    keys.add(projectId);
   }
   return keys;
 }

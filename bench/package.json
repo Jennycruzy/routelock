@@ -8,6 +8,8 @@
     "build:corpus": "tsx scripts/build-corpus.ts",
     "build:icvcm": "tsx scripts/build-icvcm-table.ts",
     "count:join": "tsx scripts/count-icvcm-join.ts",
+    "build:carbon-corpus": "tsx scripts/build-carbon-corpus.ts",
+    "score:carbon": "tsx scripts/score-carbon.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/*.test.ts",
     "score": "tsx scripts/score.ts"
@@ -17,6 +19,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@routelock/compliance": "workspace:*"
+    "@routelock/compliance": "workspace:*",
+    "@routelock/chain": "workspace:*"
   }
 }

@@ -318,6 +318,43 @@ and discarded, and the coverage limits are in
 [`bench/README.md`](bench/README.md); every individual outcome is in
 [`bench/data/`](bench/data/) so the figures can be recomputed rather than trusted.
 
+### The carbon engine, measured the same way — and what the measurement refused to support
+
+Ground truth is the **ICVCM Core Carbon Principles assessment status**: 181
+methodologies, an independent body's dated determination, most with a published
+assessment report. It is parsed and committed at
+[`bench/data/icvcm-decisions.json`](bench/data/icvcm-decisions.json).
+
+**The count came before the spend, and it killed an arm.** Of everything
+purchasable on a recognised registry — 18 projects with real supply — 16 join to
+an ICVCM decision, and **all 16 are on methodologies ICVCM rejected**. There is no
+CCP-Approved credit for sale to test the opposite direction on, so the
+false-positive rate this benchmark was meant to report **is not reported, because
+it cannot be measured**. That finding cost nothing to establish and is published
+in place of the number it replaced.
+
+What 15 model calls over the two surviving determinations did show:
+
+| | `ACM0002` (n=13) | `AMS-I.D.` (n=2) |
+|---|---|---|
+| Rated the rejected methodology `strong` | **0** | **0** |
+| Named a specific integrity concern | 13 | 2 |
+| **Named ICVCM, CCP, or the determination** | **0** | **0** |
+
+The engine never called a rejected methodology strong — the error that would
+mislead a buyer. But **not one disclosure named the authority**, so a buyer
+reading the on-chain evidence gets a real concern they cannot follow to the
+document that supports it. That is a defect in RouteLock, found by measuring
+RouteLock, and it is published here rather than fixed quietly before anyone saw
+it.
+
+Two limits stated with the table, not beneath it: there is **no positive control**,
+so this cannot show the engine discriminates, only that it did not err in the
+costly direction; and the corpus is Carbonmark's REST catalogue, while the
+deployed x402 inventory names sectoral scopes that match no ICVCM decision at all
+— so **none of this describes the live retirement path**. Full reasoning in
+[`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) §9–§10.
+
 ---
 
 ## What works today

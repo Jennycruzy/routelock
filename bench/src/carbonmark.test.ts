@@ -23,11 +23,22 @@ test("normalisation does not merge methodologies that differ", () => {
 
 test("purchasability counts listings and pool holdings alike", () => {
   const keys = purchasableProjectKeys([
-    { listing: { creditId: { projectId: "VCS-191" } } },
-    { pool: { creditId: { projectId: "VCS-844" } } },
-    { listing: { creditId: { projectId: "VCS-191" } } },
+    { supply: 10, listing: { creditId: { projectId: "VCS-191" } } },
+    { liquidSupply: 5, pool: { creditId: { projectId: "VCS-844" } } },
+    { supply: 3, listing: { creditId: { projectId: "VCS-191" } } },
   ]);
   assert.deepEqual([...keys].sort(), ["VCS-191", "VCS-844"]);
+});
+
+test("a listing holding nothing is not an offer", () => {
+  // 678 of 753 live price rows are priced and empty. Counting them inflated
+  // "purchasable" by a factor of two and filled a corpus with rows the engine
+  // refuses on liquidity before the model is asked.
+  const keys = purchasableProjectKeys([
+    { supply: 0, liquidSupply: 0, listing: { creditId: { projectId: "VCS-1883" } } },
+    { supply: 0, liquidSupply: 12, listing: { creditId: { projectId: "VCS-191" } } },
+  ]);
+  assert.deepEqual([...keys], ["VCS-191"]);
 });
 
 test("a price row naming no project is skipped rather than counted", () => {
