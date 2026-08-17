@@ -10,7 +10,7 @@ performed a real fulfilment on the named chain.
 
 | Adapter | Chain | Status | Fulfilment proof |
 |---|---|---|---|
-| `carbonmark-x402` | X Layer | **Active** since 17 August 2026. One real retirement, 0.001 t of UCR-437-2023, charged 0.027725 USDC on Base, committed against entitlement 4 on X Layer. | [Public certificate](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0) |
+| `carbonmark-x402` | X Layer **testnet and mainnet** | **Active** since 17 August 2026. Two real retirements: 0.001 t UCR-437-2023 against entitlement 4 on testnet (0.027725 USDC net), and 0.001 t Solar PV – Small Scale against entitlement 1 on **mainnet** (0.027858 USDC net, 0.028259 gross less 0.000401 change). | [testnet](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0) · [mainnet](https://app.carbonmark.com/retirements/id/8453-0xdb7451c298d6f57b58874bd1f7e7c447863ed1e1190c98cc45478c9aae285f0d-0) |
 | `carbonmark` (REST) | X Layer | **Superseded.** Retained, not shipped — Carbonmark's REST API is KYB-gated and a test-mode key retires nothing. | Public certificate URL |
 | `akash` | — | **Not started.** No implementation. | On-chain lease + ingress URL |
 | `shipbubble` | none | **Reference implementation. Not deployed.** Retained to demonstrate the contract set carries no vertical. | Carrier label + tracking |

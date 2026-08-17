@@ -321,10 +321,34 @@ script's own assertions:
 | `escrow.grantRole(COMPLIANCE_ROLE, …)` called as admin | **reverts `0xa3dd6e91`** = `ComplianceRoleForbiddenHere()` |
 | Inter-contract wiring (classes, entitlement, escrow, registry) | all four resolve to the right addresses |
 
-`totalMinted()` is **0**. Nothing has been issued on mainnet, and the README must
-not imply otherwise. The oracle holds **no gas**, so a mainnet e2e cannot run
-until it is funded — `e2e.ts` refuses to start without it rather than stranding a
-credit at step 9.
+**A full end-to-end run completed on mainnet the same day.** `totalMinted()` is
+**1**: entitlement 1, `Activated`, `APPROVED`, with a real carbon credit retired
+against it and the provider's evidence committed back.
+
+| | |
+|---|---|
+| Certificate | [`8453-0xdb7451c2…-0`](https://app.carbonmark.com/retirements/id/8453-0xdb7451c298d6f57b58874bd1f7e7c447863ed1e1190c98cc45478c9aae285f0d-0) |
+| Payment | Base block **50,107,511**, **64 blocks** behind head when checked |
+| Charged | **0.028259 USDC gross, 0.000401 refunded as change, 0.027858 net** |
+| Credit | 0.001 t Solar PV – Small Scale, UCR |
+| Decision | `0x0a0121d3…`, engine `compliance-0.2.0/carbon-registry-v1`, verdict `Approved` |
+| Carrier evidence | `0x855be16b…` committed on X Layer mainnet |
+
+The 64-block figure is the check that matters: it is the same test that exposed
+the 14 August placeholder, where a "retirement" sat 36 million blocks behind head.
+
+⛔ **Read the charge figure carefully.** The run prints `charged 0.028259`, which
+is what left the issuer's wallet. The x402 router then refunded **0.000401** of
+unused change in the same transaction, so the net cost was **0.027858**. Both
+numbers are true and they are not interchangeable — the balance moves by the net,
+the authorisation covers the gross. The testnet run shows the same pattern
+(0.028125 gross, 400 refunded).
+
+**Step 10 executed for the first time here, and it worked.** The proof is a number
+that did not move: the wallet held **1.359272 USD₮0 before the run and 1.359272
+after**. 0.3 went into escrow and 0.3 came back — release, claim, withdraw
+collateral — leaving the escrow at **0** and deposit 1 marked settled. A mainnet
+run now costs nothing but gas and the credit.
 
 ### Deployed — X Layer testnet (1952), 13 August 2026
 

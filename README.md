@@ -6,9 +6,12 @@
 > eligibility, and **refuses to proceed when its confidence is insufficient** —
 > so nothing moves on a guessed declaration.
 
-**Status: 17 August 2026** — one real carbon credit retired against entitlement 4
-on X Layer, with a [public certificate](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0)
-anyone can open. This README describes what is built and says plainly
+**Status: 17 August 2026** — **live on X Layer mainnet**, and two real carbon
+credits retired: one on testnet against entitlement 4, one on
+[**mainnet**](https://app.carbonmark.com/retirements/id/8453-0xdb7451c298d6f57b58874bd1f7e7c447863ed1e1190c98cc45478c9aae285f0d-0)
+against entitlement 1. Both have public certificates anyone can open, and both
+were checked against the chain rather than trusted — the mainnet retirement was
+**64 blocks** behind Base's head when verified. This README describes what is built and says plainly
 what is not. Nothing below is simulated. Where a feature does not exist, it is
 listed as absent rather than demonstrated with fake data, and every status claim
 is one you can check against a live chain or a public API rather than take on
@@ -34,7 +37,7 @@ gate that can refuse. Three adapters sit above one unchanged contract set:
 
 | Adapter | Vertical | Chain | Status | Fulfilment proof |
 |---|---|---|---|---|
-| `carbonmark-x402` | Carbon retirement | X Layer | **Active** since 17 Aug 2026. One real retirement, discharging entitlement 4. | [Public certificate](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0) |
+| `carbonmark-x402` | Carbon retirement | X Layer **testnet + mainnet** | **Active** since 17 Aug 2026. Two real retirements, discharging entitlement 4 on testnet and entitlement 1 on mainnet. | [testnet](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0) · [mainnet](https://app.carbonmark.com/retirements/id/8453-0xdb7451c298d6f57b58874bd1f7e7c447863ed1e1190c98cc45478c9aae285f0d-0) |
 | `shipbubble` | Delivery | none | **Reference implementation.** Built against the real API, deliberately not deployed. | Carrier label + tracking number |
 | `akash` | Compute leasing | — | **Not started.** Named here because the port it will implement already exists, not because any of it is built. | On-chain lease + ingress URL |
 
@@ -148,9 +151,14 @@ cast call 0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c 'balanceOf(address)(uint256
   The audit trail lives in `ActivationRegistry`, which is where the retirement's
   evidence was written; the soulbound receipt contract is deployed, tested and
   unused. It is not required for a fulfilment and is not pretending to be.
-- **Testnet only.** The obligation above settles in testnet USD₮0. A mainnet
-  deployment is affordable today but holds no USDT, so a mainnet issuance would
-  have nothing real to settle in.
+- ~~**Testnet only.**~~ **No longer true, as of 17 August.** RouteLock is
+  deployed on **X Layer mainnet** (196) and has completed a full end-to-end run
+  there: entitlement 1, `Activated`, a real 0.001 t credit retired against it,
+  and the provider's evidence committed back. Certificate
+  [`8453-0xdb7451c2…-0`](https://app.carbonmark.com/retirements/id/8453-0xdb7451c298d6f57b58874bd1f7e7c447863ed1e1190c98cc45478c9aae285f0d-0).
+  Addresses in [`deployments/xlayer_mainnet.json`](deployments/xlayer_mainnet.json).
+  On mainnet **`ADMIN` and `ORACLE` are separate keys** — the oracle signs
+  unattended, so it holds no authority over roles.
 - **No issuer agreement exists in writing** for any of the three verticals. The
   issuer here is this project, which is honest but is not a counterparty
   relationship.
