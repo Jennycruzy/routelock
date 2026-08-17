@@ -274,3 +274,28 @@ cross-border decision it would really be, at the higher 0.9 confidence bar.
 ```bash
 pnpm --filter @routelock/bench test   # 33 tests: extraction, HS handling, ATaR parsing
 ```
+
+---
+
+## The carbon side: ground truth built, scoring gated
+
+`data/icvcm-decisions.json` is the ICVCM Core Carbon Principles decision table —
+181 methodologies, the same standard as the HS corpus: an independent authority's
+published determination, one row per methodology, with the assessment report's URL
+where one exists. `data/icvcm-join-count.json` counts how much of it meets
+purchasable inventory.
+
+**Nothing has been scored, deliberately.** The join says purchasable inventory
+carries **one** CCP-Approved methodology, so the arm that would measure false
+integrity flags on sound credits has no rows, and the arms that survive rest on
+five distinct determinations rather than forty. Publishing an accuracy figure over
+those forty rows would report three determinations thirty-seven times.
+
+The reasoning, the counts and what would change them are in
+[`docs/carbon-benchmark-design.md`](../docs/carbon-benchmark-design.md) §9. Both
+files rebuild from live sources and cost no inference:
+
+```bash
+pnpm --filter @routelock/bench build:icvcm
+pnpm --filter @routelock/bench count:join
+```

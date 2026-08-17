@@ -613,9 +613,26 @@ The compute adapter (`AkashAdapter`). Nothing is stubbed or scaffolded.
 
 X Layer is finished completely before BOT Chain is started.
 
-1. **Carbon quality benchmark** — **design done, corpus not built.** Read
-   [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) first; it
-   is executable from step 1 and steps 1–4 cost no inference.
+1. **Carbon quality benchmark** — **steps 1 and 2 done, 17 August; step 2 stopped
+   one arm and shrank the other two.** Read
+   [`docs/carbon-benchmark-design.md`](docs/carbon-benchmark-design.md) §9 first,
+   because it changes what steps 3–5 are worth doing.
+
+   The ICVCM decision table is built and committed (181 rows,
+   `bench/data/icvcm-decisions.json`), and the join is counted
+   (`bench/data/icvcm-join-count.json`). **Purchasable inventory on a recognised
+   registry is 52 projects; 40 pairs join to an ICVCM decision; exactly one of
+   them is CCP-Approved.** So §3.2 — false integrity flags on sound credits — is
+   not measurable, and §3.1/§3.3 are five distinct determinations rather than
+   forty rows. Ignoring purchasability does not fix it: 157 rows, still 9
+   determinations, still 3 approved projects, and all refused on liquidity before
+   the model is asked. The constraint is what is tokenised for sale, not the
+   ground truth.
+
+   **This is a decision for the owner, not a coding step**, and it is stated at
+   the top of §9 rather than buried: score the five determinations and report
+   n=5 honestly, source purchasable approved credits somewhere other than
+   Carbonmark, or spend the remaining time on the deploy sequence instead.
 
    Two things settled there that change the brief: **the threshold cannot be
    derived from a calibration curve** (it gates "is the credit what it claims to

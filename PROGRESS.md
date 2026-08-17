@@ -791,3 +791,59 @@ measuring, including that it answers whether they *should* gate.
   assessment and stay active at its registry. Only registry withdrawal may score
   the `withdrawn_methodology` integrity flag; conflating them would mark the engine
   wrong for being right.
+
+### Carbon benchmark — steps 1 and 2 executed, and step 2 stopped an arm
+
+Ground truth built and committed, still no inference spent. Both rebuildable:
+`pnpm --filter @routelock/bench build:icvcm` and `… count:join`, writing
+`bench/data/icvcm-decisions.json` and `bench/data/icvcm-join-count.json`.
+
+**Step 1 — the ICVCM decision table.** 181 methodology rows parsed off
+`icvcm.org/assessment-status`, which dates itself 4th August 2026: 47
+CCP-Approved, 22 Does not meet, 14 Withdrawn, 11 Very Unlikely To Meet, 2
+Remedial Action, and **85 still under assessment**. Only **71 of the 96
+decisions publish a document** — `Very Unlikely To Meet` and `Withdrawn` are
+stated with nothing behind them, so those rows cannot clear the corpus standard.
+The page publishes **no per-row decision date**, only one date for the table, and
+the file says so in a field rather than letting a PDF's upload path be mistaken
+for one.
+
+**Step 2 — the join, counted, which is what step 2 is for.** Benchmark-eligible
+inventory is *purchasable in `/prices`, on a registry in
+`RECOGNISED_REGISTRIES`* — both narrowings come from `deterministicGround`
+refusing before the model is asked, not from the marketplace. That is **52
+projects**, 55 project/methodology pairs, **40 joined** to an ICVCM decision, 38
+with a document.
+
+**⛔ The number that stops §3.2: exactly one of those 40 rows is CCP-Approved.**
+Measuring false integrity flags on sound credits needs sound credits, and
+purchasable inventory has one. A false-positive rate over n=1 is not a rate.
+§3.1 and §3.3 survive but shrink honestly: the 40 rows sit on **five distinct
+determinations**, and `ACM0002` alone is 27 of them — reporting "accuracy over 40
+rows" would report three negative determinations thirty-seven times and call the
+repetition sample size.
+
+**Relaxing purchasability does not rescue it, and the counterfactual is in the
+report rather than assumed:** over the whole 268-project recognised-registry
+catalogue the join gives 157 rows but still **9 determinations** and still **3**
+CCP-Approved projects — and those rows are refused on liquidity before the model
+sees them anyway. **The binding constraint is inventory composition, not ground
+truth**: ICVCM has ruled on 96 methodologies, while what is tokenised for sale is
+overwhelmingly grid-connected renewable electricity, which ICVCM rejected in
+August 2024.
+
+**Two traps the live page confirmed, both now enforced in code:**
+
+- **`Withdrawn` means withdrawn from the ICVCM assessment**, by the submitting
+  programme — not registry withdrawal, and never evidence for the engine's
+  `withdrawn_methodology` flag. It carries no document either.
+- **Decisions are version-scoped and three of them disagree across versions.**
+  VM0042, VM0044 and VM0051 are each `Withdrawn` at their earlier version and
+  `CCP-Approved` at their later one, while Carbonmark's metadata never names the
+  version a project was issued under. The join excludes those three and counts
+  them as excluded rather than picking a side.
+
+Also worth keeping: identifiers are read **only from the start of the ICVCM
+cell**. `VMR0017 - … (ACM0002 revision)` is CCP-Approved while `ACM0002` is Does
+not meet, so a substring match would have credited the engine for the wrong
+answer on 27 projects.

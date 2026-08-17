@@ -1,0 +1,781 @@
+{
+  "builtAt": "2026-08-17T16:03:49.656Z",
+  "inputs": {
+    "icvcm": {
+      "url": "https://icvcm.org/assessment-status/",
+      "tableLastUpdated": "4th August 2026",
+      "decidedMethodologiesWithIdentifier": 34,
+      "excludedAsVersionAmbiguous": [
+        "VM0042 (Withdrawn / CCP-Approved)",
+        "VM0044 (Withdrawn / CCP-Approved)",
+        "VM0051 (Withdrawn / CCP-Approved)"
+      ]
+    },
+    "carbonmark": {
+      "registriesRequested": [
+        "VCS",
+        "GS",
+        "ACR",
+        "CAR",
+        "UCR",
+        "PUR",
+        "REGEN"
+      ],
+      "projectsReturned": 290,
+      "priceRows": 753,
+      "purchasableProjectKeys": 68
+    }
+  },
+  "universe": {
+    "purchasableOnRecognisedRegistry": 52,
+    "byRegistry": {
+      "VCS": 51,
+      "PUR": 1
+    },
+    "projectMethodologyPairs": 55
+  },
+  "join": {
+    "matched": 40,
+    "unmatched": 15,
+    "matchedWithDecisionDocument": 38,
+    "byDecision": {
+      "Does not meet": 37,
+      "Very Unlikely To Meet": 2,
+      "CCP-Approved": 1
+    },
+    "byMethodology": {
+      "ACM0002": 27,
+      "AMS-ID": 8,
+      "ACM0012": 2,
+      "ACM0006": 2,
+      "AMS-IIIG": 1
+    },
+    "unmatchedMethodologies": {
+      "VM0007": 2,
+      "AM0029": 2,
+      "VM0015": 2,
+      "AMS-IIIH": 1,
+      "AMS-IC": 1,
+      "AM0025": 1,
+      "VM0010": 1,
+      "VM0018": 1,
+      "VM0011": 1,
+      "AR-AM0014": 1,
+      "VM0004": 1,
+      "C03000000": 1
+    }
+  },
+  "measurableArms": {
+    "3.1 rejected methodology recognised": 39,
+    "3.2 false integrity flags on sound credits": 1,
+    "3.3 disclosure names the finding": 38,
+    "distinctDeterminations": 5
+  },
+  "ifPurchasabilityWereIgnored": {
+    "matched": 157,
+    "byDecision": {
+      "Does not meet": 149,
+      "Very Unlikely To Meet": 4,
+      "CCP-Approved": 3,
+      "Withdrawn": 1
+    },
+    "distinctDeterminations": 9
+  },
+  "pairs": [
+    {
+      "projectKey": "VCS-655",
+      "projectName": "24.8 MW Wind Power Project By Belgaum Wind Farms Private Ltd. In Gadag, Karnataka",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/655",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-426",
+      "projectName": "Wastewater Treatment With Biogas System In Palm Oil Mill At Sawi, Chumporn,Thailand",
+      "registry": "VCS",
+      "country": "Thailand",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/426",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-426",
+      "projectName": "Wastewater Treatment With Biogas System In Palm Oil Mill At Sawi, Chumporn,Thailand",
+      "registry": "VCS",
+      "country": "Thailand",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/426",
+      "methodologyId": "AMS-IIIH",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-191",
+      "projectName": "4×50 MW Dayingjiang- 3 Hydropower Project Phases 1&2",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/191",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-836",
+      "projectName": "Song Ong Hydropower Project",
+      "registry": "VCS",
+      "country": "Viet Nam",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/836",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-784",
+      "projectName": "1.6 MW Bundled Rice Husk Based Cogeneration Plant By M/S Milk Food Limited (MFL) In Patiala (Punjab) & Moradabad (U.P) Districts",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/784",
+      "methodologyId": "AMS-IC",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-784",
+      "projectName": "1.6 MW Bundled Rice Husk Based Cogeneration Plant By M/S Milk Food Limited (MFL) In Patiala (Punjab) & Moradabad (U.P) Districts",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/784",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-850",
+      "projectName": "Inner Mongolia Jingneng Saihan Wind Farm Phase I Project",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/850",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-766",
+      "projectName": "Teesta- V Hydro Power Project In Sikkim",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/766",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1356",
+      "projectName": "Jiangsu Dongtai Phase II Wind Power Project",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1356",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-896",
+      "projectName": "Foz Do Chapecó Project",
+      "registry": "VCS",
+      "country": "Brazil",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/896",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-849",
+      "projectName": "Inner Mongolia Ximeng Zheligentu Wind Farm Phase I Project",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/849",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-817",
+      "projectName": "Datong River Zhuchaxia Hydropower Station",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/817",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-566",
+      "projectName": "10 MW Wind Power Project In Maharashtra By Deepak Fertilizers And Petrochemicals Corporation Limited",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/566",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-476",
+      "projectName": "28MW Jinkouba Hydropower Project",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/476",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-708",
+      "projectName": "Engenheiro Ernesto Jorge Dreher And Engenheiro Henrique Kotzian Shps VCS Project (Jun1120)",
+      "registry": "VCS",
+      "country": "Brazil",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/708",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-2098",
+      "projectName": "Nanhai Msw Incineration II Project",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/2098",
+      "methodologyId": "AM0025",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-631",
+      "projectName": "13.25 MW Wind Power Generation By Rmtl, In Kutch, Gujarat",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/631",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1205",
+      "projectName": "Tatar Hydro Electricity Power Plant",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1205",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-10",
+      "projectName": "Baesa Project",
+      "registry": "VCS",
+      "country": "Brazil",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/10",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1718",
+      "projectName": "Inner Mongolia Keyihe IFM (Conversion Of Logged To Protected Forest) Project",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1718",
+      "methodologyId": "VM0010",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-1174",
+      "projectName": "Akcay 28.78 MW, Hydroelectric Power Plant Project (Hepp), Turkey",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1174",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-917",
+      "projectName": "Aslancik Hydro Power Plant Project",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/917",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1580",
+      "projectName": "Solar Grouped Project By Acme Group (Ekiesl-VCS-Aug-16-01)",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1580",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1580",
+      "projectName": "Solar Grouped Project By Acme Group (Ekiesl-VCS-Aug-16-01)",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1580",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1464",
+      "projectName": "Alkumru Hydroelectric Power Plant",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1464",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1427",
+      "projectName": "Adiguzel II Hydroelectric Power Plant",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1427",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1100",
+      "projectName": "Sanibey Dam And Hydroelectric Power Plant",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1100",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-391",
+      "projectName": "Gullubag 96 MW Hydro Electric Power Plant Project, Turkey",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/391",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1525",
+      "projectName": "Wind Power Project At Jaibhim By SIIL",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1525",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1758",
+      "projectName": "Dereli Hydroelectric Power Plant",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1758",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-498",
+      "projectName": "Grid-Connected Wind Electricity Generation Project In Tamil Nadu, India",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/498",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1578",
+      "projectName": "15 MW Solar Photovoltaic Power Project At Gujarat",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1578",
+      "methodologyId": "AMS-ID",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+        "icvcmMethodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+        "icvcmVersions": "1.0-18.0"
+      }
+    },
+    {
+      "projectKey": "VCS-2026",
+      "projectName": "Allain Duhangan Hydroelectric Project (ADHP)",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/2026",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1195",
+      "projectName": "Wind Power Project In Rajasthan",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1195",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1883",
+      "projectName": "Pichacay Landfill Gas Renewable Energy Project",
+      "registry": "VCS",
+      "country": "Ecuador",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1883",
+      "methodologyId": "AMS-IIIG",
+      "joined": {
+        "decision": "CCP-Approved",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2025/08/GS_AMSiii.G_v09_2024-v1.1.pdf",
+        "icvcmMethodology": "AMS-III.G. - Landfill methane recovery - 9.0-10.0",
+        "icvcmVersions": "9.0-10.0"
+      }
+    },
+    {
+      "projectKey": "VCS-929",
+      "projectName": "Energy Efficiency And Solid Waste Diversion Activities Within The Quebec Sustainable Community",
+      "registry": "VCS",
+      "country": "Canada",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/929",
+      "methodologyId": "VM0018",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-1258",
+      "projectName": "Saint Nikola Wind Farm",
+      "registry": "VCS",
+      "country": "Bulgaria",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1258",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-786",
+      "projectName": "Hyundai Steel Waste Energy Cogeneration Project",
+      "registry": "VCS",
+      "country": "Korea, Republic of",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/786",
+      "methodologyId": "ACM0012",
+      "joined": {
+        "decision": "Very Unlikely To Meet",
+        "documentUrl": null,
+        "icvcmMethodology": "ACM0012 - Waste energy recovery - 1.0-6.0",
+        "icvcmVersions": "1.0-6.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1190",
+      "projectName": "Wind Power Project In Gujarat",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1190",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-985",
+      "projectName": "Cordillera Azul National Park REDD Project",
+      "registry": "VCS",
+      "country": "Peru",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/985",
+      "methodologyId": "VM0007",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-1547",
+      "projectName": "5MW Biomass Based Cogeneration Project At Sainsons",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1547",
+      "methodologyId": "ACM0006",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0006_v1-16_2024.pdf",
+        "icvcmMethodology": "ACM0006 - Electricity and heat generation from biomass - 1.0-16.0",
+        "icvcmVersions": "1.0-16.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1140",
+      "projectName": "Henan Xinxiang 24MW Biomass Based Cogeneration Project",
+      "registry": "VCS",
+      "country": "China",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1140",
+      "methodologyId": "ACM0006",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0006_v1-16_2024.pdf",
+        "icvcmMethodology": "ACM0006 - Electricity and heat generation from biomass - 1.0-16.0",
+        "icvcmVersions": "1.0-16.0"
+      }
+    },
+    {
+      "projectKey": "VCS-292",
+      "projectName": "150 MW Grid Connected Wind Power Based Electricity Generation Project In Gujarat, India.",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/292",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1052",
+      "projectName": "North Pikounda REDD+",
+      "registry": "VCS",
+      "country": "Congo, The Democratic Republic of the",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1052",
+      "methodologyId": "VM0011",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-986",
+      "projectName": "Kumköy Hydroelectric Power Plant, Samsun",
+      "registry": "VCS",
+      "country": "Türkiye",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/986",
+      "methodologyId": "ACM0002",
+      "joined": {
+        "decision": "Does not meet",
+        "documentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+        "icvcmMethodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+        "icvcmVersions": "1.0-21.0"
+      }
+    },
+    {
+      "projectKey": "VCS-982",
+      "projectName": "Combined Cycle Natural Gas Based Grid Connected Power Plant At Jegurupadu, India",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/982",
+      "methodologyId": "AM0029",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-981",
+      "projectName": "Pacajai REDD+ Project",
+      "registry": "VCS",
+      "country": "Brazil",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/981",
+      "methodologyId": "VM0015",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-68",
+      "projectName": "119.8 MW Natural Gas Based Combined Cycle Power Plant, At Tanjavur, Tamilnadu By M/S Aban Power Company Limited",
+      "registry": "VCS",
+      "country": "India",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/68",
+      "methodologyId": "AM0029",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-1146",
+      "projectName": "The Hyundai Waste Energy Recovery Co-Generation Project Phase II",
+      "registry": "VCS",
+      "country": "Korea, Republic of",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1146",
+      "methodologyId": "ACM0012",
+      "joined": {
+        "decision": "Very Unlikely To Meet",
+        "documentUrl": null,
+        "icvcmMethodology": "ACM0012 - Waste energy recovery - 1.0-6.0",
+        "icvcmVersions": "1.0-6.0"
+      }
+    },
+    {
+      "projectKey": "VCS-1764",
+      "projectName": "Reforestation And Restoration Of Degraded Mangrove Lands, Sustainable Livelihood And Community Development In Myanmar",
+      "registry": "VCS",
+      "country": "Myanmar",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1764",
+      "methodologyId": "AR-AM0014",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-812",
+      "projectName": "Bull Run Overseas Forest Carbon Project",
+      "registry": "VCS",
+      "country": "Belize",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/812",
+      "methodologyId": "VM0007",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-1650",
+      "projectName": "Reduced Emissions From Deforestation And Degradation In Keo Seima Wildlife Sanctuary",
+      "registry": "VCS",
+      "country": "Cambodia",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/1650",
+      "methodologyId": "VM0015",
+      "joined": null
+    },
+    {
+      "projectKey": "VCS-674",
+      "projectName": "Rimba Raya Biodiversity Reserve Project",
+      "registry": "VCS",
+      "country": "Indonesia",
+      "sourceUrl": "https://registry.verra.org/app/projectDetail/VCS/674",
+      "methodologyId": "VM0004",
+      "joined": null
+    },
+    {
+      "projectKey": "PUR-175613",
+      "projectName": "Aperam BioEnergia",
+      "registry": "PUR",
+      "country": "Brazil",
+      "sourceUrl": "https://registry.puro.earth/projects/175613",
+      "methodologyId": "C03000000",
+      "joined": null
+    }
+  ]
+}

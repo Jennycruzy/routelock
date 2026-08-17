@@ -6,6 +6,8 @@
   "main": "./src/index.ts",
   "scripts": {
     "build:corpus": "tsx scripts/build-corpus.ts",
+    "build:icvcm": "tsx scripts/build-icvcm-table.ts",
+    "count:join": "tsx scripts/count-icvcm-join.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/*.test.ts",
     "score": "tsx scripts/score.ts"

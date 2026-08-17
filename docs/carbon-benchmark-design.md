@@ -1,9 +1,13 @@
 # Carbon quality benchmark — design, and what it can honestly measure
 
-**Status: design only. Nothing has been measured. No inference has been spent, and
-there are no accuracy numbers in this document or anywhere in the repo.** Written
-17 August 2026, from reading the engine's own source and verifying every data
-source live.
+**Status: steps 1 and 2 executed, 17 August 2026. Still no inference spent, and
+still no accuracy numbers anywhere in the repo — because step 2's own gate fired.**
+The ground truth is built and committed; the count that decides whether it can be
+scored says one arm of §3 is not measurable and the other two are thinner than
+they look. See [§9](#9-steps-1-and-2-executed--what-the-count-says).
+
+Written 17 August 2026, from reading the engine's own source and verifying every
+data source live.
 
 The HS benchmark's standard is the bar this has to clear: every label is a
 published determination by an independent authority, every row carries a
@@ -126,6 +130,12 @@ categories: **CCP-Approved**, **Does Not Meet**, **Remedial Action**,
 were CCP-Approved as of that page's last update, across ACR, Gold Standard, Verra
 VCS, Climate Action Reserve, Isometric and Puro.earth.
 
+*Read by machine in step 1 rather than by eye, the count is **47** CCP-Approved of
+181 rows, and "Under Assessment" is the absence of a decision rather than one of
+the categories — see [§9](#9-steps-1-and-2-executed--what-the-count-says). The
+paragraph above is left as written, because it is what a reader of the page saw
+before the table was parsed.*
+
 Decisions confirmed present, and directly relevant to what is actually listed:
 
 | Methodology | Decision |
@@ -240,12 +250,14 @@ HS benchmark's most useful lesson was that checking whether a measurement is
 meaningful takes a minute and costs nothing, and must happen before building what
 consumes it.
 
-1. **Build the ICVCM decision table** from `icvcm.org/assessment-status`, one row
-   per methodology: identifier, programme, decision, decision date, and the URL of
-   the decision document. No interpretation, no summarising.
-2. **Count the join** between listed methodologies and that table. If too few
-   listed methodologies carry an ICVCM decision, say so and stop — that number
-   decides whether §3 is measurable at all.
+1. ~~**Build the ICVCM decision table**~~ **Done** — 181 rows in
+   `bench/data/icvcm-decisions.json`, rebuilt by `pnpm --filter @routelock/bench
+   build:icvcm`. The page publishes no per-row decision date; §9 says what stands
+   in its place.
+2. ~~**Count the join**~~ **Done, and it stopped one arm.** 40 joined rows over
+   five distinct determinations, of which **one** is CCP-Approved — so §3.2 is not
+   measurable and §3.1/§3.3 are five questions rather than forty. Numbers and
+   verdict in §9; report in `bench/data/icvcm-join-count.json`.
 3. **Investigate CORSIA/ICAO TAB** as the second authority, and **Verra
    methodology status** for axis B.
 4. **Build the corpus**: real `/carbonProjects` metadata, cross-referenced against
@@ -262,3 +274,106 @@ consumes it.
 - Any number described as accuracy before step 5 has actually run.
 - `methodologyStrength` or `adverseFindings` described as gating a retirement.
   They are disclosure; `decide.ts` step 6 is explicit that this is deliberate.
+
+---
+
+## 9. Steps 1 and 2, executed — what the count says
+
+Run on 17 August 2026. Both are reproducible and cost nothing:
+
+```bash
+pnpm --filter @routelock/bench build:icvcm   # step 1 -> bench/data/icvcm-decisions.json
+pnpm --filter @routelock/bench count:join    # step 2 -> bench/data/icvcm-join-count.json
+```
+
+### Step 1 — the decision table is built
+
+181 methodology rows parsed from the ICVCM assessment-status page, which states
+its own date: **table last updated 4th August 2026**.
+
+| | Rows |
+|---|---|
+| CCP-Approved | 47 |
+| Does not meet | 22 |
+| Withdrawn | 14 |
+| Very Unlikely To Meet | 11 |
+| Remedial Action | 2 |
+| **Still under assessment** | **85** |
+
+Three things the page turned out to say that the design had not:
+
+- **85 of 181 rows carry no decision at all.** An undecided row is not a
+  negative label, and the parser records `null` rather than anything else.
+- **Only 71 of the 96 decisions publish a document.** `CCP-Approved`,
+  `Does not meet` and `Remedial Action` each link an assessment report.
+  `Very Unlikely To Meet` and `Withdrawn` are stated on the page with nothing
+  behind them, so those 25 rows cannot clear the corpus standard of "every label
+  opens a primary document".
+- **There is no per-row decision date.** The page publishes one date for the
+  whole table. `icvcm-decisions.json` says so in a field rather than leaving a
+  reader to infer a date from a PDF's upload path.
+
+⛔ **`Withdrawn` is withdrawn *from the ICVCM assessment*, by the programme that
+submitted the methodology.** It is not registry withdrawal, it carries no
+document, and it must never score the engine's `withdrawn_methodology` flag. This
+is §4's axis A/B warning, confirmed against the live page.
+
+⛔ **Decisions are version-scoped, and three of them disagree across versions:**
+VM0042, VM0044 and VM0051 are each `Withdrawn` at their earlier version and
+`CCP-Approved` at their later one. Carbonmark's project metadata names the
+methodology but never the version it was issued under, so for those three the
+join cannot tell which decision applies. The script excludes them and counts them
+as excluded — a coin flip between "approved" and "withdrawn" is not ground truth.
+
+### Step 2 — the join, counted
+
+The universe is narrower than "everything listed", and both narrowings come from
+`deterministicGround` rather than from the marketplace: a class on an unrecognised
+registry and a class without supply are **both refused before the model is asked**,
+so neither can measure the model. Benchmark-eligible therefore means *purchasable
+in `/prices`, on a registry in `RECOGNISED_REGISTRIES`*.
+
+| | Count |
+|---|---|
+| Purchasable on a recognised registry | **52 projects** (51 VCS, 1 PUR) |
+| Project/methodology pairs | 55 |
+| Joined to an ICVCM decision | **40** |
+| Of those, carrying a decision document | 38 |
+| **Distinct determinations behind those 40 rows** | **5** |
+
+| Decision | Rows | Methodologies |
+|---|---|---|
+| Does not meet | 37 | `ACM0002` (27), `AMS-I.D.` (8), `ACM0006` (2) |
+| Very Unlikely To Meet | 2 | `ACM0012` — **no document** |
+| CCP-Approved | **1** | `AMS-III.G.` |
+
+### The verdict, per arm of §3
+
+**§3.2 — false integrity flags on sound credits — is not measurable. Stop.**
+It needs credits whose methodology an authority has approved, and there is
+**one** in purchasable inventory. A false-positive rate over n=1 is not a rate.
+This is the outcome step 2 exists to produce, and it is produced before any
+inference is bought rather than after.
+
+**§3.1 and §3.3 are measurable, but as five questions and not as forty.** A
+methodology carries one determination however many projects use it. Reporting
+"accuracy over 40 rows" would report the same three negative determinations
+thirty-seven times and call the repetition sample size. Any figure from this
+corpus has to be per determination, with the row count stated beside it.
+
+**Relaxing purchasability does not fix it, and the number is in the report rather
+than assumed.** Over the whole recognised-registry catalogue — 268 projects — the
+join gives 157 rows but still only **9 distinct determinations**, and still only
+**3 CCP-Approved projects**. Those rows would also be refused on liquidity before
+the model saw them.
+
+**The binding constraint is inventory composition, not ground truth.** ICVCM has
+ruled on 96 methodologies; what is tokenised and for sale is overwhelmingly
+grid-connected renewable electricity, which ICVCM rejected in August 2024. The
+corpus is thin because the market is concentrated, and no amount of additional
+authority work changes that. Step 3's second authority (CORSIA/ICAO TAB) would add
+determinations for the twelve unjoined methodologies; it cannot add approved
+credits that nobody has tokenised.
+
+**What this does not change:** the threshold still stays picked, for the reason in
+§1, which is unrelated to any of the above.

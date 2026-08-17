@@ -1,0 +1,1848 @@
+{
+  "source": {
+    "url": "https://icvcm.org/assessment-status/",
+    "authority": "Integrity Council for the Voluntary Carbon Market — Core Carbon Principles assessment status",
+    "tableLastUpdated": "4th August 2026",
+    "fetchedAt": "2026-08-17T16:03:01.132Z"
+  },
+  "decisionDates": "not published per row; see tableLastUpdated and each decisionDocumentUrl",
+  "counts": {
+    "rows": 181,
+    "decided": 96,
+    "underAssessment": 85,
+    "withDecisionDocument": 71,
+    "withMethodologyId": 69,
+    "byDecision": {
+      "(under assessment)": 85,
+      "CCP-Approved": 47,
+      "Does not meet": 22,
+      "Withdrawn": 14,
+      "Very Unlikely To Meet": 11,
+      "Remedial Action": 2
+    },
+    "byProgramme": {
+      "Verified Carbon Standard": 52,
+      "Gold Standard": 41,
+      "Climate Action Reserve (CAR)": 23,
+      "Isometric": 21,
+      "ACR": 14,
+      "Puro.earth": 10,
+      "Rainbow": 9,
+      "Global Carbon Council": 6,
+      "Architecture for REDD+ Transaction TREES (ART)": 3,
+      "Equitable Earth": 2
+    }
+  },
+  "rows": [
+    {
+      "category": "REDD+ (Project)",
+      "programme": "ACR",
+      "methodology": "ACR Active Conservation and Sustainable Management on U.S. Forestlands - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "HFC Replacement",
+      "programme": "ACR",
+      "methodology": "ACR Advanced Refrigeration Systems - 1.0-3.0",
+      "methodologyId": null,
+      "versions": "1.0-3.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "ACR",
+      "methodology": "ACR Afforestation & Reforestation of Degraded Lands v1.0-1.2",
+      "methodologyId": null,
+      "versions": "v1.0-1.2",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/07/ACR_Degraded_Lands_v1-1.2_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/07/Board-Observations_ARR-Part-II_2025.pdf"
+    },
+    {
+      "category": "Mine Methane Capture and Utilization for Energy​",
+      "programme": "ACR",
+      "methodology": "ACR Capturing and Destroying Methane from Coal and Trona Mines in North America - 1.0-1.1",
+      "methodologyId": null,
+      "versions": "1.0-1.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "HFC Displacement",
+      "programme": "ACR",
+      "methodology": "ACR Certified Reclaimed HFC Refrigerants Propellants and Fire Suppressants - 1.0-2.0",
+      "methodologyId": null,
+      "versions": "1.0-2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "ODS Destruction",
+      "programme": "ACR",
+      "methodology": "ACR Destruction of Ozone Depleting Substances (ODS) and High-Global Warming Potential (GWP) Foam - 1.0-2.0",
+      "methodologyId": null,
+      "versions": "1.0-2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "ODS Destruction",
+      "programme": "ACR",
+      "methodology": "ACR Destruction of Ozone Depleting Substances (ODS) from International Sources - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/06/ACR_ODSDv1_2024.pdf",
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "ACR",
+      "methodology": "ACR Improved Forest Management (IFM) on Canadian Forestlands - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "ACR",
+      "methodology": "ACR Improved Forest Management (IFM) on Non-Federal U.S. Forestlands - 1.3",
+      "methodologyId": null,
+      "versions": "1.3",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2026/08/M50W_ACR_IFMUSnf_v1.3_2026.pdf",
+      "boardObservationsUrl": "http://icvcm.org/wp-content/uploads/2026/08/Board-Observations_IFM_IV_ACR_IFM_v1.3.pdf"
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "ACR",
+      "methodology": "ACR Improved Forest Management (IFM) on Non-Federal U.S. Forestlands - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/02/M47_ACR_IFMUSnf_v2.0_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/02/Board-Observations_IFM_III_ACR_IFM_v2.0.pdf"
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "ACR",
+      "methodology": "ACR Improved Forest Management (IFM) on Non-Federal U.S. Forestlands - 2.1",
+      "methodologyId": null,
+      "versions": "2.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/08/M43_ACR_IFMUSnf_v2.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/08/Board-Observations_IFM.pdf"
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "ACR",
+      "methodology": "ACR Improved Forest Management (IFM) on Small Non-Industrial Private Forestlands - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "ACR",
+      "methodology": "ACR Landfill Gas Destruction and Beneficial Use Projects - 1.0-2.0",
+      "methodologyId": null,
+      "versions": "1.0-2.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/06/ACR_LFGUv1-2_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-LFG-v2.pdf"
+    },
+    {
+      "category": "HFC Replacement",
+      "programme": "ACR",
+      "methodology": "ACR Transition to Advanced Formulation Blowing Agents in Foam Manufacturing and Use - 1.0-3.0",
+      "methodologyId": null,
+      "versions": "1.0-3.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "REDD+ (Jurisdictional)",
+      "programme": "Architecture for REDD+ Transaction TREES (ART)",
+      "methodology": "ART The REDD+ Environmental Excellence Standard (TREES) - HFLD - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": "Remedial Action",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/05/M49_ART_TREES_v2.0_HFLD_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/05/Board-Observations_REDD_HFLD.pdf"
+    },
+    {
+      "category": "REDD+ (Jurisdictional)",
+      "programme": "Architecture for REDD+ Transaction TREES (ART)",
+      "methodology": "ART The REDD+ Environmental Excellence Standard (TREES) - non HFLD - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/11/ART_TREES_v2_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/11/Board-Observations_REDD-Part-I.pdf"
+    },
+    {
+      "category": "REDD+ (Jurisdictional)",
+      "programme": "Architecture for REDD+ Transaction TREES (ART)",
+      "methodology": "ART The REDD+ Environmental Excellence Standard (TREES) - Removals - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": "Remedial Action",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/05/M49_ART_TREES_v2.0_Removals_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/05/Board-Observations_REDD_Removals.pdf"
+    },
+    {
+      "category": "Industrial Biodigesters​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Argentina Livestock - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "ODS Destruction",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Article 5 Ozone Depleting Substances Protocol - 1.0-2.0",
+      "methodologyId": null,
+      "versions": "1.0-2.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/06/CAR_A5ODSv1-2_2024.pdf",
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Avoided Grassland Conversion",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Canada Grassland - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "N₂O Abatement in Adipic Acid Production​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR China Adipic Acid Production Protocol - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/06/CAR_CH_AA_v1_2025.pdf",
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Industrial Biodigesters​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Dominican Republic Livestock - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Mexico Forest Protocol - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Mexico Forest Protocol - 3.0",
+      "methodologyId": null,
+      "versions": "3.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/10/M44_CARMX_Forest_IFM_v3_2025.2.pdf",
+      "boardObservationsUrl": "http://icvcm.org/wp-content/uploads/2025/09/Board-Observations_IFM_2.pdf"
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Mexico Forest Protocol - ARR - 2.0 - 3.0",
+      "methodologyId": null,
+      "versions": "2.0-3.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Mexico Landfill Protocol - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Industrial Biodigesters​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR Mexico Livestock Protocol - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "N₂O Abatement in Adipic Acid Production​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Adipic Acid Production Protocol - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/06/CAR_US_AA_v1_2025.pdf",
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Biochar",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. and Canada Biochar - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/08/M43_CAR_Biochar_v1.0_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/08/Board-Observations_Biochar.pdf"
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Forest Protocol - 5.1",
+      "methodologyId": null,
+      "versions": "5.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Avoided Grassland Conversion",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Grassland Protocol - 2.1",
+      "methodologyId": null,
+      "versions": "2.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Landfill Protocol - 4.0",
+      "methodologyId": null,
+      "versions": "4.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Landfill Protocol - 5.0",
+      "methodologyId": null,
+      "versions": "5.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Landfill Protocol - 6.0",
+      "methodologyId": null,
+      "versions": "6.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/06/CAR_USLFPv6_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-LFG-v2.pdf"
+    },
+    {
+      "category": "Industrial Biodigesters​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Livestock Protocol - 1.0-4.0",
+      "methodologyId": null,
+      "versions": "1.0-4.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "N₂O Abatement in Nitric Acid Production​​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Nitric Acid Production Protocol - 2.2",
+      "methodologyId": null,
+      "versions": "2.2",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "N₂O Abatement in Nitric Acid Production​​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Nitric Acid Production Protocol - 3.0",
+      "methodologyId": null,
+      "versions": "3.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Avoidance",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Organic Waste Composting Protocol - 1.0-1.1",
+      "methodologyId": null,
+      "versions": "1.0-1.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "ODS Destruction",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Ozone Depleting Substances Protocol - 1.0-2.0",
+      "methodologyId": null,
+      "versions": "1.0-2.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/06/CAR_USODSv1-2_2024.pdf",
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Sustainable Agriculture (Rotational Crops Low Till No Tillage etc)​",
+      "programme": "Climate Action Reserve (CAR)",
+      "methodology": "CAR U.S. Soil Enrichment Protocol - 1.1",
+      "methodologyId": null,
+      "versions": "1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/10/M45_CAR_US_SEP_v1.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/10/Board-Observations_Sustainable_Agriculture.pdf"
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Equitable Earth",
+      "methodology": "M001 - Quantification Methodology for Terrestrial Forest Restoration - 1.2-1.3",
+      "methodologyId": null,
+      "versions": "1.2-1.3",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "REDD+ (Project)",
+      "programme": "Equitable Earth",
+      "methodology": "M002 - Terrestrial Forest Conservation - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Global Carbon Council",
+      "methodology": "ACM0001 - Flaring or use of landfill gas - 19.0",
+      "methodologyId": "ACM0001",
+      "versions": "19.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Mine Methane Capture and Utilization for Energy​",
+      "programme": "Global Carbon Council",
+      "methodology": "ACM0008 - Abatement of methane from coal mines - 8.0",
+      "methodologyId": "ACM0008",
+      "versions": "8.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Leak Detection/Repair in Gas Systems​",
+      "programme": "Global Carbon Council",
+      "methodology": "AM0023 - Leak detection and repair in gas production processing transmission storage and distribution systems and in refinery facilities - 4.0",
+      "methodologyId": "AM0023",
+      "versions": "4.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Global Carbon Council",
+      "methodology": "AMS-III.G. - Landfill methane recovery - 10.0",
+      "methodologyId": "AMS-III.G.",
+      "versions": "10.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Peatland Management",
+      "programme": "Global Carbon Council",
+      "methodology": "GCCMA003 NBS Methodology for Rewetting Drained Peatlands - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Rice Cultivation Methane Avoidance ​",
+      "programme": "Global Carbon Council",
+      "methodology": "Methodology for Reduction of Methane Emission through Adjusted Water Management Practice in Rice Cultivation - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Lighting)",
+      "programme": "Gold Standard",
+      "methodology": "\"Powering Universal Lighting via Solar Energy (PULSE)\" - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Gold Standard",
+      "methodology": "ACM0001 - Flaring or use of landfill gas - 15.0-19.0",
+      "methodologyId": "ACM0001",
+      "versions": "15.0-19.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/06/GS_ACM0001_v15-19_2024-1.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-LFG-v2.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Gold Standard",
+      "methodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+      "methodologyId": "ACM0002",
+      "versions": "1.0-21.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0002_v1-21_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Gold Standard",
+      "methodology": "ACM0006 - Electricity and heat generation from biomass - 1.0-16.0",
+      "methodologyId": "ACM0006",
+      "versions": "1.0-16.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0006_v1-16_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Gold Standard",
+      "methodology": "ACM0018 - Electricity generation from biomass in power-only plants - 1.0-6.0",
+      "methodologyId": "ACM0018",
+      "versions": "1.0-6.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_ACM0018_v1-6_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Thermal)",
+      "programme": "Gold Standard",
+      "methodology": "AM0036 - Use of biomass in heat generation equipment - 1.0-7.0",
+      "methodologyId": "AM0036",
+      "versions": "1.0-7.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AM0036_v1-7_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Thermal)",
+      "programme": "Gold Standard",
+      "methodology": "AM0072 - Fossil Fuel Displacement by Geothermal Resources for Space Heating - 1.0-3.0",
+      "methodologyId": "AM0072",
+      "versions": "1.0-3.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AM0072_v1-3_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Gold Standard",
+      "methodology": "AM0123 - Renewable energy generation for captive use - 1.0",
+      "methodologyId": "AM0123",
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Off-grid)​",
+      "programme": "Gold Standard",
+      "methodology": "AMS-I.A. - Electricity generation by the user - 1.0-19.0",
+      "methodologyId": "AMS-I.A.",
+      "versions": "1.0-19.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.A_v1-19_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected/Thermal)",
+      "programme": "Gold Standard",
+      "methodology": "AMS-I.C. - Thermal energy production with or without electricity - 1.0-22.0",
+      "methodologyId": "AMS-I.C.",
+      "versions": "1.0-22.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Gold Standard",
+      "methodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+      "methodologyId": "AMS-I.D.",
+      "versions": "1.0-18.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.D_v1-18_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Biodigesters (household)​",
+      "programme": "Gold Standard",
+      "methodology": "AMS-I.E. - Switch from non-renewable biomass for thermal applications by the user - 1.0-13.0",
+      "methodologyId": "AMS-I.E.",
+      "versions": "1.0-13.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/GS_AMS-I.E_v1-13_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Biodigesters (household)​",
+      "programme": "Gold Standard",
+      "methodology": "AMS-I.I. - Biogas/biomass thermal applications for households/small users - 1.0-6.0",
+      "methodologyId": "AMS-I.I.",
+      "versions": "1.0-6.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/GS_AMS-I.I_v1-6_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Renewable Energy (Mini-Grids​)",
+      "programme": "Gold Standard",
+      "methodology": "AMS-I.L. - Electrification of rural communities using renewable energy - 1.0-4.0",
+      "methodologyId": "AMS-I.L.",
+      "versions": "1.0-4.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/GS_AMS.I.L_v1-4_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "AMS-II.G. - Energy efficiency measures in thermal applications of non-renewable biomass - 1-13.1",
+      "methodologyId": "AMS-II.G.",
+      "versions": "1-13.1",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/GS_AMS-II.G_v1-13.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Gold Standard",
+      "methodology": "AMS-III.G. - Landfill methane recovery - 9.0-10.0",
+      "methodologyId": "AMS-III.G.",
+      "versions": "9.0-10.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/08/GS_AMSiii.G_v09_2024-v1.1.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-LFG-v2.pdf"
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Gold Standard",
+      "methodology": "GS Afforestation/Reforestation (A/R) GHG Emissions Reduction & Sequestration Methodology - 2.1",
+      "methodologyId": null,
+      "versions": "2.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Gold Standard",
+      "methodology": "GS Carbon mineralisation using reactive mineral waste - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Gold Standard",
+      "methodology": "GS Carbon Sequestration Through Accelerated Carbonation Of Concrete Aggregate - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2025/09/M44_GS_Acc_Carb_Concrete_1.0_2025-1.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/01/Board-Observations_CDR-1.pdf"
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "GS Emission Reductions from Safe Drinking Water Supply - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "GS Emission Reductions from Safe Drinking Water Supply - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Enteric Methane",
+      "programme": "Gold Standard",
+      "methodology": "GS Methane Emissions Reduction from Enteric Fermentation in Beef Cattle Through Application of Feed Supplements - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Biodigesters (household)​",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Animal Manure Management and Biogas Use for Thermal Energy Generation - 1.0-1.1",
+      "methodologyId": null,
+      "versions": "1.0-1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/GS_M.Man_v1-1.1_2025-version-2.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Biodigesters (household)​",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Animal Manure Management and Biogas Use for Thermal Energy Generation - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Biomass Fermentation with Carbon Capture and Geologic Storage - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Biomass Fermentation with Carbon Capture and Geologic Storage - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Avoidance",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Collection of Macroalgae to Avoid Emissions from Decomposition - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Metered & Measured Energy Cooking Devices - 1.0-1.2",
+      "methodologyId": null,
+      "versions": "1.0-1.2",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/GS_MM_v1-2_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Metered & Measured Energy Cooking Devices - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Rice Cultivation Methane Avoidance ​",
+      "programme": "Gold Standard",
+      "methodology": "GS Methodology for Methane Emission Reduction by Adjusted Water Management Practice in Rice Cultivation - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/02/M47_GS_RICE_v1.0_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/02/Board-Observations_Rice-1.pdf"
+    },
+    {
+      "category": "Sustainable Agriculture (Rotational Crops Low Till No Tillage etc)​",
+      "programme": "Gold Standard",
+      "methodology": "GS Soil Organic Carbon Framework Methodology - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Gold Standard",
+      "methodology": "GS Sustainable Management of Mangroves - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "GS The Gold Standard Simplified Methodology For Clean And Efficient Cookstoves - 1.0-3.0",
+      "methodologyId": null,
+      "versions": "1.0-3.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/GS_SM_ICS_v1-3_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "GS The Gold Standard Simplified Methodology For Clean And Efficient Cookstoves - 4.0",
+      "methodologyId": null,
+      "versions": "4.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "GS TPDDTEC – Technologies and Practices to Displace Decentralized Thermal Energy Consumption - 2.0-3.1",
+      "methodologyId": null,
+      "versions": "2.0-3.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/06/GS_TPDDTEC_v2-3.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/06/Board-Observations_TPDDTEC-v2-3.1.pdf"
+    },
+    {
+      "category": "Enteric Methane",
+      "programme": "Gold Standard",
+      "methodology": "In-situ Capture and Conversion of Cattle Enteric Methane - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Just Transition",
+      "programme": "Gold Standard",
+      "methodology": "Joined-up Sustainable Transition (JUST) – Coal Decommissioning - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Just Transition",
+      "programme": "Gold Standard",
+      "methodology": "Joined-Up Sustainable Transition (JUST) – Fossil Fuel Generators - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Gold Standard",
+      "methodology": "Microbial Carbon di-oxide Mineralisation - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "Reduced Emissions from Cooking and Heating (RECH) formerly TPDDTEC - 4.0",
+      "methodologyId": null,
+      "versions": "4.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/GS_TPDDTEC_v4_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Gold Standard",
+      "methodology": "Reduced Emissions from Cooking and Heating (RECH) formerly TPDDTEC - 5.0",
+      "methodologyId": null,
+      "versions": "5.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Bio-oil Geological Storage - 1.0-1.1",
+      "methodologyId": null,
+      "versions": "1.0-1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2025/09/M44_ISM_Bio-oil-v1-1.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/01/Board-Observations_CDR-1.pdf"
+    },
+    {
+      "category": "Biochar",
+      "programme": "Isometric",
+      "methodology": "Biochar Production and Storage​ - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/08/M43_ISM_Biochar_v1.0_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/08/Board-Observations_Biochar.pdf"
+    },
+    {
+      "category": "Biochar",
+      "programme": "Isometric",
+      "methodology": "Biochar Production and Storage​ - 1.1-1.2",
+      "methodologyId": null,
+      "versions": "1.1-1.2",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Biogenic Carbon Capture and Storage​ - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Biogenic Carbon Capture and Storage​ - 1.1",
+      "methodologyId": null,
+      "versions": "1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2025/09/M44_ISM_Biogenic-v1.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/01/Board-Observations_CDR-1.pdf"
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Biogenic Carbon Capture and Storage​ - 1.2-1.4",
+      "methodologyId": null,
+      "versions": "1.2-1.4",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Biomass Geological Storage - 1.0-1.1",
+      "methodologyId": null,
+      "versions": "1.0-1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2025/09/M44_ISM_Biomass-v1-1.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/01/Board-Observations_CDR-1.pdf"
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Direct Air Capture - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Direct Air Capture - 1.1",
+      "methodologyId": null,
+      "versions": "1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2025/09/M44_ISM_Direct-v1.1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/01/Board-Observations_CDR-1.pdf"
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Direct Air Capture - 1.2-1.3",
+      "methodologyId": null,
+      "versions": "1.2-1.3",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Enhanced Weathering",
+      "programme": "Isometric",
+      "methodology": "Enhanced Weathering in Agriculture - 1.0-1.1",
+      "methodologyId": null,
+      "versions": "1.0-1.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Enhanced Weathering",
+      "programme": "Isometric",
+      "methodology": "Enhanced Weathering in Agriculture - 1.2",
+      "methodologyId": null,
+      "versions": "1.2",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "HFC and ODS Destruction",
+      "programme": "Isometric",
+      "methodology": "HFC and ODS Recovery and Destruction - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Isometric",
+      "methodology": "ISM Agroforestry - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2026/08/M50W_ISM_Agroforestry_v1.0_2026.pdf",
+      "boardObservationsUrl": "http://icvcm.org/wp-content/uploads/2026/08/Board-Observations_ARR_V_ISM_Agroforestry_v1.0.pdf"
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Isometric",
+      "methodology": "ISM Improved Forest Management - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Sustainable Agriculture (Rotational Crops Low Till No Tillage etc)​",
+      "programme": "Isometric",
+      "methodology": "ISM Improved Soil Management - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Isometric",
+      "methodology": "ISM Mangrove Restoration - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/05/M49_ISM_Mangrove_v1.0_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/05/Board-Observations_ARR_ISM_Mangrove_v1.0.pdf"
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Isometric",
+      "methodology": "ISM Reforestation - 1.1",
+      "methodologyId": null,
+      "versions": "1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/02/M47_ISM_Reforestation_v1.1_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/02/Board-Observations_ARR_III_ISM_Reforestation_v1.1.pdf"
+    },
+    {
+      "category": "Marine Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Ocean Alkalinity Enhancement from Coastal Outfalls - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Rice Cultivation Methane Avoidance ​",
+      "programme": "Isometric",
+      "methodology": "Rice Methane Reduction - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Isometric",
+      "methodology": "Subsurface Biomass Carbon Removal and Storage​ - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2025/09/M44_ISM_Subsurface-v1.0_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/01/Board-Observations_CDR-1.pdf"
+    },
+    {
+      "category": "Biochar",
+      "programme": "Puro.earth",
+      "methodology": "Biochar Methodology_2022 - 3.0",
+      "methodologyId": null,
+      "versions": "3.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Biochar",
+      "programme": "Puro.earth",
+      "methodology": "Biochar Methodology_2025 - 2.0",
+      "methodologyId": null,
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Puro.earth",
+      "methodology": "Carbonated Materials_2022 - 3.0",
+      "methodologyId": null,
+      "versions": "3.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Marine Carbon Dioxide Removals",
+      "programme": "Puro.earth",
+      "methodology": "Direct Air Capture and Ocean Storage_2025 - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Enhanced Weathering",
+      "programme": "Puro.earth",
+      "methodology": "Enhanced Rock Weathering Methodology_2022 - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Enhanced Weathering",
+      "programme": "Puro.earth",
+      "methodology": "Enhanced Rock Weathering Methodology_2025 - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Puro.earth",
+      "methodology": "Geologically Stored Carbon_2024 - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Marine Carbon Dioxide Removals",
+      "programme": "Puro.earth",
+      "methodology": "Marine Anoxic Carbon Storage‬_2025 - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Marine Carbon Dioxide Removals",
+      "programme": "Puro.earth",
+      "methodology": "Microalgae Carbon Fixation and Sinking_2025 - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Puro.earth",
+      "methodology": "Terrestrial Storage of Biomass_2023 - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Refurbishment Regeneration and Recycling",
+      "programme": "Rainbow",
+      "methodology": "Battery Second Life - 1.1",
+      "methodologyId": null,
+      "versions": "1.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Construction Materials",
+      "programme": "Rainbow",
+      "methodology": "Biobased construction materials - 2.4",
+      "methodologyId": null,
+      "versions": "2.4",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Industrial Biodigesters​",
+      "programme": "Rainbow",
+      "methodology": "Biogas from anaerobic digestion - 3.2",
+      "methodologyId": null,
+      "versions": "3.2",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Rainbow",
+      "methodology": "Biomass carbon removal and storage - 1.1",
+      "methodologyId": null,
+      "versions": "1.1",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Biochar",
+      "programme": "Rainbow",
+      "methodology": "Distributed closed-kiln biochar - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Biochar",
+      "programme": "Rainbow",
+      "methodology": "Distributed open-kiln biochar - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Enhanced Weathering",
+      "programme": "Rainbow",
+      "methodology": "Enhanced Rock Weathering - 1.0",
+      "methodologyId": null,
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Rainbow",
+      "methodology": "Mineralization of Alkaline Materials (Ex Situ) - 1.1",
+      "methodologyId": null,
+      "versions": "1.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Refurbishment Regeneration and Recycling",
+      "programme": "Rainbow",
+      "methodology": "Refurbishing of electronic devices - 2.6",
+      "methodologyId": null,
+      "versions": "2.6",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "ACM0001 - Flaring or use of landfill gas - 15.0-19.0",
+      "methodologyId": "ACM0001",
+      "versions": "15.0-19.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/06/VCS_ACM0001_v15-19_2024-1.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-LFG-v2.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "ACM0002 - Grid-connected electricity generation from renewable sources - 1.0-21.0",
+      "methodologyId": "ACM0002",
+      "versions": "1.0-21.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_ACM0002_v1-21_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "ACM0006 - Electricity and heat generation from biomass - 1.0-16.0",
+      "methodologyId": "ACM0006",
+      "versions": "1.0-16.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_ACM0006_v1-16_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Mine Methane Capture and Utilization for Energy​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "ACM0008 - Abatement of methane from coal mines - 6.0-8.0",
+      "methodologyId": "ACM0008",
+      "versions": "6.0-8.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/05/M49_VCS_MMC_v6-8_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/05/Board-Observations_MMC.pdf"
+    },
+    {
+      "category": "Waste Heat Recovery​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "ACM0012 - Waste energy recovery - 1.0-6.0",
+      "methodologyId": "ACM0012",
+      "versions": "1.0-6.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "ACM0018 - Electricity generation from biomass in power-only plants - 1.0-6.0",
+      "methodologyId": "ACM0018",
+      "versions": "1.0-6.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_ACM0018_v1-6_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "New Natural Gas Power ​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "ACM0025 - Construction of a new natural gas power plant - 1.0-2.0",
+      "methodologyId": "ACM0025",
+      "versions": "1.0-2.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "HFC-23 destruction: HFC-23 abatement from HCFC-22 production",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0001 - Decomposition of fluoroform (HFC-23) waste streams - 1.0-5.0",
+      "methodologyId": "AM0001",
+      "versions": "1.0-5.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Industrial Energy efficiency (Supply side)​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0017 - Steam system efficiency improvements by replacing steam traps and returning condensate - 1.0-2.0",
+      "methodologyId": "AM0017",
+      "versions": "1.0-2.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Industrial Energy efficiency (Supply side)​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0018 - Baseline methodology for steam optimization systems - 1.0-4.0",
+      "methodologyId": "AM0018",
+      "versions": "1.0-4.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Industrial Energy efficiency (Supply side)​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0020 - Baseline methodology for water pumping efficiency improvements - 1.0-2.0",
+      "methodologyId": "AM0020",
+      "versions": "1.0-2.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Leak Detection/Repair in Gas Systems​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0023 - Leak detection and repair in gas production processing transmission storage and distribution systems and in refinery facilities - 4.0",
+      "methodologyId": "AM0023",
+      "versions": "4.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_AM0023_v04_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-LDAR.pdf"
+    },
+    {
+      "category": "N₂O Abatement in Nitric Acid Production",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0028 - N2O destruction in the tail gas of Caprolactam production plants - 1.0-6.0",
+      "methodologyId": "AM0028",
+      "versions": "1.0-6.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "N₂O Abatement in Nitric Acid Production",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0034 - Catalytic reduction of N2O inside the ammonia burner of nitric acid plants - 1.0-5.1.1",
+      "methodologyId": "AM0034",
+      "versions": "1.0-5.1.1",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Thermal)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0036 - Use of biomass in heat generation equipment - 1.0-7.0",
+      "methodologyId": "AM0036",
+      "versions": "1.0-7.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_AM0036_v1-7_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "SF6 Avoidance",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0065 - Replacement of SF6 with alternate cover gas in the magnesium industry - 2.1",
+      "methodologyId": "AM0065",
+      "versions": "2.1",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_AM0065_v2.1_2024.pdf",
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Waste Heat Recovery​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0066 - GHG emission reductions through waste heat utilisation for pre-heating of raw materials in sponge iron manufacturing process - 1.0",
+      "methodologyId": "AM0066",
+      "versions": "1.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Thermal)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0072 - Fossil Fuel Displacement by Geothermal Resources for Space Heating - 1.0-3.0",
+      "methodologyId": "AM0072",
+      "versions": "1.0-3.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_AM0072_v1-3_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "New Natural Gas Power ​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0107 - New natural gas based cogeneration plant - 1.0-4.0",
+      "methodologyId": "AM0107",
+      "versions": "1.0-4.0",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AM0123 - Renewable energy generation for captive use - 1.0",
+      "methodologyId": "AM0123",
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Off-grid)​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AMS-I.A. - Electricity generation by the user - 1.0-19.0",
+      "methodologyId": "AMS-I.A.",
+      "versions": "1.0-19.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_AMS.I.A_v1-19_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected/Thermal)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AMS-I.C. - Thermal energy production with or without electricity - 1.0-22.0",
+      "methodologyId": "AMS-I.C.",
+      "versions": "1.0-22.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AMS-I.D. - Grid connected renewable electricity generation - 1.0-18.0",
+      "methodologyId": "AMS-I.D.",
+      "versions": "1.0-18.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_AMS.I.D_v1-18_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Biodigesters (household)​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AMS-I.E. - Switch from non-renewable biomass for thermal applications by the user - 1.0-13.0",
+      "methodologyId": "AMS-I.E.",
+      "versions": "1.0-13.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/VCS_AMS-I.E_v1-13_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Renewable Energy (Mini-Grids​)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AMS-I.L. - Electrification of rural communities using renewable energy - 1.0-4.0",
+      "methodologyId": "AMS-I.L.",
+      "versions": "1.0-4.0",
+      "decision": "Does not meet",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/08/VCS_AMS.I.L_v1-4_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-RE.pdf"
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AMS-III.G. - Landfill methane recovery - 9.0-10.0",
+      "methodologyId": "AMS-III.G.",
+      "versions": "9.0-10.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/08/VCS_AMSiii.G_v09_2024-v1.1.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/08/ICVCM_Board-Observations-for-LFG-v2.pdf"
+    },
+    {
+      "category": "Waste Heat Recovery​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "AMS-III.Q. - Waste energy recovery - 1.0-6.1",
+      "methodologyId": "AMS-III.Q.",
+      "versions": "1.0-6.1",
+      "decision": "Very Unlikely To Meet",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "CAR U.S. Landfill Protocol - 6.0",
+      "methodologyId": null,
+      "versions": "6.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "REDD+ (Jurisdictional)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VCS Jurisdictional and Nested REDD+ (JNR) Framework - 4.1",
+      "methodologyId": null,
+      "versions": "4.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/11/VCS_JNR-Framework_v4.1_2024.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/11/Board-Observations_REDD-Part-I.pdf"
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0003 Methodology for Improved Forest Management through Extension of Rotation Age - 1.3",
+      "methodologyId": "VM0003",
+      "versions": "1.3",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0005 Methodology for Conversion of Low-Productive Forest to High-Productive Forest - 1.2",
+      "methodologyId": "VM0005",
+      "versions": "1.2",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0010 Methodology for Improved Forest Management: Conversion from Logged to Protected Forest - 1.4",
+      "methodologyId": "VM0010",
+      "versions": "1.4",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0012 Improved Forest Management in Temperate and Boreal Forests (LtPF) - 1.2",
+      "methodologyId": "VM0012",
+      "versions": "1.2",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0033 Methodology for Tidal Wetland and Seagrass Restoration - 2.1",
+      "methodologyId": "VM0033",
+      "versions": "2.1",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0035 Methodology for Improved Forest Management through Reduced Impact Logging - 1.0",
+      "methodologyId": "VM0035",
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Enteric Methane",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0041 Methodology for the Reduction of Enteric Methane Emissions from Ruminants through the Use of Feed Ingredients - 2.0",
+      "methodologyId": "VM0041",
+      "versions": "2.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Sustainable Agriculture (Rotational Crops Low Till No Tillage etc)​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0042 Methodology for Improved Agricultural Land Management - 2.0-2.1",
+      "methodologyId": "VM0042",
+      "versions": "2.0-2.1",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Sustainable Agriculture (Rotational Crops Low Till No Tillage etc)​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0042 Methodology for Improved Agricultural Land Management - 2.2",
+      "methodologyId": "VM0042",
+      "versions": "2.2",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/10/M45_VCS_VM42_v2.2_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/10/Board-Observations_Sustainable_Agriculture.pdf"
+    },
+    {
+      "category": "Biochar",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0044 Methodology for Biochar Utilization in Soil and Non-Soil Applications - 1.0-1.1",
+      "methodologyId": "VM0044",
+      "versions": "1.0-1.1",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Biochar",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0044 Methodology for Biochar Utilization in Soil and Non-Soil Applications - 1.2",
+      "methodologyId": "VM0044",
+      "versions": "1.2",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/08/M43_VCS_VM0044_v1.2_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/08/Board-Observations_Biochar.pdf"
+    },
+    {
+      "category": "Improved Forestry Management",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0045 Improved Forest Management Methodology Using Dynamic Matched Baselines from National Forest Inventories - 1.2",
+      "methodologyId": "VM0045",
+      "versions": "1.2",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/08/M43_VCS_VM45_v1.2_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/08/Board-Observations_IFM.pdf"
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0047 Afforestation, Reforestation, and Revegetation - 1.0",
+      "methodologyId": "VM0047",
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2024/12/Category-decision-Dec.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/12/Board-Observations_ARR_part-I_VM0047.pdf"
+    },
+    {
+      "category": "Afforestation Reforestation and Revegetation and Agroforestry",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0047 Afforestation, Reforestation, and Revegetation - 1.1",
+      "methodologyId": "VM0047",
+      "versions": "1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2025/09/M44_VCS_VM47_v1.1_2025.pdf",
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "REDD+ (Project)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0048 Reducing Emissions from Deforestation and Forest Degradation - 1.0",
+      "methodologyId": "VM0048",
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/11/VCS_VM48_v1_2025-version-2.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2024/11/Board-Observations_REDD-Part-I.pdf"
+    },
+    {
+      "category": "Carbon Dioxide Removals",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0049 Carbon Capture and Storage - 1.0",
+      "methodologyId": "VM0049",
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0050 Energy Efficiency and Fuel-Switch Measures in Cookstoves - 1.0",
+      "methodologyId": "VM0050",
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2025/03/VCS_VM50_v1_2025.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2025/03/Board-Observations_Cookstoves-and-Biodigesters-FINAL.pdf"
+    },
+    {
+      "category": "Rice Cultivation Methane Avoidance ​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0051 Improved Management in Rice Production Systems - 1.0",
+      "methodologyId": "VM0051",
+      "versions": "1.0",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Rice Cultivation Methane Avoidance ​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0051 Improved Management in Rice Production Systems - 1.1",
+      "methodologyId": "VM0051",
+      "versions": "1.1",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2026/08/M50W_VCS_VM51_IMRicePS_v1.1_2026.pdf",
+      "boardObservationsUrl": "http://icvcm.org/wp-content/uploads/2026/08/Board-Observations_Rice_II_VCS_VM0051_v1.1.pdf"
+    },
+    {
+      "category": "Just Transition",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VM0052 - Accelerated Retirement of Coal-Fired Power Plants Using a Just Transition - 1.0",
+      "methodologyId": "VM0052",
+      "versions": "1.0",
+      "decision": null,
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Efficient Cookstoves ​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VMR0006 Energy Efficiency and Fuel Switch Measures in Thermal Applications - 1.2",
+      "methodologyId": "VMR0006",
+      "versions": "1.2",
+      "decision": "Withdrawn",
+      "decisionDocumentUrl": null,
+      "boardObservationsUrl": null
+    },
+    {
+      "category": "Landfill Gas Capture & Utilisation​",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VMR0016 Flaring or Use of Landfill Gas (ACM0001 Revision) - 1.0",
+      "methodologyId": "VMR0016",
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "http://icvcm.org/wp-content/uploads/2026/08/M50W_VCS_VMR16_LFG_v1.0_2026.pdf",
+      "boardObservationsUrl": "http://icvcm.org/wp-content/uploads/2026/08/Board-Observations_LFG_VCS_VMR0016_v1.0.pdf"
+    },
+    {
+      "category": "Renewable Energy (Grid Connected)",
+      "programme": "Verified Carbon Standard",
+      "methodology": "VMR0017 - Grid-connected electricity generation from renewable sources (ACM0002 revision) - 1.0",
+      "methodologyId": "VMR0017",
+      "versions": "1.0",
+      "decision": "CCP-Approved",
+      "decisionDocumentUrl": "https://icvcm.org/wp-content/uploads/2026/05/M49_VCS_VMR0017_v1.0_2026.pdf",
+      "boardObservationsUrl": "https://icvcm.org/wp-content/uploads/2026/05/Board_Observations_RE_2026.pdf"
+    }
+  ]
+}

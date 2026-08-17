@@ -10,6 +10,29 @@ export {
   atarUrl,
 } from "./atar.ts";
 export type { AtarRuling } from "./atar.ts";
+export {
+  fetchAssessmentStatus,
+  parseAssessmentStatus,
+  assessmentStatusUrl,
+  extractMethodologyId,
+  extractVersions,
+  ICVCM_DECISIONS,
+  DOCUMENTED_DECISIONS,
+} from "./icvcm.ts";
+export type { IcvcmDecision, IcvcmRow, IcvcmTable } from "./icvcm.ts";
+export {
+  fetchProjects,
+  fetchPrices,
+  projectsUrl,
+  pricesUrl,
+  purchasableProjectKeys,
+  normaliseMethodologyId,
+} from "./carbonmark.ts";
+export type {
+  CarbonmarkProject,
+  CarbonmarkMethodology,
+  CarbonmarkPrice,
+} from "./carbonmark.ts";
 
 /// The customs authorities the corpus draws ground truth from.
 ///
