@@ -6,7 +6,9 @@
 > eligibility, and **refuses to proceed when its confidence is insufficient** —
 > so nothing moves on a guessed declaration.
 
-**Status: 16 August 2026.** This README describes what is built and says plainly
+**Status: 17 August 2026** — one real carbon credit retired against entitlement 4
+on X Layer, with a [public certificate](https://app.carbonmark.com/retirements/id/8453-0x8717eb0fad50d2afed907edc810bb7daca7b19a66eccce7cc67a20aa58d7b6d2-0)
+anyone can open. This README describes what is built and says plainly
 what is not. Nothing below is simulated. Where a feature does not exist, it is
 listed as absent rather than demonstrated with fake data, and every status claim
 is one you can check against a live chain or a public API rather than take on
@@ -43,7 +45,9 @@ different terms document, a different adapter.
 
 [`docs/adapters.md`](docs/adapters.md) is the authoritative status record and
 defines the vocabulary above. A status moves to **Active** only once that adapter
-has performed a real fulfilment on the named chain. None has yet.
+has performed a real fulfilment on the named chain. **One of the three has** —
+carbon, on 17 August. The other two rows are honest absences, not work in
+progress.
 
 ### Why the vertical is a parameter, and how to verify that
 
@@ -99,22 +103,42 @@ details are attached, transfers lock permanently: moving it afterwards would
 either leak those details to whoever received the token, or let work a provider
 has already accepted be redirected.
 
-### What is not yet true of the asset
+### What is now true of the asset, and what is still not
 
 This section exists because the claim above is the part most worth being
-sceptical of, and the honest position today is narrower than the design.
+sceptical of. Two of its three limitations were resolved on 17 August; the
+remaining one is stated rather than smoothed over.
 
-- **No obligation has been issued through the deployment.** The live contracts on
-  X Layer testnet hold **zero registered issuers, zero classes, zero
-  entitlements, and zero fulfilment receipts** — confirmed 16 August by calling
-  `totalMinted()` and `totalReceipts()` on the addresses below, both of which
-  return `0`. The machinery is real and live; nothing has been issued through it.
-- **No fulfilment has been performed by any adapter.** No carbon credit has been
-  retired, no shipment purchased, no lease taken.
-- **No issuer agreement exists in writing** for any of the three verticals.
+**Resolved.** An obligation has been issued through the deployment and
+discharged. `totalMinted()` returns **4** — check it yourself:
 
-Until those are resolved, RouteLock is a working, deployed settlement and
-compliance layer for a real-world service obligation — not yet a tokenised one.
+```bash
+cast call 0x8A9A92a5Cd3c1eF2D2F0b5cD67E33e73949C992b 'totalMinted()(uint256)' \
+  --rpc-url https://testrpc.xlayer.tech
+```
+
+Entitlement 4 was collateralised, purchased into escrow, bound to a work
+specification, ruled on by the engine, committed on chain, fulfilled by a real
+carbon retirement, and had the provider's own evidence committed back. The
+`SettlementEscrow` holds 9.3 USD₮0 of real collateral and buyer deposits across
+the four.
+
+**Still not true, and worth knowing:**
+
+- **`FulfilmentReceipt` has never been minted** — `totalReceipts()` returns `0`.
+  The audit trail lives in `ActivationRegistry`, which is where the retirement's
+  evidence was written; the soulbound receipt contract is deployed, tested and
+  unused. It is not required for a fulfilment and is not pretending to be.
+- **Testnet only.** The obligation above settles in testnet USD₮0. A mainnet
+  deployment is affordable today but holds no USDT, so a mainnet issuance would
+  have nothing real to settle in.
+- **No issuer agreement exists in writing** for any of the three verticals. The
+  issuer here is this project, which is honest but is not a counterparty
+  relationship.
+
+So RouteLock is a working, deployed settlement and compliance layer that has now
+carried one real obligation end to end — on testnet, with real money spent at the
+fulfilment leg, and with the proof at a third party rather than here.
 
 ---
 
@@ -439,7 +463,7 @@ asserts it on every run so a stale value cannot reach a deploy.
 ```bash
 pnpm install
 pnpm verify:chains    # re-verify all four chains against live RPC
-pnpm -r test          # 290 tests across seven packages
+pnpm -r test          # 334 tests across eight packages
 
 cd packages/contracts && forge test    # 159 tests
 ```

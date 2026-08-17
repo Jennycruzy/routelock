@@ -732,9 +732,13 @@ than two that can drift.
 
 ### Suite
 
-**290 TypeScript tests across seven packages, 0 failing** (chain 28, fulfilment 2,
-carbon 45, carrier 31, compliance 125, attest 57, api 2). **159 Solidity tests,
-0 failing.** No contract was modified.
+**334 TypeScript tests across eight packages, 0 failing** (compliance 125, attest
+57, carbon 45, bench 44, carrier 31, chain 28, api 2, fulfilment 2). **159
+Solidity tests, 0 failing.** No contract was modified.
+
+*A first count here said 290 across seven — it silently omitted `bench`, whose 44
+tests do not live under `packages/`. Worth the note because a test count is the
+kind of number a README states and nobody rechecks.*
 
 ### Also confirmed today
 
