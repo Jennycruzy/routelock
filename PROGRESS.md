@@ -946,3 +946,53 @@ Two things also worth carrying:
 the outputs — a post-hoc instrument applied to both arms, not a pre-registered
 test. It does not zero the baseline (4 of 15 rows, not 0), but it is a
 description of a change, not proof of one.
+
+### Role separation enforced, a resale market built, and the Aave question answered
+
+Three items off the resume list, and the third one closed by not building it.
+
+**`ADMIN`/`ORACLE` separation is now a precondition, not a reminder.**
+`Deploy.s.sol` refuses a mainnet deploy (196, 677) where the two are the same
+address, checked *before* `startBroadcast` rather than asserted after the gas is
+spent. `oracle != compliance` and `admin != compliance` are refused on every
+chain — the first of those was previously caught only by `_assertWiring`, i.e.
+after a half-built deployment already existed. Testnet 1952 keeps its shared key,
+now explicitly permitted by a named test rather than tolerated by omission.
+
+**Nothing on chain was rotated.** The live 1952 deployment still runs admin and
+oracle on one key. Doing it for real needs a second keystore entry, a human at a
+password prompt, and `e2e.ts` split into two signers — it currently signs as
+issuer, buyer, admin *and* oracle from one unlocked account.
+
+**`EntitlementMarket.sol`** — 23 tests, 100% branches, not deployed. It holds no
+role and takes no custody, which is what let it be added without reopening the
+deployed five; a test fails if that stops being true. The design point worth
+keeping: `buy()` re-reads the entitlement state at execution, because a token
+listed while `Available` can be submitted and activated before a buyer arrives.
+A listing is a standing offer its own lifecycle can invalidate, and checking only
+at listing time would let the payment leg run before the ERC-721 transfer
+reverted.
+
+**The `YieldAdapter` was not built, and the reason is the finding.** The resume
+list said to extend `verify:chains` before wiring anything. Doing that first is
+what caught it:
+
+| | |
+|---|---|
+| Aave V3 on X Layer mainnet | live, provider `getPool()` agrees with the pool |
+| Its stablecoin reserve | **USD₮0** `0x779Ded0c…` |
+| RouteLock's mainnet settlement | **USDT** `0x1E4a5963…` |
+| Ours in Aave's 9-reserve list | **absent** |
+| Aave on X Layer testnet | **not deployed** — `0x` at both addresses |
+
+Aave being on X Layer and RouteLock being able to float its collateral there are
+different claims, and only the first is true. Closing it needs a settlement
+change or a swap, and a swap is a different product with price risk the solvency
+invariant would then have to cover. There is also nowhere to rehearse it: Aave is
+mainnet-only on X Layer, where the deployer holds 0 USDT.
+
+⛔ **The trap for next time:** a protocol being deployed on a chain says nothing
+about whether the asset you hold is listed on it. Ask the chain about the pair,
+not about the protocol. `verify:chains` now does exactly that on every run,
+including cross-checking the `settlesInVenueAsset` claim against the two
+addresses it describes, so it cannot drift into a lie.
