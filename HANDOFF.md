@@ -712,8 +712,26 @@ X Layer is finished completely before BOT Chain is started.
    satisfies the eligibility sequence but proves less than the testnet run does.
 4. **Submit X Layer.** Only then start BOT Chain: testnet deploy (funded, needs a
    human at the keystore prompt), `AkashAdapter`, mainnet, submit.
-5. **Secondary market listing contract**, with a test asserting a bound
-   entitlement cannot be listed.
+5. **Secondary market listing contract — BUILT.** `EntitlementMarket.sol`, 23
+   tests, 100% branches. **Not deployed anywhere**, deliberately: it is written
+   and proven, and putting it on chain is a separate decision.
+
+   It is **additive and holds no role on anything**, which is what let it be
+   added without reopening the deployed five — `test_theMarketHoldsNoRoleAnywhere`
+   fails if that ever stops being true. It takes no custody either: the seller
+   keeps the token and grants an ERC-721 approval.
+
+   The design point worth not undoing: **`buy()` re-checks the entitlement state
+   at execution, not only at listing.** A token listed while `Available` can be
+   submitted, approved and activated before a buyer arrives, so a listing is a
+   standing offer that its own lifecycle can invalidate. Checking only at listing
+   time would carry a stale permission and let the payment leg run before the
+   ERC-721 transfer reverted. `test_aListingGoesStaleWhenTheTokenIsBoundAfterwards`
+   is that property.
+
+   Also covered: `expectedPrice` on `buy` so a relist cannot fill a pending
+   purchase at a new number, a seller who has moved the token, a revoked
+   approval, and a settlement token that calls back mid-transfer.
 6. **Float `YieldAdapter`** into Aave V3 on X Layer, with a Foundry `invariant_`
    test on the solvency property. Extend `verify:chains` to assert the Aave pool,
    the USD₮0 reserve and the aToken live, before wiring anything.
