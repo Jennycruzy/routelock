@@ -49,9 +49,26 @@ So budget mainnet as **0.3 per run that will not come back on its own**, not as
 0.3 consumed. Recovering it is nine transactions the deployer key can already
 sign (it holds both `ORACLE_ROLE` and the issuer): `releaseToIssuer(tokenId)` per
 token, one `claim(token)`, then `withdrawCollateral(classId, …)` per class once
-`_dischargeObligation` has zeroed the outstanding obligation. **No script does
-this.** Writing one is the cheapest way to stop a mainnet balance disappearing
-into escrow a third of a token at a time.
+`_dischargeObligation` has zeroed the outstanding obligation. **`pnpm --filter @routelock/attest recover` now does this**, dry run by
+default, `--broadcast` to send.
+
+It does not take an instruction about who to pay — it reads one. `carrierRefHash`
+committed means the provider's evidence is on chain and the issuer performed, so
+the deposit is **released**; a zero hash means fulfilment was never proven, so the
+buyer is **refunded**. There is deliberately no flag to override that: releasing
+and refunding emit different permanent events, and picking the convenient one
+would write a false public account of whether the work was done. A token whose
+state claims carriage (`LabelCreated` onward) while carrying no evidence is
+**refused and left alone** rather than guessed at.
+
+The dry run is not a printout — every call goes through `simulateContract`
+against live state. It also *projects* the discharge: `withdrawCollateral` cannot
+be simulated before the settlements land, so a naive dry run would report 6.2 of
+9.3 recoverable and read as though the rest were stuck.
+
+Verified against 1952 on 2026-08-17: **the plan accounts for all 9.3 USD₮0**
+(3.1 deposits + 6.2 collateral) — tokens 1–3 refund, token 4 releases. Not yet
+broadcast.
 
 Note `releaseToIssuer` checks only that the deposit is live — there is no
 on-chain entitlement-state precondition — so it can be called on all four today.

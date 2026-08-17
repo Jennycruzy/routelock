@@ -8,7 +8,8 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/*.test.ts",
     "verify:registry": "tsx scripts/verify-registry.ts",
-    "e2e": "tsx scripts/e2e.ts"
+    "e2e": "tsx scripts/e2e.ts",
+    "recover": "tsx scripts/recover-escrow.ts"
   },
   "dependencies": {
     "@routelock/chain": "workspace:*",
