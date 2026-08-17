@@ -66,9 +66,28 @@ against live state. It also *projects* the discharge: `withdrawCollateral` canno
 be simulated before the settlements land, so a naive dry run would report 6.2 of
 9.3 recoverable and read as though the rest were stuck.
 
-Verified against 1952 on 2026-08-17: **the plan accounts for all 9.3 USD₮0**
-(3.1 deposits + 6.2 collateral) — tokens 1–3 refund, token 4 releases. Not yet
-broadcast.
+**Executed on 1952, 17 August. The escrow is now empty and the wallet holds
+10.0 USD₮0** (from 0.7) — about 33 further e2e runs, so the faucet cooldown is no
+longer a constraint. Tokens 1–3 refunded, token 4 released, 6.2 collateral
+withdrawn. Entitlement 4's `carrierRefHash` is untouched: the fulfilment evidence
+the submission rests on survives the unwind.
+
+⛔ **Two bugs it hit on the first real run, both the stale-RPC trap this repo
+already knew about.** X Layer's public RPC is load-balanced, so a read after a
+confirmed write can be served by a node that has not seen the block.
+
+1. **It read `claimable` once, got 0, printed "nothing claimable" and left 0.1
+   USD₮0 behind.** The fix is not "retry the read" — it is that **a money path
+   must never report success from an absence.** The expected credit is now
+   computed from the releases just performed, a contradicting zero is retried,
+   and a persistent one is reported as unfinished business rather than passed
+   over in silence.
+2. The closing balance printed 0.3 when the chain held 0.1.
+
+Both were avoidable: `e2e.ts` already carries the answer (retry the simulation,
+`confirmations: 2`) from commit `ef906db`, and this script did not reuse it.
+**When writing a new script against these chains, read the sibling script's
+confirmation handling first.**
 
 Note `releaseToIssuer` checks only that the deposit is live — there is no
 on-chain entitlement-state precondition — so it can be called on all four today.

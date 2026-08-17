@@ -119,9 +119,28 @@ cast call 0x8A9A92a5Cd3c1eF2D2F0b5cD67E33e73949C992b 'totalMinted()(uint256)' \
 
 Entitlement 4 was collateralised, purchased into escrow, bound to a work
 specification, ruled on by the engine, committed on chain, fulfilled by a real
-carbon retirement, and had the provider's own evidence committed back. The
-`SettlementEscrow` holds 9.3 USD₮0 of real collateral and buyer deposits across
-the four.
+carbon retirement, and had the provider's own evidence committed back.
+
+**And then it was unwound, which is the half that had never been exercised.** On
+17 August all four entitlements were settled and the escrow emptied to **zero**,
+paying each side what the chain said it was owed: entitlement 4 **released to the
+issuer**, because the provider's evidence is committed against it; entitlements
+1–3 **refunded to the buyer**, because no fulfilment was ever proven for them.
+6.2 USD₮0 of collateral was returned once those settlements discharged the
+obligations backing it.
+
+That direction matters more than a balance sitting still. A collateral system
+that can take money and has never given it back is an untested promise, and the
+refunds are the evidence that a buyer whose work is not performed gets paid out
+rather than written off. The unwind is reproducible —
+`pnpm --filter @routelock/attest recover` — and it reads who to pay from
+`carrierRefHash` rather than from a flag, so it cannot be pointed at the wrong
+party. Check the escrow yourself:
+
+```bash
+cast call 0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c 'balanceOf(address)(uint256)' \
+  0x58eba10730Fd1ee4E5b24AaAa7caE154cbC69C83 --rpc-url https://testrpc.xlayer.tech
+```
 
 **Still not true, and worth knowing:**
 
