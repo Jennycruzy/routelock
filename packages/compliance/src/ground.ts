@@ -19,6 +19,7 @@
 /// rather than shipped.
 
 import { loadChapter, type Subheading } from "./nomenclature.ts";
+import { reportUsage, type UsageSink } from "./anthropic.ts";
 import { roundConfidence } from "./hash.ts";
 import type { ClassificationRequest, Proposal } from "./types.ts";
 
@@ -110,7 +111,7 @@ export interface GroundedResult {
 export async function ground(
   request: ClassificationRequest,
   first: Proposal,
-  options: { apiKey: string; model: string },
+  options: { apiKey: string; model: string; onUsage?: UsageSink },
 ): Promise<GroundedResult | null> {
   const chapters = first.candidateChapters ?? [];
   if (chapters.length === 0) return null;
@@ -146,7 +147,12 @@ export async function ground(
 
   const body = (await response.json()) as {
     content?: { type: string; name?: string; input?: Record<string, unknown> }[];
+    usage?: { input_tokens?: number; output_tokens?: number };
   };
+  // This pass discards its own answer whenever the model invents a code rather
+  // than choosing one from the list. Discarded or not, it was paid for.
+  reportUsage(body, options, "hs_ground");
+
   const call = body.content?.find(
     (b) => b.type === "tool_use" && b.name === SELECT_TOOL.name,
   );

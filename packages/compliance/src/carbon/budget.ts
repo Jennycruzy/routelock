@@ -55,9 +55,17 @@ export class InferenceBudgetExceeded extends Error {
   constructor(
     readonly spentCalls: number,
     readonly maxCalls: number,
+    /// How many calls the refused operation needed. Present when the ledger has
+    /// room for *some* calls but not for all of them — a two-pass ruling asked
+    /// for with one call left. Reported because "exhausted" and "cannot afford
+    /// the whole ruling" are different situations with the same remedy.
+    readonly callsNeeded?: number,
   ) {
     super(
-      `inference budget exhausted: ${spentCalls} of ${maxCalls} calls used. ` +
+      `inference budget exhausted: ${spentCalls} of ${maxCalls} calls used` +
+        (callsNeeded === undefined
+          ? ". "
+          : `, and this ruling needs ${callsNeeded}. `) +
         `Raise ROUTELOCK_MAX_MODEL_CALLS deliberately, or clear the ledger — ` +
         `refusing to spend further without a decision.`,
     );

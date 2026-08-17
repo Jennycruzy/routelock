@@ -174,10 +174,46 @@ export async function withRetry<T>(
   throw lastError;
 }
 
+/// What one completed call cost, as the API itself reported it.
+///
+/// Reported rather than returned, because a call that spends and then fails to
+/// parse has still spent. Every 200 from the API reaches the sink, including
+/// the grounding responses whose content is discarded — a budget that only
+/// counts calls whose answers were useful is not a budget.
+export interface CallUsage {
+  readonly purpose: string;
+  readonly model: string;
+  readonly inputTokens: number;
+  readonly outputTokens: number;
+}
+
+export type UsageSink = (usage: CallUsage) => void;
+
 export interface ModelClientOptions {
   readonly apiKey: string;
   readonly model: string;
   readonly maxTokens?: number;
+  /// Called once per 200 response. Optional so the benchmark and the tests can
+  /// ignore it; the served endpoints supply one and refuse to run without it.
+  readonly onUsage?: UsageSink;
+}
+
+/// Read the counts the API reported, defaulting to zero rather than guessing.
+///
+/// Absent usage is recorded as a call costing nothing, which understates spend
+/// — but the call cap, not the dollar estimate, is what stops a runaway, so the
+/// count is the number that has to be right.
+export function reportUsage(
+  body: { usage?: { input_tokens?: number; output_tokens?: number } },
+  options: { readonly model: string; readonly onUsage?: UsageSink },
+  purpose: string,
+): void {
+  options.onUsage?.({
+    purpose,
+    model: options.model,
+    inputTokens: body.usage?.input_tokens ?? 0,
+    outputTokens: body.usage?.output_tokens ?? 0,
+  });
 }
 
 /// Ask the model to classify one consignment.
@@ -210,7 +246,14 @@ export async function propose(
     );
   }
 
-  const body = (await response.json()) as { content?: AnthropicContentBlock[] };
+  const body = (await response.json()) as {
+    content?: AnthropicContentBlock[];
+    usage?: { input_tokens?: number; output_tokens?: number };
+  };
+  // Before the parse, not after: a malformed response has already been paid
+  // for, and throwing first would lose the spend.
+  reportUsage(body, options, "hs_classify");
+
   const call = body.content?.find(
     (b) => b.type === "tool_use" && b.name === CLASSIFY_TOOL.name,
   );
