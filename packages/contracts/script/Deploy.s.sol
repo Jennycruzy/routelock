@@ -333,10 +333,17 @@ contract Deploy is Script {
             });
         }
         if (chainId == 196) {
+            // USD₮0, the canonical stablecoin on X Layer. Corrected 2026-08-17
+            // from 0x1E4a5963… ("Tether USD"), the legacy bridged token being
+            // phased out: 30x less supply, 19x less transfer activity, and
+            // absent from Aave's X Layer reserve list. Both answer decimals()
+            // with 6, so `_assertSettlementToken` accepted either — the check
+            // proves a token is a 6-decimal ERC-20, never that it is the right
+            // one. See packages/chain/src/chains.ts.
             return Target({
                 key: "xlayer_mainnet",
-                settlementToken: 0x1E4a5963aBFD975d8c9021ce480b42188849D41d,
-                settlementSymbol: "USDT"
+                settlementToken: 0x779Ded0c9e1022225f8E0630b35a9b54bE713736,
+                settlementSymbol: unicode"USD₮0"
             });
         }
         if (chainId == 968) {

@@ -507,7 +507,7 @@ a docs page.
 | Target | Chain ID | Settlement |
 |---|---|---|
 | X Layer testnet | 1952 | USD₮0 `0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c` |
-| X Layer mainnet | 196 | USDT `0x1E4a5963aBFD975d8c9021ce480b42188849D41d` |
+| X Layer mainnet | 196 | USD₮0 `0x779Ded0c9e1022225f8E0630b35a9b54bE713736` |
 | BOT Chain testnet | 968 | USDT `0x75edC9335175Fc0552D51D48439F229c10420fe3` |
 | BOT Chain mainnet | 677 | USDT `0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C` |
 

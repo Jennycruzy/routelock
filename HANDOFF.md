@@ -154,7 +154,7 @@ Day 5 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 | Target | Chain ID | RPC | Settlement |
 |---|---|---|---|
 | X Layer testnet | 1952 (`0x7a0`) | `https://testrpc.xlayer.tech` | USD₮0 `0x9e29b3aada05bf2d2c827af80bd28dc0b9b4fb0c` (6 dp) |
-| X Layer mainnet | 196 (`0xc4`) | `https://rpc.xlayer.tech` | USDT `0x1E4a5963aBFD975d8c9021ce480b42188849D41d` (6 dp) |
+| X Layer mainnet | 196 (`0xc4`) | `https://rpc.xlayer.tech` | USD₮0 `0x779Ded0c9e1022225f8E0630b35a9b54bE713736` (6 dp) |
 | BOT Chain testnet | 968 (`0x3c8`) | `https://rpc.bohr.life` | USDT `0x75edC9335175Fc0552D51D48439F229c10420fe3` (6 dp) |
 | BOT Chain mainnet | 677 (`0x2a5`) | `https://rpc.botchain.ai` | USDT `0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C` (6 dp) |
 
@@ -732,42 +732,62 @@ X Layer is finished completely before BOT Chain is started.
    Also covered: `expectedPrice` on `buy` so a relist cannot fill a pending
    purchase at a new number, a seller who has moved the token, a revoked
    approval, and a settlement token that calls back mid-transfer.
-6. **`YieldAdapter` — the verification was done first, and it says do not build
-   this.** `verify:chains` now probes the venue on all four chains. **No adapter
-   was written**, because the probe found it cannot be built for real:
+6. **`YieldAdapter` — buildable, and blocked on an environment rather than an
+   asset.** `verify:chains` now probes the venue on all four chains.
 
    | | |
    |---|---|
-   | Aave V3 on X Layer mainnet | **live** — pool `0xE3F3Caef…`, provider `0xdFf435BC…`, provider `getPool()` agrees |
-   | Its stablecoin reserve | **USD₮0** `0x779Ded0c…`, aToken `aXlrUSDT0`, supply 113.3M |
-   | RouteLock's mainnet settlement | **USDT** `0x1E4a5963…`, supply 3.8M |
-   | RouteLock's token in Aave's reserve list | **absent** |
+   | Aave V3 on X Layer mainnet | **live** — pool `0xE3F3Caef…`, provider `0xdFf435BC…`, `getPool()` agrees |
+   | Its stablecoin reserve | **USD₮0** `0x779Ded0c…`, aToken `aXlrUSDT0` |
+   | RouteLock's mainnet settlement | **USD₮0** `0x779Ded0c…` — the same asset |
    | Aave V3 on X Layer **testnet** | **not deployed** — pool and provider return `0x` at 1952 |
 
-   So "float idle collateral into Aave on X Layer" is not a wiring job. The
-   protocol is on the chain; **the asset RouteLock holds is not listed on it**.
-   Closing that needs either a settlement change (mainnet to USD₮0, which is what
-   testnet already settles in) or a swap — and a swap is a different product
-   carrying slippage and price risk that the solvency invariant would then have
-   to cover. Neither is a two-day task, and the second is arguably not worth
-   doing at all.
+   ⛔ **This entry said "do not build this" for part of 17 August, and that was
+   wrong.** The claim rested on mainnet settling in `0x1E4a5963…`, which was a
+   config error, not a fact about Aave — see the correction below. No swap is
+   needed and no settlement change is outstanding; both were done.
 
-   And there is **nowhere to rehearse it**: Aave is mainnet-only on X Layer,
-   where RouteLock holds 0 USDT. A yield adapter could not be exercised for real
-   before submission even if the asset matched.
+   **What actually blocks it: there is nowhere to rehearse.** Aave is mainnet-only
+   on X Layer, and the deployer holds 0 USD₮0 there. Building a yield adapter
+   whose first execution is on mainnet, with real money, against a protocol this
+   project has never called, two days before a deadline, is the kind of thing
+   §1.5.1 exists to prevent. The options are a mainnet fork rehearsal (`--fork`
+   against anvil at current head, which the e2e path already supports and which
+   costs nothing) or leaving it.
 
-   **Do not "fix" this by pointing an adapter at USD₮0 on mainnet** — RouteLock
-   would then be floating a token it does not settle in, which is a swap wearing
-   a wiring diagram.
+   The Foundry `invariant_` test on the solvency property stays wanted and now has
+   something to attach to.
 
    What is committed: `yieldVenue` on every chain in `chains.ts` (a discriminated
-   union, so "no venue" and "a venue" are different shapes and `none` must carry
-   a reason), the live probe in `verify:chains`, and four tests. The venue's
-   `settlesInVenueAsset` claim is cross-checked against the two addresses it
-   describes both offline and against the chain, so it cannot drift.
+   union, so "no venue" and "a venue" are different shapes and `none` must carry a
+   reason), the live probe in `verify:chains`, and five tests.
 
-   The invariant test on the solvency property stays wanted, and has nothing to
-   attach to until an asset matches.
+### ⛔ Correction, 17 August: mainnet settled in the wrong token
+
+**`ROUTELOCK` mainnet settlement was `0x1E4a5963…` ("Tether USD", `USDT`) and is
+now `0x779Ded0c…` (`USD₮0`).** The first is X Layer's legacy bridged USDT, being
+phased out; the second is the canonical LayerZero-OFT token the chain actually
+uses. Measured, not argued: **30x the supply** (113.3M vs 3.8M), **19x the
+transfer activity** over ten sampled 100-block windows, and it is the asset Aave
+lists. X Layer *testnet* already settled in USD₮0, so the two environments
+disagreed with each other for four days.
+
+**Why nothing caught it.** `_assertSettlementToken` proves a contract exists and
+answers `decimals() == 6` — both tokens do. `verify:chains` compared `symbol()`
+against the configured symbol, and the configured symbol was `USDT`, which the
+legacy token returns. A check that compares a config against itself confirms
+consistency, never correctness. A test now names the legacy address and fails if
+it reappears anywhere as a settlement token, because nothing structural can catch
+it: it is a real, live, correctly-behaved ERC-20 that is simply the wrong one.
+
+**The reasoning error worth not repeating:** a live on-chain reading disagreed
+with the config, and the config was treated as ground truth, producing a
+confident wrong conclusion about Aave. When a reading and a config disagree,
+**the config is a suspect too.**
+
+⛔ **Anything funded or acquired for mainnet must be USD₮0 `0x779Ded0c…`.** The
+legacy USDT is not settlement anywhere and buying it would be money spent on the
+wrong asset.
 
 `ClassShares` remains wanted and remains last.
 

@@ -100,7 +100,7 @@ describe("requireSettlementToken", () => {
     );
     assert.equal(
       requireSettlementToken(CHAINS.xlayer_mainnet),
-      "0x1E4a5963aBFD975d8c9021ce480b42188849D41d"
+      "0x779Ded0c9e1022225f8E0630b35a9b54bE713736"
     );
   });
 
@@ -317,24 +317,43 @@ describe("Yield venues are configured from the chain, not from announcements", (
     }
   });
 
-  // The finding that stopped the YieldAdapter from being built. Aave V3 is live
-  // on X Layer and lists USD₮0; RouteLock settles mainnet in USDT. Two different
-  // contracts, and Aave's reserve list does not contain ours. If this assertion
-  // ever fails it means the settlement token or the reserve changed, and the
-  // adapter question genuinely reopens — which is exactly when someone should be
-  // made to look.
-  test("X Layer mainnet settles in a token Aave's market does not list", () => {
+  // Aave's X Layer reserve and X Layer's settlement token are the same asset:
+  // USD₮0. They read as different for one day, on 2026-08-17, because the
+  // mainnet settlement address in this file named the legacy bridged USDT
+  // (`0x1E4a5963…`) rather than the canonical USD₮0 the chain actually uses.
+  //
+  // That mistake briefly produced a confident, wrong conclusion — "Aave does not
+  // list our token, so no yield adapter can be built" — from entirely correct
+  // on-chain readings. The readings were never the problem; the config they were
+  // compared against was.
+  test("X Layer mainnet settles in the asset Aave's market lists", () => {
     const chain = CHAINS.xlayer_mainnet;
     assert.equal(chain.yieldVenue.kind, "aave-v3");
     if (chain.yieldVenue.kind !== "aave-v3") return;
     if (chain.settlement.kind !== "erc20") throw new Error("expected an erc20 settlement");
 
-    assert.notEqual(
-      chain.yieldVenue.asset.toLowerCase(),
+    assert.equal(
       chain.settlement.token.toLowerCase(),
-      "the venue asset and the settlement token are now the same — re-read the adapter decision",
+      chain.yieldVenue.asset.toLowerCase(),
+      "settlement and the Aave reserve have diverged — a yield adapter would need a swap",
     );
-    assert.equal(chain.yieldVenue.settlesInVenueAsset, false);
+    assert.equal(chain.yieldVenue.settlesInVenueAsset, true);
+  });
+
+  // The legacy token must not come back by copy-paste. It is a live 6-decimal
+  // ERC-20 that answers symbol() with "USDT", so every structural check in this
+  // repo passes on it — `_assertSettlementToken` included. Nothing but naming it
+  // catches it.
+  test("the deprecated bridged USDT is not a settlement token anywhere", () => {
+    const legacy = "0x1e4a5963abfd975d8c9021ce480b42188849d41d";
+    for (const [key, chain] of Object.entries(CHAINS) as [string, ChainConfig][]) {
+      if (chain.settlement.kind !== "erc20") continue;
+      assert.notEqual(
+        chain.settlement.token.toLowerCase(),
+        legacy,
+        `${key} settles in X Layer's phased-out bridged USDT`,
+      );
+    }
   });
 
   // `settlesInVenueAsset` is a claim, and a claim that can drift from the two

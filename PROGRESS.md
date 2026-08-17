@@ -981,7 +981,7 @@ what caught it:
 |---|---|
 | Aave V3 on X Layer mainnet | live, provider `getPool()` agrees with the pool |
 | Its stablecoin reserve | **USD₮0** `0x779Ded0c…` |
-| RouteLock's mainnet settlement | **USDT** `0x1E4a5963…` |
+| RouteLock's mainnet settlement | **USDT** `0x1E4a5963…` — ⛔ wrong, corrected below |
 | Ours in Aave's 9-reserve list | **absent** |
 | Aave on X Layer testnet | **not deployed** — `0x` at both addresses |
 
@@ -996,3 +996,44 @@ about whether the asset you hold is listed on it. Ask the chain about the pair,
 not about the protocol. `verify:chains` now does exactly that on every run,
 including cross-checking the `settlesInVenueAsset` claim against the two
 addresses it describes, so it cannot drift into a lie.
+
+### ⛔ Correction: mainnet settled in the wrong token, and it produced a wrong finding
+
+**X Layer mainnet settlement was `0x1E4a5963…` ("Tether USD", `USDT`). It is now
+`0x779Ded0c…` (`USD₮0`).** The first is X Layer's legacy bridged USDT, being
+phased out. The second is the canonical LayerZero-OFT token the chain uses.
+
+Caught by the owner reading the funding table and saying mainnet uses USDT0.
+Verified before acting on it:
+
+| | `0x1E4a5963…` | `0x779Ded0c…` |
+|---|---|---|
+| supply | 3,829,200,805,666 | **113,309,004,080,663** (30x) |
+| transfers, 10 sampled 100-block windows | 324 | **6,175** (19x) |
+| in Aave's X Layer reserve list | no | **yes** |
+
+X Layer **testnet** already settled in USD₮0 — the 1952 faucet dispenses it — so
+the two environments disagreed with each other for four days.
+
+**The finding this invalidated.** The entry above concluding "Aave does not list
+RouteLock's settlement token, so no yield adapter can be built without a swap"
+was wrong. Every `cast` reading behind it was correct; the config they were
+compared against was not. `settlesInVenueAsset` is now **true**, the adapter needs
+no swap, and what actually blocks it is that Aave is mainnet-only on X Layer so
+there is nowhere to rehearse.
+
+⛔ **Two traps, and the second is the expensive one:**
+
+1. **Nothing structural could catch this.** `_assertSettlementToken` proves a
+   contract exists and answers `decimals() == 6` — both tokens do.
+   `verify:chains` compared `symbol()` against the *configured* symbol, which was
+   `USDT`, which the legacy token returns. A check that compares a config against
+   itself confirms consistency, never correctness. The fix is a test that names
+   the legacy address, because there is no property to check — it is a real,
+   live, well-behaved ERC-20 that is simply not the one the chain uses.
+2. **When a live reading disagrees with the config, the config is a suspect too.**
+   The reading was trusted and the config was not questioned, which turned a
+   config bug into a confident architectural conclusion. The disagreement was
+   real; which side was at fault was assumed rather than established.
+
+Anything funded for mainnet must be USD₮0 `0x779Ded0c…`.

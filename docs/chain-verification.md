@@ -42,10 +42,16 @@ X Layer mainnet, confirmed the same way:
 
 | Network | Address | `symbol()` | `decimals()` |
 |---|---|---|---|
+| X Layer mainnet | `0x779Ded0c9e1022225f8E0630b35a9b54bE713736` | `USD₮0` | 6 |
 | X Layer mainnet | `0x1E4a5963aBFD975d8c9021ce480b42188849D41d` | `USDT` | 6 |
 | X Layer mainnet | `0x74b7F16337b8972027F6196A17a631aC6dE26d22` | `USDC` | 6 |
 
-USDT is configured as the settlement token for consistency with BOT Chain.
+⛔ **USD₮0 is the settlement token, corrected 2026-08-17.** The row above it,
+`0x1E4a5963…`, was configured until then "for consistency with BOT Chain" — a
+reason about naming, not about the chain. It is X Layer's legacy bridged USDT,
+being phased out in favour of USD₮0. Both are live, both are 6-decimal ERC-20s,
+and both answer `symbol()` plausibly, so every structural check in this repo
+passed on the wrong one. See §"Which USDT" below.
 
 ## X Layer testnet chain ID: 1952, not 195
 
@@ -234,19 +240,62 @@ $ cast call 0xE3F3Caefdd7180F884c01E57f65Df979Af84f116 'getReservesList()(addres
  0x50500000…, 0xAFeab3B8…, 0x14a68610…, 0xDe653901…]                # 0x1E4a5963… is not in it
 ```
 
-**The conclusion: Aave's X Layer market does not list RouteLock's settlement
-token.** Nine reserves, and the one RouteLock holds is not among them.
+⛔ **The conclusion drawn from this on 17 August was wrong, and the readings
+above were not.** Every `cast` output on this page is accurate. What was wrong
+was the thing they were compared against: `chains.ts` named `0x1E4a5963…` as
+X Layer mainnet settlement, so "our token is absent from Aave's reserves" was
+true of a token RouteLock should never have been settling in.
+
+The corrected position: **Aave's X Layer reserve and RouteLock's settlement token
+are the same asset, USD₮0.** A yield adapter needs no swap and no settlement
+change. What it still lacks is an environment — see below.
+
+## Which USDT: the config named the wrong one
+
+Two live 6-decimal stablecoins on chain 196 both present as Tether:
+
+| | `0x1E4a5963…` | `0x779Ded0c…` |
+|---|---|---|
+| `name()` | `Tether USD` | `USD₮0` |
+| `symbol()` | `USDT` | `USD₮0` |
+| `decimals()` | 6 | 6 |
+| `totalSupply()` | 3,829,200,805,666 | **113,309,004,080,663** (30x) |
+| Transfers, 10 sampled 100-block windows | 324 | **6,175** (19x) |
+| In Aave's reserve list | no | **yes** |
+| Standard | legacy bridged, being phased out | LayerZero OFT, canonical |
+
+X Layer **testnet** already settled in USD₮0 — the 1952 faucet dispenses it — so
+the two environments disagreed with each other for four days and nothing caught
+it.
+
+**Why every existing check passed on the wrong token.** `_assertSettlementToken`
+in `Deploy.s.sol` asserts a contract exists and answers `decimals() == 6`. Both
+do. `verify:chains` compared `symbol()` against the configured symbol — and the
+configured symbol was `USDT`, which the legacy token duly returned. A check that
+compares a config against itself confirms consistency, never correctness.
+
+Corrected 2026-08-17. A test now names the legacy address and fails if it
+reappears as any chain's settlement token, because nothing structural can catch
+it: it is a real, live, correctly-behaved ERC-20 that simply is not the one the
+chain uses.
+
+## Aave on X Layer: live on mainnet, absent on testnet
 
 On X Layer **testnet** the pool and provider both return `0x` — Aave is not
 deployed there at all, so there is no environment in which a yield adapter could
-be rehearsed before touching mainnet.
+be rehearsed before touching mainnet. That, not the asset, is what still blocks
+it.
 
 ### The general lesson, worth more than the specific addresses
 
-A protocol being deployed on a chain says nothing about whether *your* asset is
-listed on it. The chain-verification habit this file exists for — ask the chain,
-do not trust the docs page — extends one step further than it first appeared:
-ask the chain about the specific pair, not about the protocol.
+Two lessons, and the second one cost a wrong conclusion:
+
+1. A protocol being deployed on a chain says nothing about whether *your* asset
+   is listed on it. Ask the chain about the specific pair, not the protocol.
+2. **When a live reading disagrees with the config, the config is a suspect too.**
+   The instinct here was to treat `chains.ts` as ground truth and conclude
+   something about Aave. The disagreement was real; the party at fault was
+   assumed rather than established.
 
 `verify:chains` now performs this check on every run, including the
 `settlesInVenueAsset` claim, which is cross-checked against the two addresses it

@@ -271,7 +271,7 @@ contract DeployTest is Test {
         assertEq(xlayerTest.key, "xlayer_testnet");
         assertEq(xlayerTest.settlementToken, 0x9e29b3AaDa05Bf2D2c827Af80Bd28Dc0b9b4FB0c);
 
-        assertEq(harness.targetFor(196).settlementToken, 0x1E4a5963aBFD975d8c9021ce480b42188849D41d);
+        assertEq(harness.targetFor(196).settlementToken, 0x779Ded0c9e1022225f8E0630b35a9b54bE713736);
         assertEq(harness.targetFor(968).settlementToken, 0x75edC9335175Fc0552D51D48439F229c10420fe3);
         assertEq(harness.targetFor(677).settlementToken, 0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C);
 

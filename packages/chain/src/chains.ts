@@ -108,20 +108,35 @@ export const CHAINS = {
     explorer: "https://www.oklink.com/xlayer",
     settlement: {
       kind: "erc20",
-      // verified on-chain: symbol() -> "USDT", decimals() -> 6
-      token: "0x1E4a5963aBFD975d8c9021ce480b42188849D41d",
-      symbol: "USDT",
+      // USD₮0 — LayerZero-OFT USDT, and the canonical stablecoin on X Layer.
+      // Verified on-chain 2026-08-17: name() -> "USD₮0", decimals() -> 6.
+      //
+      // ⛔ This was `0x1E4a5963…` ("Tether USD", USDT) until 2026-08-17, and
+      // that was wrong. Both contracts are live on 196, so nothing reverted and
+      // nothing looked broken — the config simply named the legacy bridged
+      // token, which is being phased out in favour of USD₮0. What settles it,
+      // measured rather than argued:
+      //
+      //   supply     113,309,004,080,663  vs  3,829,200,805,666   (30x)
+      //   transfers  6,175                vs  324                 (19x, sampled
+      //              over ten 100-block windows spanning ~50k blocks)
+      //   Aave       listed               vs  absent from all 9 reserves
+      //   testnet    the 1952 faucet dispenses USD₮0, so testnet already
+      //              settled in this asset while mainnet did not
+      //
+      // The lesson is the one this file already teaches, applied one level
+      // further: `symbol()` returning "USDT" proves a token calls itself USDT,
+      // not that it is the one the chain actually uses.
+      token: "0x779Ded0c9e1022225f8E0630b35a9b54bE713736",
+      symbol: "USD₮0",
       decimals: 6,
     },
     // Aave V3 launched on X Layer on 30 March 2026 and every address below was
     // read off the chain on 2026-08-17, not off the announcement.
     //
-    // ⛔ `settlesInVenueAsset` is FALSE, and it is the whole finding. Aave's
-    // X Layer market lists **USD₮0** (`0x779Ded…`, supply 113.3M). RouteLock
-    // settles mainnet in **USDT** (`0x1E4a59…`, supply 3.8M). They are different
-    // contracts and Aave's reserve list does not contain RouteLock's token at
-    // all, so floating mainnet collateral into Aave is not a wiring job — it
-    // needs either a settlement change or a swap.
+    // `settlesInVenueAsset` is TRUE: Aave's X Layer reserve *is* the settlement
+    // token. It read false until the settlement address above was corrected —
+    // the mismatch was never Aave's, it was ours.
     yieldVenue: {
       kind: "aave-v3",
       pool: "0xE3F3Caefdd7180F884c01E57f65Df979Af84f116",
@@ -130,7 +145,7 @@ export const CHAINS = {
       assetSymbol: "USD₮0",
       aToken: "0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297",
       aTokenSymbol: "aXlrUSDT0",
-      settlesInVenueAsset: false,
+      settlesInVenueAsset: true,
     },
     env: "live",
     carrierMode: "live",
