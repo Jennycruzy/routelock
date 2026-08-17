@@ -870,8 +870,9 @@ X Layer is finished completely before BOT Chain is started.
    missing is **USDT on mainnet** (0, so no real issuance) and **OKB on the
    compliance key** (0, so no `recordDecision`). A mainnet deploy with no issuance
    satisfies the eligibility sequence but proves less than the testnet run does.
-4. **Submit X Layer.** Only then start BOT Chain: testnet deploy (funded, needs a
-   human at the keystore prompt), `AkashAdapter`, mainnet, submit.
+4. **Submit X Layer** — the code is done; see §7 for what remains, which is not code.
+
+   **Then BOT Chain. §8 is the runbook.** Written for whoever picks it up next.
 5. **Secondary market listing contract — BUILT.** `EntitlementMarket.sol`, 23
    tests, 100% branches. **Not deployed anywhere**, deliberately: it is written
    and proven, and putting it on chain is a separate decision.
@@ -1176,3 +1177,118 @@ fungible per-class token over unbound entitlements is economically honest rather
 than a gimmick. Build it as an **additive wrapper** holding `Available`
 entitlements and issuing shares, so the five deployed contracts and their 159
 tests are untouched and the work is droppable if time runs short.
+
+---
+
+## 7. X Layer — what is left, and none of it is code
+
+**Both deployment requirements are met.** Testnet 13 August, mainnet 17 August,
+broadcast records for both under `packages/contracts/broadcast/Deploy.s.sol/`.
+Mainnet is not a bare deploy: entitlement 1 is `Activated` with a real credit
+retired against it and the escrow settled back to zero.
+
+X Layer's stated conditions, from their own post:
+
+| Condition | State |
+|---|---|
+| Build AI into the product | done — the compliance engine rules on every activation |
+| Deploy on X Layer testnet, then launch on mainnet | **done, both** |
+| Maintain a dedicated X account, active | ⛔ **NOT DONE** |
+| Submission post mentioning **@XLayerOfficial** | ⛔ **NOT DONE** |
+
+⛔ **The X account is the only thing standing between this build and a valid
+submission.** It is a hard eligibility gate: failing it disqualifies regardless
+of build quality, and no amount of further engineering substitutes for it.
+Deadline 21 August 23:59 UTC.
+
+---
+
+## 8. BOT Chain runbook
+
+Deadline **22 August 23:59 UTC+8**. Nothing here is started. The contracts are
+chain-agnostic and already carry BOT Chain's verified settlement token, so this
+is a deploy-and-run job rather than a build.
+
+### 8.1 Funding, measured 2026-08-17
+
+| Address | tBOT (968) | tUSDT (968) | BOT (677) |
+|---|---|---|---|
+| deployer `0x69eb1bAA…54f6` | 10 | **0** | 0 |
+| compliance `0xA30D8311…922a` | 10 | **1000** | 0 |
+| oracle `0x25CE5281…151e` | **0** | 0 | 0 |
+
+⛔ **Two things are in the wrong place, and both will fail a run.**
+
+1. **The tUSDT is on the compliance key.** Compliance never spends — it records
+   decision hashes and nothing else. The **deployer** is issuer *and* buyer and
+   is the address that needs it. Move it, or claim again for the deployer:
+   `cast send 0x75edC9335175Fc0552D51D48439F229c10420fe3 "transfer(address,uint256)" 0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6 300000 --rpc-url https://rpc.bohr.life --account routelock-deployer`
+   — except the tokens are on the *compliance* key, which lives in
+   `COMPLIANCE_PRIVATE_KEY`, so send with `--private-key "$COMPLIANCE_PRIVATE_KEY"`
+   instead. 0.3 tUSDT covers one run.
+2. **The oracle holds no tBOT.** `.env` now points `ROUTELOCK_ORACLE` at
+   `0x25CE…`, so a 968 deploy grants it `ORACLE_ROLE` and `e2e.ts` will refuse to
+   start (by design — it checks oracle gas at step 0 rather than stranding a
+   credit at step 9). Either send it ~0.5 tBOT from the deployer's 10, **or** set
+   `ROUTELOCK_ORACLE` back to the deployer for testnet, which `Deploy.s.sol`
+   permits on 968 and refuses on 677.
+
+### 8.2 Gas is 1000× X Layer — do not reuse the OKB intuitions
+
+BOT gas price is **20 gwei**; X Layer is 0.02 gwei. Same 7,178,141-gas deploy:
+
+| | X Layer | BOT Chain |
+|---|---|---|
+| full deploy | 0.000144 OKB | **0.1436 BOT** |
+| e2e oracle calls, per run | 0.000012 | **0.0117 BOT** |
+| one `recordDecision` | 0.000003 | **0.00275 BOT** |
+
+The deployer's 10 tBOT covers roughly 60 testnet deploys, so testnet is
+comfortable. **Mainnet holds zero on all three keys.**
+
+### 8.3 Order of work
+
+1. **Deploy 968 (testnet) first.** This is a prerequisite for the mainnet gas
+   support application, not merely good practice — apply with a live testnet
+   deployment to point at.
+   ```
+   bash scripts/deploy.sh botchain_testnet --broadcast
+   ```
+   Prompts for the deployer keystore password. Writes
+   `deployments/botchain_testnet.json`, which is what `e2e.ts` reads to find the
+   oracle. Commit that file and the broadcast record.
+2. **Verify the role graph from the chain**, not from the script's assertions —
+   the same checks §2 records for 196: `ORACLE_ROLE` on the oracle and *not* the
+   admin, compliance holding nothing on the escrow, and
+   `escrow.grantRole(COMPLIANCE_ROLE, …)` reverting `0xa3dd6e91`
+   (`ComplianceRoleForbiddenHere()`).
+3. **Apply for BOT Chain mainnet gas support** (1 BOT per eligible project) and
+   file their project submission form. Both were meant to be filed on day 1 and
+   have not been. 1 BOT covers the 0.1436 deploy with wide margin.
+4. **Run e2e on 968.** `ROUTELOCK_CHAIN=botchain_testnet`, scaled to the balance:
+   ```
+   export ROUTELOCK_CLASS_LABEL="carbon-retirement-0.001t-$(date +%s)"
+   ROUTELOCK_CHAIN=botchain_testnet ROUTELOCK_PRICE=0.1 \
+     ROUTELOCK_COLLATERAL=0.2 ROUTELOCK_PAYOUT=0.1 \
+     pnpm --filter @routelock/attest e2e --broadcast --retire
+   ```
+   ⛔ **`--retire` burns a real credit paid in USDC on Base, whatever chain the
+   entitlement is on.** The retirement is not on BOT Chain; only the obligation
+   is. Budget ~0.028 USDC per run against the deployer's Base balance, and note
+   `assertKeylessSpendAllowed` **requires an explicit opt-in on a test chain** —
+   `--retire` sets it. Running without `--retire` proves everything up to the
+   signature and burns nothing, which is the right first attempt.
+5. **Mainnet 677**, once gas support lands. `ADMIN != ORACLE` is enforced there,
+   so the oracle needs its own BOT for gas.
+6. **Submit**, with the X account post tagging BOT Chain as their rules require.
+
+### 8.4 What will not work, and why
+
+- **`AkashAdapter` is still not built.** It is the third vertical and it is
+  absent, not partial. If BOT Chain needs a differentiated story, the honest one
+  is the same carbon adapter on a second chain, not a compute adapter that does
+  not exist.
+- **The x402 retirement path is chain-agnostic and unaffected by BOT Chain** —
+  it settles on Base. Nothing about the carbon adapter needs porting.
+- **Aave has no BOT Chain deployment**, so `yieldVenue` is `none` on both 968 and
+  677 and `verify:chains` says so on every run.
