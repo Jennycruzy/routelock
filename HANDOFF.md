@@ -29,7 +29,38 @@ pnpm --filter @routelock/api start     # http://127.0.0.1:8787
 ```
 
 **Another full e2e run costs 0.3 USD₮0** against the 0.7 remaining, so two more
-fit without a faucet claim. Retiring again is neither necessary nor free — one
+fit without a faucet claim.
+
+⛔ **"Costs" is the wrong word, and it matters when funding mainnet.** The 0.3 is
+**locked, not spent**: 0.2 collateral posted by the issuer plus a 0.1 buyer
+deposit, both sitting in `SettlementEscrow`. It is recoverable — and **nothing
+recovers it.** `e2e.ts` never calls `releaseToIssuer`, `claim` or
+`withdrawCollateral`, so every run to date has left its money behind. Measured on
+1952, 2026-08-17:
+
+| | |
+|---|---|
+| Escrow holds | **9.3 USD₮0** (6.2 collateral + 3.1 deposits) |
+| Ever claimed | **0** — `claimable[issuer]` is zero |
+| Deposits settled | **0 of 4** — including token 4, the successful retirement |
+| Wallet holds | 0.7 |
+
+So budget mainnet as **0.3 per run that will not come back on its own**, not as
+0.3 consumed. Recovering it is nine transactions the deployer key can already
+sign (it holds both `ORACLE_ROLE` and the issuer): `releaseToIssuer(tokenId)` per
+token, one `claim(token)`, then `withdrawCollateral(classId, …)` per class once
+`_dischargeObligation` has zeroed the outstanding obligation. **No script does
+this.** Writing one is the cheapest way to stop a mainnet balance disappearing
+into escrow a third of a token at a time.
+
+Note `releaseToIssuer` checks only that the deposit is live — there is no
+on-chain entitlement-state precondition — so it can be called on all four today.
+
+**The one genuinely irreversible spend is the retirement**, and it is not on
+X Layer: it is **USDC on Base**, ~0.0277 per retirement, signed by the same
+deployer key, capped by `ROUTELOCK_MAX_RETIREMENT_USDC` (default 1). That wallet
+holds **2.962275 USDC on Base** — about 107 more retirements, already funded,
+nothing to send. Retiring again is neither necessary nor free — one
 real fulfilment is what `docs/adapters.md` requires for Active:
 
 ```bash
