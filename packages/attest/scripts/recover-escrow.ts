@@ -1,7 +1,7 @@
 /// Recovers funds sitting in `SettlementEscrow` after an end-to-end run.
 ///
 ///   pnpm --filter @routelock/attest recover              # dry run, sends nothing
-///   pnpm --filter @routelock/attest recover --broadcast  # sends, prompts for the keystore
+///   pnpm --filter @routelock/attest recover --broadcast  # sends, prompts for deployer/oracle keys as needed
 ///
 /// ## Why this exists
 ///
@@ -69,7 +69,7 @@ import {
   keccak256,
   toHex,
 } from "viem";
-import type { Account, Address, PublicClient } from "viem";
+import type { Account, Address, PublicClient, WalletClient } from "viem";
 import { getChain, loadDotEnv, requireSettlementToken } from "@routelock/chain";
 
 import { ENTITLEMENT_STATE_NAMES, EntitlementState, SERVICE_ENTITLEMENT_ABI } from "../src/abi.ts";
@@ -197,7 +197,9 @@ const REGISTRY_ACTIVATIONS_ABI = [
 export const ORACLE_ROLE = keccak256(toHex("ORACLE_ROLE"));
 
 interface Deployment {
+  readonly admin: Address;
   readonly chainId: number;
+  readonly oracle: Address;
   readonly settlementEscrow: Address;
   readonly activationRegistry: Address;
   readonly serviceEntitlement: Address;
@@ -363,36 +365,85 @@ async function main(): Promise<void> {
   }
 
   // ---- check authority before sending anything -------------------------
-  let account: Account | undefined;
+  // A split deployment has two money signers: the oracle settles deposits and
+  // the issuer/deployer claims releases and withdraws collateral. Keeping one
+  // `account` here made the dry run simulate refunds from the admin and made a
+  // broadcast try to send oracle calls from a key that does not hold the role.
+  let ownerAccount: Account | undefined;
+  let oracleAccount: Account | undefined;
   if (BROADCAST) {
     if (actionable.length === 0 && classIds.size === 0) {
       console.log("\nnothing to do.");
       return;
     }
-    console.log(`\nunlocking keystore — password prompt follows`);
-    account = await unlockKeystoreAccount(process.env.ROUTELOCK_KEYSTORE_ACCOUNT ?? "routelock-deployer");
-    console.log(`signer    ${account.address}`);
+    console.log(`\nunlocking deployer keystore — password prompt follows`);
+    ownerAccount = await unlockKeystoreAccount(
+      process.env.ROUTELOCK_KEYSTORE_ACCOUNT ?? "routelock-deployer",
+    );
+    console.log(`deployer  ${ownerAccount.address}`);
 
     if (actionable.length > 0) {
       const isOracle = await publicClient.readContract({
         address: deployment.settlementEscrow,
         abi: ESCROW_ABI,
         functionName: "hasRole",
-        args: [ORACLE_ROLE, account.address],
+        args: [ORACLE_ROLE, ownerAccount.address],
       });
-      if (!isOracle) {
-        throw new Error(
-          `${account.address} does not hold ORACLE_ROLE on the escrow, so it cannot ` +
-            `release or refund. Nothing has been sent.`,
+      if (isOracle) {
+        oracleAccount = ownerAccount;
+      } else {
+        console.log(`unlocking oracle keystore — second password prompt follows`);
+        oracleAccount = await unlockKeystoreAccount(
+          process.env.ROUTELOCK_ORACLE_KEYSTORE_ACCOUNT ?? "routelock-oracle",
         );
+        if (oracleAccount.address.toLowerCase() !== deployment.oracle.toLowerCase()) {
+          throw new Error(
+            `the unlocked oracle key is ${oracleAccount.address}, but deployment oracle is ` +
+              `${deployment.oracle} — nothing has been sent`,
+          );
+        }
+
+        const oracleRole = await publicClient.readContract({
+          address: deployment.settlementEscrow,
+          abi: ESCROW_ABI,
+          functionName: "hasRole",
+          args: [ORACLE_ROLE, oracleAccount.address],
+        });
+        if (!oracleRole) {
+          throw new Error(
+            `${oracleAccount.address} does not hold ORACLE_ROLE on the escrow, so it cannot ` +
+              `release or refund. Nothing has been sent.`,
+          );
+        }
       }
     }
   }
 
-  const walletClient =
-    account === undefined
+  const chainForWallet = { ...chain, id: liveChainId } as never;
+  const ownerWallet =
+    ownerAccount === undefined
       ? undefined
-      : createWalletClient({ account, chain: { ...chain, id: liveChainId } as never, transport: http(rpc) });
+      : createWalletClient({ account: ownerAccount, chain: chainForWallet, transport: http(rpc) });
+  const oracleWallet =
+    oracleAccount === undefined
+      ? undefined
+      : createWalletClient({ account: oracleAccount, chain: chainForWallet, transport: http(rpc) });
+
+  type Signer = {
+    readonly account: Account | undefined;
+    readonly wallet: WalletClient | undefined;
+    readonly address: Address;
+  };
+  const ownerSigner: Signer = {
+    account: ownerAccount,
+    wallet: ownerWallet,
+    address: ownerAccount?.address ?? deployment.admin,
+  };
+  const oracleSigner: Signer = {
+    account: oracleAccount,
+    wallet: oracleWallet,
+    address: oracleAccount?.address ?? deployment.oracle,
+  };
 
   /// Simulate always; send only with --broadcast. The simulation is the dry
   /// run's substance — it proves the call would succeed against live state.
@@ -406,6 +457,7 @@ async function main(): Promise<void> {
     address: Address,
     functionName: string,
     args: readonly unknown[],
+    signer: Signer,
   ): Promise<void> {
     let simulated = false;
     let lastError: unknown;
@@ -416,7 +468,7 @@ async function main(): Promise<void> {
           abi: ESCROW_ABI,
           functionName: functionName as never,
           args: args as never,
-          account: account?.address ?? (process.env.ROUTELOCK_ADMIN as Address),
+          account: signer.address,
         });
         simulated = true;
       } catch (err) {
@@ -432,17 +484,17 @@ async function main(): Promise<void> {
       return;
     }
 
-    if (walletClient === undefined || account === undefined) {
+    if (signer.wallet === undefined || signer.account === undefined) {
       console.log(`  would ${label}`);
       return;
     }
 
-    const hash = await walletClient.writeContract({
+    const hash = await signer.wallet.writeContract({
       address,
       abi: ESCROW_ABI,
       functionName: functionName as never,
       args: args as never,
-      account,
+      account: signer.account,
       chain: null,
     });
     // Two confirmations, matching e2e.ts. One is not enough here: the reads
@@ -461,6 +513,7 @@ async function main(): Promise<void> {
         deployment.settlementEscrow,
         s.action === "release" ? "releaseToIssuer" : "refundBuyer",
         [s.tokenId],
+        oracleSigner,
       );
     }
   }
@@ -478,7 +531,7 @@ async function main(): Promise<void> {
   // and a zero that contradicts it is treated as a node being behind, not as
   // nothing to do. If it never arrives, that is reported as unfinished business
   // rather than passed over in silence.
-  const beneficiary = account?.address ?? (process.env.ROUTELOCK_ADMIN as Address);
+  const beneficiary = ownerSigner.address;
   const expectedFromReleases = actionable
     .filter((s) => s.action === "release")
     .reduce((sum, s) => sum + s.amount, 0n);
@@ -504,7 +557,7 @@ async function main(): Promise<void> {
 
   if (claimable > 0n) {
     console.log(`\nclaiming ${fmt(claimable, decimals, symbol)}:`);
-    await run(`claim`, deployment.settlementEscrow, "claim", [settlement]);
+    await run(`claim`, deployment.settlementEscrow, "claim", [settlement], ownerSigner);
   } else if (BROADCAST && expectedFromReleases > 0n) {
     console.log(
       `\n⛔ ${fmt(expectedFromReleases, decimals, symbol)} was released but never became ` +
@@ -569,8 +622,8 @@ async function main(): Promise<void> {
       continue;
     }
 
-    if (BROADCAST && account !== undefined && getAddress(issuer) !== getAddress(account.address)) {
-      console.log(`  ${label}  SKIP — issuer is ${issuer}, signer is ${account.address}`);
+    if (BROADCAST && ownerAccount !== undefined && getAddress(issuer) !== getAddress(ownerSigner.address)) {
+      console.log(`  ${label}  SKIP — issuer is ${issuer}, signer is ${ownerSigner.address}`);
       continue;
     }
 
@@ -579,6 +632,7 @@ async function main(): Promise<void> {
       deployment.settlementEscrow,
       "withdrawCollateral",
       [classId, withdrawable],
+      ownerSigner,
     );
   }
 

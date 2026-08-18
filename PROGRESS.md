@@ -1055,13 +1055,28 @@ Anything funded for mainnet must be USD₮0 `0x779Ded0c…`.
 - The five creates mined in blocks `20273858`–`20273861` and cost `0.14356402`
   tBOT (7,178,201 gas at 20 gwei). Live checks confirmed bytecode, wiring,
   role assignments, and the escrow's `ComplianceRoleForbiddenHere()` guard.
-- Current balances were checked live after deployment: deployer 9.85643598 tBOT /
-  0 tUSDT, compliance 10 tBOT / 1000 tUSDT, oracle 0 tBOT / 0 tUSDT. Move
-  0.3 tUSDT to the deployer and fund the oracle before the 968 e2e run.
+- Initial post-deployment balances were checked live: deployer 9.85643598 tBOT /
+  0 tUSDT, compliance 10 tBOT / 1000 tUSDT, oracle 0 tBOT / 0 tUSDT.
+- **BOT testnet funding is now complete.** Compliance transferred 0.3 tUSDT to
+  the deployer in block 20275741 (`0xd7f03ff5aecfda17ca7c2a418896529406d2bb7300f591250849d86a0ac77bb3`),
+  and the deployer transferred 0.5 tBOT to the oracle in block 20276020
+  (`0x922c80288b2951c23fb957ed5b35cab97a02d6c6826a514771e49fca1a24560e`).
+- Live balances after funding: deployer **9.35601598 tBOT / 0.3 tUSDT**,
+  compliance **10 tBOT / 999.7 tUSDT**, oracle **0.5 tBOT / 0 tUSDT**.
+- **First BOT testnet e2e branch completed.** Token 1 was registered, funded,
+  minted, submitted, and recorded by compliance as `NEEDS_INFORMATION` with
+  confidence 0.62 (`low_confidence`), decision hash
+  `0xead68579d76cb0f462f4f20e3ed4eecdb86dbbfb3d446d3ccb4574b659931a3a`.
+  No retirement or oracle settlement was attempted. Token 1 is `Available`,
+  and the 0.3 tUSDT remains in escrow pending recovery.
+- The recovery tool now handles the split BOT signers: oracle for refunds/releases
+  and deployer for claims/collateral. Its live dry run plans exactly 0.1 tUSDT
+  refunded and 0.2 tUSDT collateral withdrawn.
 - The README and handoff now reflect the live BOT testnet deployment. BOT mainnet
   gas support and the 677 deployment remain.
 
 ### Next action
 
-Move the testnet funds into the deployer/oracle wallets, run the 968 e2e flow,
-then apply for BOT mainnet gas support before deploying chain 677.
+Recover token 1's 0.1 tUSDT deposit with the oracle, withdraw its 0.2 tUSDT
+collateral with the deployer, rerun the 968 e2e flow for an approved path, then
+apply for BOT mainnet gas support before deploying chain 677.

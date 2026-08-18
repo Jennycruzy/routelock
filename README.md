@@ -520,6 +520,20 @@ The five contracts are live at:
 The deployment cost **0.14356402 tBOT**. Live verification confirms the
 bytecode, wiring, role graph and `ComplianceRoleForbiddenHere()` escrow guard.
 
+The BOT testnet wallets are now funded for the e2e run: the oracle holds **0.5
+tBOT**, the deployer holds **0.3 tUSDT**, and compliance retains **999.7
+tUSDT**. The native transfer is
+`0x922c80288b2951c23fb957ed5b35cab97a02d6c6826a514771e49fca1a24560e` and the
+tUSDT transfer is
+`0xd7f03ff5aecfda17ca7c2a418896529406d2bb7300f591250849d86a0ac77bb3`.
+
+The first BOT e2e run completed its non-approval branch on token **1**. The
+live model returned `NEEDS_INFORMATION` (`low_confidence`, confidence 0.62),
+and the compliance decision was committed with hash
+`0xead68579d76cb0f462f4f20e3ed4eecdb86dbbfb3d446d3ccb4574b659931a3a`.
+The run correctly stopped before retirement and oracle settlement. Token 1 is
+reusable, while its 0.3 tUSDT remains safely in escrow until the recovery step.
+
 ### Other verified targets — not deployed
 
 The chain layer resolves and verifies four targets in total (see
@@ -536,10 +550,11 @@ Stated as absent rather than stubbed:
   see above. Delivery is deliberately not deployed and compute is not built, so
   two of the three rows in the adapter table are honest absences rather than work
   in progress.
-- **BOT Chain mainnet is the next deployment target.** Testnet 968 is deployed;
-  after deployment gas, the deployer holds 9.85643598 tBOT, compliance holds 10
-  tBOT and 1000 tUSDT, and the separate oracle wallet still needs tBOT before a
-  BOT e2e run.
+- **The BOT Chain testnet e2e has completed its first non-approval branch.** The
+  current balances are deployer 9.35601598 tBOT / 0 tUSDT, compliance 10 tBOT /
+  999.7 tUSDT, and oracle 0.5 tBOT; the deployer's 0.3 tUSDT is held by escrow
+  for token 1. Recover that deposit and collateral, then rerun for an approved
+  path before deploying BOT Chain mainnet.
 - **The compute adapter** — not started.
 - **The HS benchmark stands at 253 of 354 rows**, and the figures published here
   say so. The remaining rows are parked deliberately, not pending.
