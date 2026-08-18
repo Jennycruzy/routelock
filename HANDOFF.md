@@ -1,7 +1,7 @@
 # RouteLock — Handoff
 
-**Last updated: 17 August 2026** — **the whole system has run end to end for
-real.** All nine steps completed: a real carbon credit was retired, and the
+**Last updated: 18 August 2026** — **the whole system has run end to end for
+real.** All ten steps completed: a real carbon credit was retired, and the
 provider's evidence is committed on X Layer against entitlement 4. Carbon is
 **Active**. The frontend (`apps/web` + `apps/api`) is built and serves live values.
 
@@ -28,29 +28,16 @@ cd /root/routelock
 pnpm --filter @routelock/api start     # http://127.0.0.1:8787
 ```
 
-**Another full e2e run costs 0.3 USD₮0** against the 0.7 remaining, so two more
-fit without a faucet claim.
+**A scaled e2e run temporarily locks 0.3 USD₮0**: 0.2 collateral plus a 0.1
+buyer deposit. After successful Step 10 it is released, claimed and withdrawn,
+so the run returns the escrowed funds. The X Layer testnet wallet now holds
+**10.0 USD₮0** and the escrow is empty.
 
-⛔ **"Costs" is the wrong word, and it matters when funding mainnet.** The 0.3 is
-**locked, not spent**: 0.2 collateral posted by the issuer plus a 0.1 buyer
-deposit, both sitting in `SettlementEscrow`. It is recoverable — and **nothing
-recovers it.** `e2e.ts` never calls `releaseToIssuer`, `claim` or
-`withdrawCollateral`, so every run to date has left its money behind. Measured on
-1952, 2026-08-17:
-
-| | |
-|---|---|
-| Escrow holds | **9.3 USD₮0** (6.2 collateral + 3.1 deposits) |
-| Ever claimed | **0** — `claimable[issuer]` is zero |
-| Deposits settled | **0 of 4** — including token 4, the successful retirement |
-| Wallet holds | 0.7 |
-
-So budget mainnet as **0.3 per run that will not come back on its own**, not as
-0.3 consumed. Recovering it is nine transactions the deployer key can already
-sign (it holds both `ORACLE_ROLE` and the issuer): `releaseToIssuer(tokenId)` per
-token, one `claim(token)`, then `withdrawCollateral(classId, …)` per class once
-`_dischargeObligation` has zeroed the outstanding obligation. **`pnpm --filter @routelock/attest recover` now does this**, dry run by
-default, `--broadcast` to send.
+The recovery command remains for runs that die partway through. It is
+`pnpm --filter @routelock/attest recover`, dry run by default and
+`--broadcast` to send. It reads the on-chain evidence: committed carrier proof
+releases the deposit, while a zero carrier hash refunds the buyer. A token that
+claims carriage but has no evidence is refused and left alone.
 
 It does not take an instruction about who to pay — it reads one. `carrierRefHash`
 committed means the provider's evidence is on chain and the issuer performed, so
@@ -85,13 +72,13 @@ schedule eventually refunds live work and writes a permanent, false
 10 has what a sweeper never does: the retirement happened three lines earlier.
 Fulfilment is remembered, not inferred.
 
-⛔ **Step 10 is written and typechecked but has not yet executed.** It only runs
-under `--broadcast --retire`, and fork mode returns at step 8, so exercising it
-costs a real retirement. The three calls themselves *are* proven — `recover`
-made exactly these against this deployment on 17 August. What is unexercised is
-their placement in the run. **The failure mode is safe:** if the claim does not
-appear, the release is still on chain, the money is still in escrow, and the
-script says to run `recover`. Nothing is lost, and the next real run is the test.
+✅ **Step 10 has now executed successfully.** It runs only under
+`--broadcast --retire`, and the first real mainnet run exercised the placement
+of `releaseToIssuer`, `claim`, and `withdrawCollateral` after the provider's
+evidence was committed. The wallet balance returned to its starting value and
+the escrow settled to zero. The three calls remain covered by `recover` for a
+run that dies partway; if a claim does not appear, the release is still on
+chain, the money is still in escrow, and the script says to run `recover`.
 
 ⛔ **Two bugs it hit on the first real run, both the stale-RPC trap this repo
 already knew about.** X Layer's public RPC is load-balanced, so a read after a
@@ -218,7 +205,7 @@ From §1.2 of the specification, restated because they get tested under time pre
 
 ## 2. Where the build actually stands
 
-Day 5 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
+Day 6 of 8. Deadlines: **X Layer Aug 21 23:59 UTC** (submit Aug 19),
 **BOT Chain Aug 22 23:59 UTC+8** (submit Aug 20).
 
 ### Done and verified
@@ -350,6 +337,32 @@ after**. 0.3 went into escrow and 0.3 came back — release, claim, withdraw
 collateral — leaving the escrow at **0** and deposit 1 marked settled. A mainnet
 run now costs nothing but gas and the credit.
 
+### DEPLOYED — BOT Chain testnet (968), 18 August 2026
+
+The testnet deployment is live and independently verified at chain 968. The
+deployment record is [`deployments/botchain_testnet.json`](deployments/botchain_testnet.json)
+and the broadcast transactions are under
+`packages/contracts/broadcast/Deploy.s.sol/968/`.
+
+| Contract | Address |
+|---|---|
+| `ServiceEntitlement` | `0x16DBdF87A9A99891eb2B89557527269B81a991D4` |
+| `SettlementEscrow` | `0x5caeCb1fD4101b49f921E826ea8a7a390D42FA43` |
+| `EntitlementFactory` | `0xA336656FA1DAcBB99d3C02a45fF8382a17263FD8` |
+| `ActivationRegistry` | `0xC9bF75F4c0950bC5c53538A12Dc172C13a274dBe` |
+| `FulfilmentReceipt` | `0xC47c81B384cb20D23B18dA760C8E5f4587Ab7997` |
+
+The five creates mined in blocks **20273858–20273861**. Total deployment cost
+was **0.14356402 tBOT** (7,178,201 gas at 20 gwei), leaving the deployer with
+**9.85643598 tBOT**. Settlement is USDT
+`0x75edC9335175Fc0552D51D48439F229c10420fe3`, 6 decimals.
+
+Live verification passed: all five addresses have bytecode, factory/registry
+wiring resolves to the deployed addresses, the admin/factory/registry/oracle/
+compliance roles are correct, and an admin simulation of
+`grantRole(COMPLIANCE_ROLE, …)` still reverts `0xa3dd6e91`
+(`ComplianceRoleForbiddenHere()`).
+
 ### Deployed — X Layer testnet (1952), 13 August 2026
 
 Live at block 38195716. Addresses in `deployments/xlayer_testnet.json`; the
@@ -363,17 +376,15 @@ including a live simulation proving `SettlementEscrow` still reverts
 by the admin, while the same call for `ORACLE_ROLE` succeeds. Re-run that check
 after any redeploy; it is the one assertion the whole pitch rests on.
 
-Remaining: BOT Chain testnet, then both mainnets.
+Remaining: BOT Chain mainnet. X Layer and BOT Chain testnet are complete.
 
-**BOT Chain testnet is funded and ready to deploy as of 14 August** — the
-deployer holds 10 tBOT from one faucet claim, against a ~0.21 tBOT deploy cost
-(gas there is 20 gwei, 1,000× X Layer's 0.02), so roughly 47 deploys of
-headroom. This is the next action and needs a human only because the keystore
-password prompt is interactive.
+**BOT Chain testnet deployed 18 August** — the deployer paid 0.14356402 tBOT
+from the claimed balance. The separate oracle wallet remains unfunded, so the
+deployment is complete but a BOT e2e run must wait for oracle gas.
 
-Deployer balances, checked live 14 August: X Layer testnet **0.3998 OKB**,
-X Layer mainnet **0.00045 OKB**, BOT Chain testnet **10 tBOT**, BOT Chain
-mainnet **0**.
+Balances, checked live after deployment: deployer **9.85643598 tBOT / 0 tUSDT**,
+compliance **10 tBOT / 1000 tUSDT**, oracle **0 tBOT / 0 tUSDT**. BOT mainnet
+holds **0 BOT** on all three keys.
 
 ### Deploy again with
 
@@ -707,7 +718,7 @@ assessment takes a `sign` that throws, so the code path that reads inventory
 physically cannot spend. Step 8 constructs a *second* adapter with a real signer
 under an explicit ceiling. **That throwing stub is not a TODO — do not "fix" it.**
 
-**All nine steps have now completed on the real chain**, on 17 August, producing
+**All ten steps have now completed on the real chain**, on 17 August, producing
 entitlement 4 and the retirement recorded at the top of this file. Step 8 — the
 EIP-3009 signature and the irreversible burn — executed for the first and so far
 only time.
@@ -846,8 +857,8 @@ X Layer is finished completely before BOT Chain is started.
    purchasable universe is **28 projects, 18 on a recognised registry**. Trust
    `bench/data/icvcm-join-count.json`, which is rebuildable, over any number
    quoted in prose. The HS benchmark's parked 101 rows stay parked.
-2. **Separate `ADMIN` from `ORACLE`** before mainnet — **now enforced in code, so
-   this can no longer be forgotten.** `Deploy.s.sol` refuses a mainnet deploy
+2. **Separate `ADMIN` from `ORACLE`** before mainnet — **done and verified on
+   mainnet.** `Deploy.s.sol` refuses a mainnet deploy
    (196, 677) where `ROUTELOCK_ADMIN == ROUTELOCK_ORACLE`, as a precondition
    checked *before* `startBroadcast` rather than an assertion discovered after
    the gas is spent. `oracle != compliance` and `admin != compliance` are
@@ -857,22 +868,13 @@ X Layer is finished completely before BOT Chain is started.
    permitted — `test_adminMayShareTheOracleKeyOnTestnet` names it as a shortcut
    rather than leaving it as an accident.
 
-   **What is still open, and it needs a human:** the mainnet deploy needs a
-   *second* keystore key for the oracle, and `packages/attest/scripts/e2e.ts`
-   signs as issuer, buyer, admin **and** oracle from one unlocked account
-   (`e2e.ts:307`). Splitting the roles for real means a second keystore entry, a
-   second interactive password prompt, and moving every `ORACLE_ROLE` call
-   (`recordLabel`, `recordPickup`, `recordDelivery`, `recordCarrier`,
-   `releaseToIssuer`, `refundBuyer`, `mintReceipt`) onto the oracle wallet.
-   Nothing on chain has been rotated — the live 1952 deployment is untouched.
-3. **X Layer mainnet deploy**, after testnet, sequence provable. **Gas is
-   affordable now** — 0.02 gwei, ~0.000144 OKB against 0.000450 held. What is
-   missing is **USDT on mainnet** (0, so no real issuance) and **OKB on the
-   compliance key** (0, so no `recordDecision`). A mainnet deploy with no issuance
-   satisfies the eligibility sequence but proves less than the testnet run does.
+   Mainnet uses the dedicated `routelock-oracle` keystore account; the testnet
+   1952 deployment still deliberately shares the admin/oracle key.
+3. **X Layer mainnet deploy and e2e**, including Step 10 settlement, are done.
 4. **Submit X Layer** — the code is done; see §7 for what remains, which is not code.
 
-   **Then BOT Chain. §8 is the runbook.** Written for whoever picks it up next.
+   **Then BOT Chain mainnet. §8 is the runbook; testnet 968 is deployed and
+   verified.**
 5. **Secondary market listing contract — BUILT.** `EntitlementMarket.sol`, 23
    tests, 100% branches. **Not deployed anywhere**, deliberately: it is written
    and proven, and putting it on chain is a separate decision.
@@ -1006,8 +1008,9 @@ These cannot be resolved from this box and are listed in the order they block wo
    gate; failing it disqualifies the submission regardless of build quality.
    Day 1 has already passed without a post.
 
-3. **Inference credit**, for the carbon quality benchmark. Not for the parked HS
-   rows.
+3. ~~**Inference credit**, for the carbon quality benchmark.~~ **Done.** The
+   carbon benchmark and citation rescore used 69 of 70 calls; the parked HS
+   rows remain deliberately unfinished.
 
    **X Layer testnet USD₮0 is *not* on this list, and should not be treated as
    blocking.** The faucet has a per-address cooldown enforced off-chain by OKX's
@@ -1027,28 +1030,17 @@ These cannot be resolved from this box and are listed in the order they block wo
    only 5 free live shipments exist, and cancellation is **scheduled shipments
    only, before the processing date, refund behaviour unconfirmed.**
 
-6. **Mainnet funding — and this entry was wrong until 17 August.** It listed
-   X Layer mainnet gas as blocking. It is not: gas there is **0.02 gwei**
-   (20,000,001 wei, read live), the testnet deploy cost 7,178,201 gas ≈ 0.000144
-   OKB, and the deployer holds **0.000450 OKB** — about 3× headroom. *The mainnet
-   deploy can be broadcast today.*
-
-   What is actually missing, and what each thing blocks:
+6. **X Layer mainnet funding and deployment are done.** The remaining funding
+   items are on the BOT path:
 
    | Missing | Blocks |
    |---|---|
-   | **USDT on X Layer mainnet** (holds 0) | any real mainnet issuance — collateral and price both settle in it |
-   | **OKB on the compliance key on mainnet** (holds 0) | `recordDecision` on mainnet, so the audit trail cannot be written there |
-   | **BOT Chain mainnet gas** (holds 0) | the BOT Chain mainnet deploy |
+   | **BOT Chain oracle gas** (holds 0 on 968) | a later BOT e2e run with the separate oracle |
+   | **BOT Chain mainnet gas** (holds 0) | the 677 deployment |
+   | **BOT gas-support and project forms** | the mainnet funding request and submission |
 
-   So a mainnet deployment that satisfies X Layer's testnet-then-mainnet sequence
-   is available now, while a mainnet deployment that *demonstrates* anything is
-   not. Do not conflate the two in the submission.
-
-   Also still open from the original setup: `ADMIN` and `ORACLE` currently share
-   one key as a testnet shortcut. **Re-point them before mainnet.** The oracle
-   signs unattended from this box, so as configured a box compromise also reaches
-   role administration.
+   BOT testnet deployment is complete. The next technical blocker is oracle gas
+   for the 968 e2e run; the next deployment blocker is mainnet gas for 677.
 
 ---
 
@@ -1077,7 +1069,7 @@ is only a record of a previous answer.
 pnpm --filter @routelock/carrier smoke      # quote 3 lanes, free, no quota used
 pnpm --filter @routelock/compliance classify --goods "…" --from NG --to GB
 pnpm --filter @routelock/bench build:corpus # rebuild from both rulings databases
-pnpm test                                   # 326 across the workspace
+pnpm test                                   # 334 across eight packages
 ```
 
 ### End to end
@@ -1205,19 +1197,20 @@ Deadline 21 August 23:59 UTC.
 
 ## 8. BOT Chain runbook
 
-Deadline **22 August 23:59 UTC+8**. Nothing here is started. The contracts are
+Deadline **22 August 23:59 UTC+8**. BOT testnet 968 is deployed and verified;
+the remaining chain work is the 968 e2e run followed by mainnet 677. The contracts are
 chain-agnostic and already carry BOT Chain's verified settlement token, so this
 is a deploy-and-run job rather than a build.
 
-### 8.1 Funding, measured 2026-08-17
+### 8.1 Funding, measured 2026-08-18
 
 | Address | tBOT (968) | tUSDT (968) | BOT (677) |
 |---|---|---|---|
-| deployer `0x69eb1bAA…54f6` | 10 | **0** | 0 |
+| deployer `0x69eb1bAA…54f6` | **9.85643598** | 0 | 0 |
 | compliance `0xA30D8311…922a` | 10 | **1000** | 0 |
 | oracle `0x25CE5281…151e` | **0** | 0 | 0 |
 
-⛔ **Two things are in the wrong place, and both will fail a run.**
+⛔ **Two funding items remain before the BOT e2e run.**
 
 1. **The tUSDT is on the compliance key.** Compliance never spends — it records
    decision hashes and nothing else. The **deployer** is issuer *and* buyer and
@@ -1226,7 +1219,7 @@ is a deploy-and-run job rather than a build.
    — except the tokens are on the *compliance* key, which lives in
    `COMPLIANCE_PRIVATE_KEY`, so send with `--private-key "$COMPLIANCE_PRIVATE_KEY"`
    instead. 0.3 tUSDT covers one run.
-2. **The oracle holds no tBOT.** `.env` now points `ROUTELOCK_ORACLE` at
+2. **The oracle holds no tBOT.** `.env` points `ROUTELOCK_ORACLE` at
    `0x25CE…`, so a 968 deploy grants it `ORACLE_ROLE` and `e2e.ts` will refuse to
    start (by design — it checks oracle gas at step 0 rather than stranding a
    credit at step 9). Either send it ~0.5 tBOT from the deployer's 10, **or** set
@@ -1243,26 +1236,21 @@ BOT gas price is **20 gwei**; X Layer is 0.02 gwei. Same 7,178,141-gas deploy:
 | e2e oracle calls, per run | 0.000012 | **0.0117 BOT** |
 | one `recordDecision` | 0.000003 | **0.00275 BOT** |
 
-The deployer's 10 tBOT covers roughly 60 testnet deploys, so testnet is
+The deployer's 9.85643598 tBOT covers roughly 60 testnet deploys, so testnet is
 comfortable. **Mainnet holds zero on all three keys.**
 
 ### 8.3 Order of work
 
-1. **Deploy 968 (testnet) first.** This is a prerequisite for the mainnet gas
-   support application, not merely good practice — apply with a live testnet
-   deployment to point at.
-   ```
-   bash scripts/deploy.sh botchain_testnet --broadcast
-   ```
-   Prompts for the deployer keystore password. Writes
-   `deployments/botchain_testnet.json`, which is what `e2e.ts` reads to find the
-   oracle. Commit that file and the broadcast record.
+1. **968 is deployed and verified.** The addresses are in
+   `deployments/botchain_testnet.json`; the broadcast record is under
+   `packages/contracts/broadcast/Deploy.s.sol/968/`. Commit both records.
 2. **Verify the role graph from the chain**, not from the script's assertions —
    the same checks §2 records for 196: `ORACLE_ROLE` on the oracle and *not* the
    admin, compliance holding nothing on the escrow, and
    `escrow.grantRole(COMPLIANCE_ROLE, …)` reverting `0xa3dd6e91`
    (`ComplianceRoleForbiddenHere()`).
-3. **Apply for BOT Chain mainnet gas support** (1 BOT per eligible project) and
+3. **Move 0.3 tUSDT to the deployer and ~0.5 tBOT to the oracle**, then apply for
+   BOT Chain mainnet gas support (1 BOT per eligible project) and
    file their project submission form. Both were meant to be filed on day 1 and
    have not been. 1 BOT covers the 0.1436 deploy with wide margin.
 4. **Run e2e on 968.** `ROUTELOCK_CHAIN=botchain_testnet`, scaled to the balance:

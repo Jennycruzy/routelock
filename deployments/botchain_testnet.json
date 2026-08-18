@@ -1,0 +1,16 @@
+{
+  "activationRegistry": "0xC9bF75F4c0950bC5c53538A12Dc172C13a274dBe",
+  "admin": "0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6",
+  "chain": "botchain_testnet",
+  "chainId": 968,
+  "compliance": "0xA30D83117470c884fB3C35532d2a49Bc65B0922a",
+  "deployedAt": 1787040640,
+  "deployedAtBlock": 20273836,
+  "entitlementFactory": "0xA336656FA1DAcBB99d3C02a45fF8382a17263FD8",
+  "fulfilmentReceipt": "0xC47c81B384cb20D23B18dA760C8E5f4587Ab7997",
+  "oracle": "0x25CE528149563c217167b9cE148604FEbeCC151e",
+  "serviceEntitlement": "0x16DBdF87A9A99891eb2B89557527269B81a991D4",
+  "settlementEscrow": "0x5caeCb1fD4101b49f921E826ea8a7a390D42FA43",
+  "settlementSymbol": "USDT",
+  "settlementToken": "0x75edC9335175Fc0552D51D48439F229c10420fe3"
+}

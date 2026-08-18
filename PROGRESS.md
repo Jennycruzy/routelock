@@ -1037,3 +1037,31 @@ there is nowhere to rehearse.
    real; which side was at fault was assumed rather than established.
 
 Anything funded for mainnet must be USD₮0 `0x779Ded0c…`.
+
+## Day 6 — 18 August 2026
+
+### X Layer documentation closed; BOT Chain testnet deployed
+
+- X Layer mainnet is deployed and verified at block `68234300`, after the
+  testnet-before-mainnet sequence. The mainnet deployment record is
+  `deployments/xlayer_mainnet.json` and the broadcast is under
+  `packages/contracts/broadcast/Deploy.s.sol/196/`.
+- The mainnet carbon e2e completed with entitlement 1 `Activated` and a real
+  retirement. Step 10 (`releaseToIssuer`, `claim`, `withdrawCollateral`) also
+  executed successfully; escrow returned to zero.
+- BOT Chain testnet was deployed successfully on chain 968. The five contracts
+  are recorded in `deployments/botchain_testnet.json`; the broadcast record is
+  under `packages/contracts/broadcast/Deploy.s.sol/968/`.
+- The five creates mined in blocks `20273858`–`20273861` and cost `0.14356402`
+  tBOT (7,178,201 gas at 20 gwei). Live checks confirmed bytecode, wiring,
+  role assignments, and the escrow's `ComplianceRoleForbiddenHere()` guard.
+- Current balances were checked live after deployment: deployer 9.85643598 tBOT /
+  0 tUSDT, compliance 10 tBOT / 1000 tUSDT, oracle 0 tBOT / 0 tUSDT. Move
+  0.3 tUSDT to the deployer and fund the oracle before the 968 e2e run.
+- The README and handoff now reflect the live BOT testnet deployment. BOT mainnet
+  gas support and the 677 deployment remain.
+
+### Next action
+
+Move the testnet funds into the deployer/oracle wallets, run the 968 e2e flow,
+then apply for BOT mainnet gas support before deploying chain 677.

@@ -6,7 +6,7 @@
 > eligibility, and **refuses to proceed when its confidence is insufficient** —
 > so nothing moves on a guessed declaration.
 
-**Status: 17 August 2026** — **live on X Layer mainnet**, and two real carbon
+**Status: 18 August 2026** — **live on X Layer mainnet**, and two real carbon
 credits retired: one on testnet against entitlement 4, one on
 [**mainnet**](https://app.carbonmark.com/retirements/id/8453-0xdb7451c298d6f57b58874bd1f7e7c447863ed1e1190c98cc45478c9aae285f0d-0)
 against entitlement 1. Both have public certificates anyone can open, and both
@@ -417,9 +417,9 @@ reasoning in
   classes, collateral-backed purchase), `SettlementEscrow`, `ActivationRegistry`,
   and a soulbound `FulfilmentReceipt`.
 
-- **190 further tests across six TypeScript packages** — chain configuration,
-  the fulfilment port, both carbon adapters, the carrier adapter, the compliance
-  engine, and the benchmark scorer.
+- **334 TypeScript tests across eight packages** — chain configuration, the
+  fulfilment port, both carbon adapters, the carrier adapter, the compliance
+  engine, the benchmark scorer, the API and benchmark utilities.
 
 - **Four-target chain configuration, verified against the live networks.** Chain
   IDs, RPC liveness, and settlement token `symbol()`/`decimals()` are confirmed by
@@ -492,18 +492,41 @@ cast call --rpc-url https://testrpc.xlayer.tech \
 # reverts: 0xa3dd6e91 == ComplianceRoleForbiddenHere()
 ```
 
-### X Layer mainnet — not deployed
+### X Layer mainnet — live
 
-Holds 0.00045 OKB. Deploys after the testnet sequence is complete, which is the
-order X Layer's eligibility rules require.
+Deployed 17 August 2026 after the testnet sequence. The deployment and broadcast
+record are in [`deployments/xlayer_mainnet.json`](deployments/xlayer_mainnet.json)
+and [`packages/contracts/broadcast/Deploy.s.sol/196/`](packages/contracts/broadcast/Deploy.s.sol/196/).
+It completed a real end-to-end carbon run: entitlement 1 is `Activated`, with
+the compliance decision, fulfilment evidence and Step 10 settlement recorded.
+`ADMIN` and `ORACLE` are separate keys on mainnet.
+
+### BOT Chain testnet — live
+
+Deployed 18 August 2026 on chain 968. The deployment record is
+[`deployments/botchain_testnet.json`](deployments/botchain_testnet.json), with
+broadcast transactions under
+[`packages/contracts/broadcast/Deploy.s.sol/968/`](packages/contracts/broadcast/Deploy.s.sol/968/).
+The five contracts are live at:
+
+| Contract | Address |
+|---|---|
+| `ServiceEntitlement` | `0x16DBdF87A9A99891eb2B89557527269B81a991D4` |
+| `SettlementEscrow` | `0x5caeCb1fD4101b49f921E826ea8a7a390D42FA43` |
+| `EntitlementFactory` | `0xA336656FA1DAcBB99d3C02a45fF8382a17263FD8` |
+| `ActivationRegistry` | `0xC9bF75F4c0950bC5c53538A12Dc172C13a274dBe` |
+| `FulfilmentReceipt` | `0xC47c81B384cb20D23B18dA760C8E5f4587Ab7997` |
+
+The deployment cost **0.14356402 tBOT**. Live verification confirms the
+bytecode, wiring, role graph and `ComplianceRoleForbiddenHere()` escrow guard.
 
 ### Other verified targets — not deployed
 
 The chain layer resolves and verifies four targets in total (see
-[Verified networks](#verified-networks)). Only X Layer carries a deployment. The
-others are configured, RPC-verified and settlement-token-verified so that
-portability is a checkable property of the config rather than an assertion in
-prose.
+[Verified networks](#verified-networks)). X Layer and BOT testnet carry
+deployments; BOT mainnet remains configured, RPC-verified and settlement-token-
+verified so portability is a checkable property of the config rather than an
+assertion in prose.
 
 ## Not finished yet
 
@@ -513,15 +536,15 @@ Stated as absent rather than stubbed:
   see above. Delivery is deliberately not deployed and compute is not built, so
   two of the three rows in the adapter table are honest absences rather than work
   in progress.
-- **The X Layer deployment is testnet only.** Mainnet holds 0.00045 OKB, which at
-  the current 0.02 gwei covers the ~0.000144 OKB deploy about three times over,
-  but it holds no USDT — so a mainnet deployment could exist today while a real
-  mainnet *issuance* could not.
+- **BOT Chain mainnet is the next deployment target.** Testnet 968 is deployed;
+  after deployment gas, the deployer holds 9.85643598 tBOT, compliance holds 10
+  tBOT and 1000 tUSDT, and the separate oracle wallet still needs tBOT before a
+  BOT e2e run.
 - **The compute adapter** — not started.
 - **The HS benchmark stands at 253 of 354 rows**, and the figures published here
   say so. The remaining rows are parked deliberately, not pending.
-- **`ADMIN` and `ORACLE` share one key**, as a testnet shortcut. They are
-  separated before any mainnet deploy.
+- **`ADMIN` and `ORACLE` share one key only on the existing testnet deployment**;
+  mainnet uses a separate oracle key.
 
 See [`PROGRESS.md`](PROGRESS.md) and [`HANDOFF.md`](HANDOFF.md).
 
