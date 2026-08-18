@@ -535,6 +535,11 @@ The run correctly stopped before retirement and oracle settlement. Token 1 is
 reusable. Recovery then refunded the 0.1 tUSDT deposit and withdrew the 0.2
 tUSDT collateral; escrow is now empty and the deployer is funded for a rerun.
 
+The approved rerun completed the full BOT testnet path on token **2**: a real
+carbon retirement charged **0.028192 USDC**, the oracle committed its evidence,
+and release, claim, and collateral withdrawal returned the escrow to zero.
+[Public Carbonmark proof](https://app.carbonmark.com/retirements/id/8453-0x8b2d4f1a239c19c0cbf7f8e802e2f0d7cd20e5b53b497d235d37cfbb9bb55997-0).
+
 ### Other verified targets — not deployed
 
 The chain layer resolves and verifies four targets in total (see
@@ -551,10 +556,11 @@ Stated as absent rather than stubbed:
   see above. Delivery is deliberately not deployed and compute is not built, so
   two of the three rows in the adapter table are honest absences rather than work
   in progress.
-- **The BOT Chain testnet e2e has completed its first non-approval branch and
-  recovery.** Current balances are deployer 9.33758978 tBOT / 0.3 tUSDT,
-  compliance 9.99621108 tBOT / 999.7 tUSDT, and oracle 0.49809922 tBOT. The
-  escrow is empty; rerun for an approved path before deploying BOT Chain mainnet.
+- **The BOT Chain testnet e2e is complete.** Token 2 is `Activated` with an
+  `APPROVED` decision, carrier evidence, and settled escrow. Current balances
+  are deployer 9.31974792 tBOT / 0.3 tUSDT, compliance 9.99345998 tBOT /
+  999.7 tUSDT, and oracle 0.49489396 tBOT. BOT Chain mainnet gas support and
+  deployment 677 remain.
 - **The compute adapter** — not started.
 - **The HS benchmark stands at 253 of 354 rows**, and the figures published here
   say so. The remaining rows are parked deliberately, not pending.

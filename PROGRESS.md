@@ -1080,10 +1080,18 @@ Anything funded for mainnet must be USD₮0 `0x779Ded0c…`.
   Escrow is empty and the deployer again holds 0.3 tUSDT.
 - Current live balances: deployer **9.33758978 tBOT / 0.3 tUSDT**, compliance
   **9.99621108 tBOT / 999.7 tUSDT**, oracle **0.49809922 tBOT / 0 tUSDT**.
+- **BOT testnet approved e2e completed.** Token 2 reached `Activated` with an
+  `APPROVED` decision at confidence 0.72. The real retirement charged 0.028192
+  USDC and returned proof
+  `https://app.carbonmark.com/retirements/id/8453-0x8b2d4f1a239c19c0cbf7f8e802e2f0d7cd20e5b53b497d235d37cfbb9bb55997-0`.
+  Carrier evidence was committed by the oracle; release, claim, and collateral
+  withdrawal succeeded, and the escrow returned to zero.
+- Final live balances: deployer **9.31974792 tBOT / 0.3 tUSDT**, compliance
+  **9.99345998 tBOT / 999.7 tUSDT**, oracle **0.49489396 tBOT / 0 tUSDT**.
 - The README and handoff now reflect the live BOT testnet deployment. BOT mainnet
   gas support and the 677 deployment remain.
 
 ### Next action
 
-Rerun the 968 e2e flow for an approved path, then apply for BOT mainnet gas
-support before deploying chain 677.
+Apply for BOT mainnet gas support, then deploy chain 677 and rerun the live
+verification/role checks on mainnet.

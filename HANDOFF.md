@@ -375,8 +375,9 @@ including a live simulation proving `SettlementEscrow` still reverts
 by the admin, while the same call for `ORACLE_ROLE` succeeds. Re-run that check
 after any redeploy; it is the one assertion the whole pitch rests on.
 
-Remaining chain work: complete an approved 968 run, then deploy BOT Chain
-mainnet. X Layer and the BOT Chain testnet deployment/recovery are complete.
+Remaining chain work: obtain BOT Chain mainnet gas support, then deploy chain
+677. X Layer and the BOT Chain testnet deployment, recovery, and approved e2e
+are complete.
 
 **BOT Chain testnet deployed 18 August** — the deployer paid 0.14356402 tBOT
 from the claimed balance. The separate oracle wallet was funded after deployment
@@ -430,6 +431,27 @@ Recovery was then broadcast successfully: `refundBuyer(1)` in block **20277908**
 (`0x684a566d6e2b4ec0131e2466ded376ab52e4135506e1f879162a365070fd253c`). The
 escrow now holds **0 USDT**, token 1's deposit is settled, and the class has
 zero outstanding obligation and collateral.
+
+### BOT e2e — approved path, 18 August 2026
+
+The second 968 run completed the full approved path with class label
+`carbon-retirement-0.001t-1787044173`, class id
+`0xc30f5e02de10bf9b16a3d60651ec86fe2a3ca4721f6b7e8c1714104dd81f71d6`, and
+token **2**. The live model returned `APPROVED` with confidence **0.72**.
+Decision hash:
+`0xde56366987e536bfbfb81acf630bdbc11b6f64ea5893a25e127755e46e368103`.
+
+The real carbon retirement charged **0.028192 USDC** and produced the public
+[Carbonmark proof](https://app.carbonmark.com/retirements/id/8453-0x8b2d4f1a239c19c0cbf7f8e802e2f0d7cd20e5b53b497d235d37cfbb9bb55997-0).
+The oracle committed carrier evidence, then `releaseToIssuer`, `claim`, and
+`withdrawCollateral` all succeeded. Live verification shows token 2 is
+`Activated`, `APPROVED`, its deposit is settled, its class obligation and
+collateral are zero, and the escrow holds **0 USDT**.
+
+Key BOT transactions: `releaseToIssuer(2)`
+`0x39b074ad1a010506a802b358a1363f10ac6b774131c8a26e733abbba94af0888`,
+`claim` `0xc65c80a6cd90e9f1acd20404cfe58ac08506cb3929990f1462cca051d55bc8d4`,
+and `withdrawCollateral` `0xfe9d6ee60bdec49856538edd6f659b05ccba87b0184d689221ef35926640c3e1`.
 
 ### Deploy again with
 
@@ -1243,7 +1265,7 @@ Deadline 21 August 23:59 UTC.
 ## 8. BOT Chain runbook
 
 Deadline **22 August 23:59 UTC+8**. BOT testnet 968 is deployed and verified;
-the remaining chain work is an approved 968 e2e run, followed by mainnet 677. The contracts are
+the remaining chain work is mainnet gas/support followed by deployment 677. The contracts are
 chain-agnostic and already carry BOT Chain's verified settlement token, so this
 is a deploy-and-run job rather than a build.
 
@@ -1251,9 +1273,9 @@ is a deploy-and-run job rather than a build.
 
 | Address | tBOT (968) | tUSDT (968) | BOT (677) |
 |---|---|---|---|
-| deployer `0x69eb1bAA…54f6` | **9.33758978** | **0.3** | 0 |
-| compliance `0xA30D8311…922a` | **9.99621108** | **999.7** | 0 |
-| oracle `0x25CE5281…151e` | **0.49809922** | 0 | 0 |
+| deployer `0x69eb1bAA…54f6` | **9.31974792** | **0.3** | 0 |
+| compliance `0xA30D8311…922a` | **9.99345998** | **999.7** | 0 |
+| oracle `0x25CE5281…151e` | **0.49489396** | 0 | 0 |
 
 ✅ **Funding is complete for the BOT e2e run.**
 
@@ -1274,7 +1296,7 @@ BOT gas price is **20 gwei**; X Layer is 0.02 gwei. Same 7,178,141-gas deploy:
 | e2e oracle calls, per run | 0.000012 | **0.0117 BOT** |
 | one `recordDecision` | 0.000003 | **0.00275 BOT** |
 
-The deployer's 9.33758978 tBOT covers roughly 60 testnet deploys, so testnet is
+The deployer's 9.31974792 tBOT covers roughly 60 testnet deploys, so testnet is
 comfortable. **Mainnet holds zero on all three keys.**
 
 ### 8.3 Order of work
@@ -1287,21 +1309,8 @@ comfortable. **Mainnet holds zero on all three keys.**
    admin, compliance holding nothing on the escrow, and
    `escrow.grantRole(COMPLIANCE_ROLE, …)` reverting `0xa3dd6e91`
    (`ComplianceRoleForbiddenHere()`).
-3. **Rerun e2e on 968** for an approved path. Funding and recovery are complete;
-   the deployer holds the restored 0.3 tUSDT. Use
-   `ROUTELOCK_CHAIN=botchain_testnet`, scaled to the balance:
-   ```
-   export ROUTELOCK_CLASS_LABEL="carbon-retirement-0.001t-$(date +%s)"
-   ROUTELOCK_CHAIN=botchain_testnet ROUTELOCK_PRICE=0.1 \
-     ROUTELOCK_COLLATERAL=0.2 ROUTELOCK_PAYOUT=0.1 \
-     pnpm --filter @routelock/attest e2e --broadcast --retire
-   ```
-   ⛔ **`--retire` burns a real credit paid in USDC on Base, whatever chain the
-   entitlement is on.** The retirement is not on BOT Chain; only the obligation
-   is. Budget ~0.028 USDC per run against the deployer's Base balance, and note
-   `assertKeylessSpendAllowed` **requires an explicit opt-in on a test chain** —
-   `--retire` sets it. Running without `--retire` proves everything up to the
-   signature and burns nothing, which is the right first attempt.
+3. **Approved 968 e2e completed.** Token 2 is `Activated`, the Carbonmark
+   retirement proof is recorded above, and the escrow returned to zero.
 4. **Mainnet 677**, once gas support lands. `ADMIN != ORACLE` is enforced there,
    so the oracle needs its own BOT for gas.
 5. **Apply for BOT Chain mainnet gas support and file the project submission
