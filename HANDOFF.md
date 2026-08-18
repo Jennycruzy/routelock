@@ -375,24 +375,23 @@ including a live simulation proving `SettlementEscrow` still reverts
 by the admin, while the same call for `ORACLE_ROLE` succeeds. Re-run that check
 after any redeploy; it is the one assertion the whole pitch rests on.
 
-Remaining chain work: recover the first BOT testnet e2e deposit, complete an
-approved 968 run, then deploy BOT Chain mainnet. X Layer and the BOT Chain
-testnet deployment are complete.
+Remaining chain work: complete an approved 968 run, then deploy BOT Chain
+mainnet. X Layer and the BOT Chain testnet deployment/recovery are complete.
 
 **BOT Chain testnet deployed 18 August** — the deployer paid 0.14356402 tBOT
 from the claimed balance. The separate oracle wallet was funded after deployment
 and the 968 e2e run is now unblocked.
 
-Balances, checked live after funding: deployer **9.35601598 tBOT / 0.3 tUSDT**,
-compliance **10 tBOT / 999.7 tUSDT**, oracle **0.5 tBOT / 0 tUSDT**. BOT mainnet
-holds **0 BOT** on all three keys.
+Balances, checked live after recovery: deployer **9.33758978 tBOT / 0.3 tUSDT**,
+compliance **9.99621108 tBOT / 999.7 tUSDT**, oracle **0.49809922 tBOT / 0 tUSDT**.
+BOT mainnet holds **0 BOT** on all three keys.
 
 Funding receipts: 0.3 tUSDT from compliance to deployer in block **20275741**
 (`0xd7f03ff5aecfda17ca7c2a418896529406d2bb7300f591250849d86a0ac77bb3`), and
 0.5 tBOT from deployer to oracle in block **20276020**
 (`0x922c80288b2951c23fb957ed5b35cab97a02d6c6826a514771e49fca1a24560e`).
 
-### 8.2 BOT e2e rehearsal — first run, 18 August 2026
+### BOT e2e rehearsal — first run, 18 August 2026
 
 The first real 968 run completed the non-approval branch successfully. It used
 class label `carbon-retirement-0.001t-1787042816`, class id
@@ -407,11 +406,11 @@ and the separate compliance signer. Because the decision was not `Approved`,
 the script correctly did not retire a credit, call the oracle, or settle the
 escrow.
 
-Live state after the run: token 1 is `Available`, its deposit is unsettled, the
-escrow holds **0.3 USDT** (**0.1** buyer deposit plus **0.2** collateral), and
-the deployer holds **0 tUSDT**. The funds are safe but must be recovered before
-another run. The recovery decision is deterministic: no carrier evidence means
-refund token 1, then withdraw the freed 0.2 collateral.
+Immediately after the run, token 1 was `Available`, its deposit was unsettled,
+the escrow held **0.3 USDT** (**0.1** buyer deposit plus **0.2** collateral),
+and the deployer held **0 tUSDT**. The funds were safe pending recovery. The
+recovery decision is deterministic: no carrier evidence means refund token 1,
+then withdraw the freed 0.2 collateral.
 
 For this deployment the two recovery writes use the two separate signers:
 
@@ -424,6 +423,13 @@ The recovery tool now handles split keys: it prompts for the deployer key for
 collateral/claims and the oracle key for settlement. Its dry run was verified
 against this live state and plans exactly one 0.1 USDT refund plus a 0.2 USDT
 collateral withdrawal.
+
+Recovery was then broadcast successfully: `refundBuyer(1)` in block **20277908**
+(`0xebc84dbfb6e0422a16c48f3f73e12c975586266ae32b6082192698a362f67537`) and
+`withdrawCollateral` in block **20277914**
+(`0x684a566d6e2b4ec0131e2466ded376ab52e4135506e1f879162a365070fd253c`). The
+escrow now holds **0 USDT**, token 1's deposit is settled, and the class has
+zero outstanding obligation and collateral.
 
 ### Deploy again with
 
@@ -1077,9 +1083,9 @@ These cannot be resolved from this box and are listed in the order they block wo
    | **BOT Chain mainnet gas** (holds 0) | the 677 deployment |
    | **BOT gas-support and project forms** | the mainnet funding request and submission |
 
-   BOT testnet deployment and funding are complete. The first 968 e2e branch is
-   recorded; recovery and an approved run are the next technical steps. The
-   next deployment blocker is mainnet gas for 677.
+   BOT testnet deployment, funding, and recovery are complete. The first 968
+   e2e branch is recorded; an approved run is the next technical step. The next
+   deployment blocker is mainnet gas for 677.
 
 ---
 
@@ -1237,17 +1243,17 @@ Deadline 21 August 23:59 UTC.
 ## 8. BOT Chain runbook
 
 Deadline **22 August 23:59 UTC+8**. BOT testnet 968 is deployed and verified;
-the remaining chain work is recovery plus an approved 968 e2e run, followed by mainnet 677. The contracts are
+the remaining chain work is an approved 968 e2e run, followed by mainnet 677. The contracts are
 chain-agnostic and already carry BOT Chain's verified settlement token, so this
 is a deploy-and-run job rather than a build.
 
-### 8.1 Funding, measured 2026-08-18
+### 8.1 Funding and current balances, measured 2026-08-18
 
 | Address | tBOT (968) | tUSDT (968) | BOT (677) |
 |---|---|---|---|
-| deployer `0x69eb1bAA…54f6` | **9.35601598** | **0.3** | 0 |
-| compliance `0xA30D8311…922a` | 10 | **999.7** | 0 |
-| oracle `0x25CE5281…151e` | **0.5** | 0 | 0 |
+| deployer `0x69eb1bAA…54f6` | **9.33758978** | **0.3** | 0 |
+| compliance `0xA30D8311…922a` | **9.99621108** | **999.7** | 0 |
+| oracle `0x25CE5281…151e` | **0.49809922** | 0 | 0 |
 
 ✅ **Funding is complete for the BOT e2e run.**
 
@@ -1268,7 +1274,7 @@ BOT gas price is **20 gwei**; X Layer is 0.02 gwei. Same 7,178,141-gas deploy:
 | e2e oracle calls, per run | 0.000012 | **0.0117 BOT** |
 | one `recordDecision` | 0.000003 | **0.00275 BOT** |
 
-The deployer's 9.35601598 tBOT covers roughly 60 testnet deploys, so testnet is
+The deployer's 9.33758978 tBOT covers roughly 60 testnet deploys, so testnet is
 comfortable. **Mainnet holds zero on all three keys.**
 
 ### 8.3 Order of work
@@ -1281,10 +1287,8 @@ comfortable. **Mainnet holds zero on all three keys.**
    admin, compliance holding nothing on the escrow, and
    `escrow.grantRole(COMPLIANCE_ROLE, …)` reverting `0xa3dd6e91`
    (`ComplianceRoleForbiddenHere()`).
-3. **Recover token 1**, using the oracle for `refundBuyer(1)` and the deployer
-   for `withdrawCollateral(classId, 200000)`, as documented in §8.2.
-4. **Rerun e2e on 968** for an approved path. Funding is complete once the
-   recovery returns the 0.3 tUSDT to the deployer. Use
+3. **Rerun e2e on 968** for an approved path. Funding and recovery are complete;
+   the deployer holds the restored 0.3 tUSDT. Use
    `ROUTELOCK_CHAIN=botchain_testnet`, scaled to the balance:
    ```
    export ROUTELOCK_CLASS_LABEL="carbon-retirement-0.001t-$(date +%s)"
@@ -1298,9 +1302,9 @@ comfortable. **Mainnet holds zero on all three keys.**
    `assertKeylessSpendAllowed` **requires an explicit opt-in on a test chain** —
    `--retire` sets it. Running without `--retire` proves everything up to the
    signature and burns nothing, which is the right first attempt.
-5. **Mainnet 677**, once gas support lands. `ADMIN != ORACLE` is enforced there,
+4. **Mainnet 677**, once gas support lands. `ADMIN != ORACLE` is enforced there,
    so the oracle needs its own BOT for gas.
-6. **Apply for BOT Chain mainnet gas support and file the project submission
+5. **Apply for BOT Chain mainnet gas support and file the project submission
    form**, then submit with the X account post tagging BOT Chain as their rules
    require.
 

@@ -1067,16 +1067,23 @@ Anything funded for mainnet must be USD₮0 `0x779Ded0c…`.
   minted, submitted, and recorded by compliance as `NEEDS_INFORMATION` with
   confidence 0.62 (`low_confidence`), decision hash
   `0xead68579d76cb0f462f4f20e3ed4eecdb86dbbfb3d446d3ccb4574b659931a3a`.
-  No retirement or oracle settlement was attempted. Token 1 is `Available`,
-  and the 0.3 tUSDT remains in escrow pending recovery.
+  No retirement or oracle settlement was attempted. Token 1 returned to
+  `Available`; its 0.3 tUSDT was in escrow pending recovery, which completed
+  below.
 - The recovery tool now handles the split BOT signers: oracle for refunds/releases
   and deployer for claims/collateral. Its live dry run plans exactly 0.1 tUSDT
   refunded and 0.2 tUSDT collateral withdrawn.
+- **BOT e2e recovery completed.** `refundBuyer(1)` succeeded in block 20277908
+  (`0xebc84dbfb6e0422a16c48f3f73e12c975586266ae32b6082192698a362f67537`) and
+  `withdrawCollateral` succeeded in block 20277914
+  (`0x684a566d6e2b4ec0131e2466ded376ab52e4135506e1f879162a365070fd253c`).
+  Escrow is empty and the deployer again holds 0.3 tUSDT.
+- Current live balances: deployer **9.33758978 tBOT / 0.3 tUSDT**, compliance
+  **9.99621108 tBOT / 999.7 tUSDT**, oracle **0.49809922 tBOT / 0 tUSDT**.
 - The README and handoff now reflect the live BOT testnet deployment. BOT mainnet
   gas support and the 677 deployment remain.
 
 ### Next action
 
-Recover token 1's 0.1 tUSDT deposit with the oracle, withdraw its 0.2 tUSDT
-collateral with the deployer, rerun the 968 e2e flow for an approved path, then
-apply for BOT mainnet gas support before deploying chain 677.
+Rerun the 968 e2e flow for an approved path, then apply for BOT mainnet gas
+support before deploying chain 677.

@@ -532,7 +532,8 @@ live model returned `NEEDS_INFORMATION` (`low_confidence`, confidence 0.62),
 and the compliance decision was committed with hash
 `0xead68579d76cb0f462f4f20e3ed4eecdb86dbbfb3d446d3ccb4574b659931a3a`.
 The run correctly stopped before retirement and oracle settlement. Token 1 is
-reusable, while its 0.3 tUSDT remains safely in escrow until the recovery step.
+reusable. Recovery then refunded the 0.1 tUSDT deposit and withdrew the 0.2
+tUSDT collateral; escrow is now empty and the deployer is funded for a rerun.
 
 ### Other verified targets — not deployed
 
@@ -550,11 +551,10 @@ Stated as absent rather than stubbed:
   see above. Delivery is deliberately not deployed and compute is not built, so
   two of the three rows in the adapter table are honest absences rather than work
   in progress.
-- **The BOT Chain testnet e2e has completed its first non-approval branch.** The
-  current balances are deployer 9.35601598 tBOT / 0 tUSDT, compliance 10 tBOT /
-  999.7 tUSDT, and oracle 0.5 tBOT; the deployer's 0.3 tUSDT is held by escrow
-  for token 1. Recover that deposit and collateral, then rerun for an approved
-  path before deploying BOT Chain mainnet.
+- **The BOT Chain testnet e2e has completed its first non-approval branch and
+  recovery.** Current balances are deployer 9.33758978 tBOT / 0.3 tUSDT,
+  compliance 9.99621108 tBOT / 999.7 tUSDT, and oracle 0.49809922 tBOT. The
+  escrow is empty; rerun for an approved path before deploying BOT Chain mainnet.
 - **The compute adapter** — not started.
 - **The HS benchmark stands at 253 of 354 rows**, and the figures published here
   say so. The remaining rows are parked deliberately, not pending.
