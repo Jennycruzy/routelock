@@ -41,3 +41,5 @@ packages/contracts/lib/
 # one. Local operational state, not evidence.
 **/data/inference-calls.jsonl
 **/data/served-inference.jsonl
+**/data/compute-inference-calls.jsonl
+**/data/compute-inference-calls-*.jsonl

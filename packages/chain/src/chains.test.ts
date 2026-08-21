@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   CHAINS,
   getChain,
+  assertVerticalAllowed,
   requireSettlementToken,
   assertEnvironmentPairing,
   assertProviderPairing,
@@ -151,6 +152,26 @@ describe("getChain", () => {
   test("throws on an unknown key and names the valid ones", () => {
     assert.throws(() => getChain("ethereum"), /Unknown chain "ethereum"/);
     assert.throws(() => getChain("ethereum"), /xlayer_testnet/);
+  });
+});
+
+describe("vertical binding", () => {
+  test("X Layer is the carbon lane and BOT Chain is the compute lane", () => {
+    assert.doesNotThrow(() => assertVerticalAllowed(CHAINS.xlayer_testnet, "carbon"));
+    assert.doesNotThrow(() => assertVerticalAllowed(CHAINS.xlayer_mainnet, "carbon"));
+    assert.doesNotThrow(() => assertVerticalAllowed(CHAINS.botchain_testnet, "compute"));
+    assert.doesNotThrow(() => assertVerticalAllowed(CHAINS.botchain_mainnet, "compute"));
+  });
+
+  test("the wrong lane is refused before an adapter can load", () => {
+    assert.throws(
+      () => assertVerticalAllowed(CHAINS.botchain_testnet, "carbon"),
+      /BOT Chain Testnet does not allow the carbon fulfilment lane/,
+    );
+    assert.throws(
+      () => assertVerticalAllowed(CHAINS.xlayer_testnet, "compute"),
+      /X Layer Testnet does not allow the compute fulfilment lane/,
+    );
   });
 });
 

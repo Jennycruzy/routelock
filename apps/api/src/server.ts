@@ -10,9 +10,13 @@
 ///   3. **The audit trail** — what the registry holds for any token, with the
 ///      `cast` command to re-read it without this server.
 ///
-/// It holds no key, constructs no wallet, and signs nothing. Every state change
-/// in RouteLock is an operator action taken at a terminal. `no-signing.test.ts`
-/// reads this package's source and fails if that stops being true.
+/// Consumer checkout is deliberately split: the browser wallet owns the
+/// consumer's X Layer entitlement transactions, while this process may hold
+/// only the deployment's compliance and oracle/retirement relayer identities.
+/// The configured RouteLock relayer signs the issuer-side Base USDC retirement;
+/// the customer never signs or pays on Base. `consumer.ts` checks those role
+/// addresses against the deployment before it can write anything. The selected
+/// chain still fixes the lane: X Layer serves carbon and BOT serves compute.
 ///
 /// There is no framework here on purpose: `node:http` and viem are enough, and a
 /// dependency that has to be audited before a submission is a cost.
@@ -21,6 +25,7 @@ import { createServer } from "node:http";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { extname, join, normalize, resolve } from "node:path";
 import { readFile, stat } from "node:fs/promises";
+import { keccak256, toBytes } from "viem";
 
 import { loadDotEnv, repoRoot } from "@routelock/chain";
 import {
@@ -31,7 +36,13 @@ import {
   InferenceBudgetExceeded,
   ledgerPath,
 } from "@routelock/compliance";
-import { RetirementLedger, capsFromEnv as retirementCaps } from "@routelock/carbon";
+import {
+  DuplicateRetirement,
+  RetirementLedger,
+  SpendCapExceeded,
+  X402Error,
+  capsFromEnv as retirementCaps,
+} from "@routelock/carbon";
 
 import { assertChainMatches, loadChainContext } from "./chain.ts";
 import { readFulfilments } from "./fulfilment.ts";
@@ -47,13 +58,22 @@ import {
 } from "./rule.ts";
 import { readState } from "./state.ts";
 import { RateLimiter, reportBudget, servedBudget, servedCaps } from "./spend.ts";
+import { ConsumerError, ConsumerService } from "./consumer.ts";
 
 const loaded = loadDotEnv();
 
-const PORT = Number(process.env["ROUTELOCK_API_PORT"] ?? 8787);
+// Local development uses ROUTELOCK_API_PORT. Hosted Node services (including
+// Render) provide PORT, so the same process can be deployed without a second
+// adapter or a hard-coded public port.
+const PORT = Number(process.env["ROUTELOCK_API_PORT"] ?? process.env["PORT"] ?? 8787);
 const HOST = process.env["ROUTELOCK_API_HOST"] ?? "127.0.0.1";
-const CHAIN_KEY = process.env["ROUTELOCK_CHAIN"] ?? "xlayer_testnet";
-const WEB_ROOT = resolve(repoRoot(), "apps/web/public");
+// The live product is the X Layer carbon retirement. Testnet remains available
+// by explicitly setting ROUTELOCK_CHAIN=xlayer_testnet for a read-only demo.
+const CHAIN_KEY = process.env["ROUTELOCK_CHAIN"] ?? "xlayer_mainnet";
+const WEB_ROOT = resolve(process.env["ROUTELOCK_WEB_ROOT"] ?? resolve(repoRoot(), "apps/web/public"));
+const WEB_INDEX = process.env["ROUTELOCK_WEB_INDEX"] ?? "index.html";
+const DATA_ROOT = resolve(process.env["ROUTELOCK_DATA_DIR"] ?? resolve(repoRoot(), "data"));
+const dataFile = (name: string): string => resolve(DATA_ROOT, name);
 const TRUST_PROXY = process.env["ROUTELOCK_TRUST_PROXY"] === "yes";
 
 /// Model-backed endpoints get their own limiter, because they are the only ones
@@ -71,9 +91,24 @@ const caps = servedCaps();
 /// Built once. `configFromEnv` throws when there is no API key, which is the
 /// intended behaviour: an engine that cannot perform real inference must not
 /// start, because the alternative is an endpoint that appears to work.
-const engine = new ComplianceEngine(configFromEnv(), { budget });
-const retirements = new RetirementLedger(ledgerPath("data/retirements.jsonl"), retirementCaps());
-const carbon = readOnlyCarbonAdapter(context.chain, retirements);
+const inferenceConfig = configFromEnv();
+const engine = new ComplianceEngine(inferenceConfig, { budget });
+const retirements = new RetirementLedger(
+  process.env["ROUTELOCK_RETIREMENTS_LEDGER"] ?? dataFile("retirements.jsonl"),
+  retirementCaps(),
+);
+const carbon = context.chain.allowedVerticals.includes("carbon")
+  ? readOnlyCarbonAdapter(context.chain, retirements)
+  : null;
+const consumer = new ConsumerService({
+  context,
+  budget,
+  apiKey: inferenceConfig.apiKey,
+  model: inferenceConfig.model,
+  carbon,
+  storePath: dataFile("consumer-orders.jsonl"),
+  catalogPath: dataFile("consumer-catalog.jsonl"),
+});
 
 function callerOf(request: IncomingMessage): string {
   if (TRUST_PROXY) {
@@ -137,7 +172,9 @@ const MIME: Readonly<Record<string, string>> = {
 /// file server that actually matters.
 async function serveStatic(pathname: string, response: ServerResponse): Promise<void> {
   const relative = normalize(decodeURIComponent(pathname)).replace(/^(\.\.[/\\])+/, "");
-  let file = resolve(join(WEB_ROOT, relative));
+  let file = pathname === "/"
+    ? resolve(join(WEB_ROOT, WEB_INDEX))
+    : resolve(join(WEB_ROOT, relative));
 
   if (!file.startsWith(WEB_ROOT)) {
     send(response, 403, { error: "path is outside the web root" });
@@ -235,6 +272,9 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
         return;
 
       case "GET /api/fulfilment":
+        if (carbon === null) {
+          throw new ConsumerError(409, `${context.chain.name} is the BOT compute lane; carbon fulfilment is served by an X Layer API`);
+        }
         // Re-verified against the provider on every request, not read from a
         // cache. A proof URL this project stored is a claim; a proof URL the
         // provider still confirms is evidence.
@@ -242,6 +282,9 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
         return;
 
       case "GET /api/carbon/inventory": {
+        if (carbon === null) {
+          throw new ConsumerError(409, `${context.chain.name} is the BOT compute lane; carbon inventory is served by an X Layer API`);
+        }
         // Free: discovery and pricing cost no money and no signature.
         const classes = await carbon.discover();
         send(response, 200, {
@@ -250,6 +293,85 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
           count: classes.length,
           classes,
         });
+        return;
+      }
+
+      case "GET /api/consumer/capabilities":
+        send(response, 200, await consumer.capabilities());
+        return;
+
+      case "GET /api/consumer/catalog":
+        send(response, 200, await consumer.catalog());
+        return;
+
+      case "GET /api/merchant/capabilities":
+        {
+          const capabilities = await consumer.capabilities();
+          send(response, 200, {
+          role: "merchant",
+          chain: context.chain.name,
+          chainKey: context.deployment.chain,
+          chainId: context.deployment.chainId,
+          contracts: {
+            entitlementFactory: context.deployment.entitlementFactory,
+            settlementEscrow: context.deployment.settlementEscrow,
+            settlementToken: context.deployment.settlementToken,
+            ...(context.deployment.aaveYieldAdapter
+              ? { aaveYieldAdapter: context.deployment.aaveYieldAdapter }
+              : {}),
+          },
+          admin: context.deployment.admin,
+          issuer: context.deployment.issuer ?? null,
+          permissionlessIssuers: context.deployment.permissionlessIssuers === true,
+          walletSigns: true,
+          yield: capabilities.yield,
+          note: context.deployment.permissionlessIssuers === true
+            ? "RouteLock Agent checks customer requests and gates proof-backed settlement. Any wallet can publish an offer; its first offer registers it automatically. The admin can pause providers, while offer creation and collateral moves remain approved by the connected wallet."
+            : "Offer creation and collateral moves are approved by the connected provider wallet. The API only reads and derives identifiers.",
+          lanes: capabilities,
+        });
+        return;
+        }
+
+      case "GET /api/merchant/catalog":
+        send(response, 200, await consumer.catalog());
+        return;
+
+      case "POST /api/merchant/draft": {
+        const body = await readJsonBody(request);
+        const label = body["label"];
+        const terms = body["terms"];
+        if (typeof label !== "string" || label.trim() === "") {
+          throw new BadRequest("label is required to create a service offer");
+        }
+        if (typeof terms !== "string" || terms.trim() === "") {
+          throw new BadRequest("terms are required to create a service offer");
+        }
+        // This endpoint never signs or broadcasts. It only applies the same
+        // deterministic hash convention used by the contracts and e2e tools;
+        // the connected provider wallet still creates the class on chain.
+        send(response, 200, {
+          classId: keccak256(toBytes(`routelock:class:${label.trim()}`)),
+          termsHash: keccak256(toBytes(terms.trim())),
+        });
+        return;
+      }
+
+      case "POST /api/merchant/discover": {
+        const body = await readJsonBody(request);
+        send(response, 200, await consumer.discoverMerchantClass(body["classId"]));
+        return;
+      }
+
+      case "POST /api/consumer/carbon/preview": {
+        if (!modelLimiter.take(caller)) {
+          send(response, 429, {
+            error: "rate limit reached for model-backed consumer reviews",
+            retryAfterSeconds: modelLimiter.retryAfterSeconds(caller),
+          });
+          return;
+        }
+        send(response, 200, await consumer.previewCarbon(await readJsonBody(request)));
         return;
       }
 
@@ -268,6 +390,9 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
       }
 
       case "POST /api/rule/carbon": {
+        if (carbon === null) {
+          throw new ConsumerError(409, `${context.chain.name} is the BOT compute lane; carbon reviews are served by an X Layer API`);
+        }
         const body = await readJsonBody(request);
         const carbonClass = body["carbonClass"];
         if (typeof carbonClass !== "string" || carbonClass.trim() === "") {
@@ -307,6 +432,45 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
       return;
     }
 
+    const merchantClassMatch = /^\/api\/merchant\/classes\/(0x[0-9a-fA-F]{64})$/.exec(path);
+    if (request.method === "GET" && merchantClassMatch !== null) {
+      send(response, 200, await consumer.merchantClass(merchantClassMatch[1]));
+      return;
+    }
+
+    const consumerOrderMatch = /^\/api\/consumer\/orders\/([^/]+)(?:\/(minted|submitted|retirement\/prepare|retirement\/fulfil|settle))?$/.exec(path);
+    if (consumerOrderMatch !== null) {
+      const orderId = decodeURIComponent(consumerOrderMatch[1]!);
+      const action = consumerOrderMatch[2];
+      if (request.method === "GET" && action === undefined) {
+        send(response, 200, consumer.getOrder(orderId));
+        return;
+      }
+      if (request.method !== "POST" || action === undefined) {
+        send(response, 405, { error: "method not allowed" });
+        return;
+      }
+      const body = await readJsonBody(request);
+      if (action === "minted") {
+        send(response, 200, await consumer.recordMint(orderId, body["txHash"]));
+        return;
+      }
+      if (action === "submitted") {
+        send(response, 200, await consumer.recordSubmitted(orderId, body["txHash"]));
+        return;
+      }
+      if (action === "retirement/prepare") {
+        send(response, 200, await consumer.prepareRetirement(orderId));
+        return;
+      }
+      if (action === "retirement/fulfil") {
+        send(response, 200, await consumer.fulfilRetirement(orderId));
+        return;
+      }
+      send(response, 200, await consumer.settleOrder(orderId));
+      return;
+    }
+
     send(response, 404, { error: `no route for ${request.method ?? "?"} ${path}` });
   } catch (error) {
     if (error instanceof BadRequest) {
@@ -320,6 +484,32 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
         error: error.message,
         budget: reportBudget(budget, caps),
       });
+      return;
+    }
+    if (error instanceof ConsumerError) {
+      send(response, error.status, { error: error.message });
+      return;
+    }
+    if (error instanceof X402Error) {
+      send(response, error.status, {
+        error: error.message,
+        code: error.code,
+        action: error.action,
+        ...error.context,
+      });
+      return;
+    }
+    if (error instanceof SpendCapExceeded) {
+      send(response, 409, {
+        error: error.message,
+        cap: error.cap,
+        limitUsdc: error.limitUsdc,
+        attemptedUsdc: error.attemptedUsdc,
+      });
+      return;
+    }
+    if (error instanceof DuplicateRetirement) {
+      send(response, 409, { error: error.message, key: error.key, prior: error.prior });
       return;
     }
     throw error;

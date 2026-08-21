@@ -11,6 +11,7 @@ import {ActivationRegistry, Verdict} from "../src/ActivationRegistry.sol";
 import {FulfilmentReceipt} from "../src/FulfilmentReceipt.sol";
 import {Roles, EntitlementState} from "../src/RouteLockTypes.sol";
 import {TestERC20} from "./utils/TestERC20.sol";
+import {MockAavePool} from "./utils/MockAavePool.sol";
 
 /// @notice Exposes the script's internals so the deployment path is exercised
 ///         by `forge test` rather than first tried against a real chain.
@@ -23,6 +24,18 @@ contract DeployHarness is Deploy {
 
     function deployAndWire(address oracle, address compliance) external {
         dep = _deployAndWire(address(this), oracle, compliance);
+    }
+
+    function deployAndWireWithAave(
+        address oracle,
+        address compliance,
+        address settlementToken,
+        address pool,
+        address aToken
+    ) external {
+        dep = _deployAndWire(
+            address(this), oracle, compliance, settlementToken, pool, aToken
+        );
     }
 
     function handOverAdmin(address admin) external {
@@ -82,6 +95,66 @@ contract DeployTest is Test {
     function test_wiringPassesItsOwnAssertions() public {
         harness.deployAndWire(oracle, compliance);
         harness.assertWiring(address(harness), oracle, compliance);
+    }
+
+    function test_strategyAwareWiringPassesItsOwnAssertions() public {
+        TestERC20 token = new TestERC20();
+        MockAavePool pool = new MockAavePool(address(token));
+
+        harness.deployAndWireWithAave(
+            oracle, compliance, address(token), address(pool), address(pool.reserveAToken())
+        );
+        harness.assertWiring(address(harness), oracle, compliance);
+
+        Deploy.Deployment memory d = harness.deployment();
+        assertTrue(address(d.yieldAdapter) != address(0));
+        assertEq(d.yieldAdapter.asset(), address(token));
+        assertEq(d.escrow.collateralStrategy(), address(d.yieldAdapter));
+    }
+
+    function test_strategyAwareDeploymentCarriesAProviderOfferThroughAave() public {
+        TestERC20 token = new TestERC20();
+        MockAavePool pool = new MockAavePool(address(token));
+        harness.deployAndWireWithAave(
+            oracle, compliance, address(token), address(pool), address(pool.reserveAToken())
+        );
+        Deploy.Deployment memory d = harness.deployment();
+
+        bytes32 classId = keccak256("AAVE-PROVIDER-OFFER");
+        uint256 price = 1_000_000;
+        uint256 obligation = 2_000_000;
+
+        vm.prank(address(harness));
+        d.factory.registerIssuer(issuer);
+        vm.prank(issuer);
+        d.factory.createClass(
+            classId,
+            keccak256("aave-provider-terms"),
+            address(token),
+            price,
+            obligation,
+            uint64(block.timestamp + 30 days),
+            2
+        );
+
+        token.mint(issuer, obligation);
+        vm.startPrank(issuer);
+        token.approve(address(d.escrow), obligation);
+        d.escrow.postCollateral(classId, obligation);
+        d.escrow.investCollateral(classId, obligation);
+        vm.stopPrank();
+
+        assertEq(d.escrow.totalBacking(classId), obligation);
+        assertEq(d.yieldAdapter.totalShares(), obligation);
+
+        token.mint(buyer, price);
+        vm.startPrank(buyer);
+        token.approve(address(d.escrow), price);
+        d.factory.mint(classId, buyer);
+        vm.stopPrank();
+
+        assertTrue(d.escrow.isFullyBacked(classId));
+        assertEq(d.escrow.totalBacking(classId), obligation);
     }
 
     // ---------------------------------------------------------------------
@@ -272,6 +345,12 @@ contract DeployTest is Test {
         assertEq(xlayerTest.settlementToken, 0x9e29b3AaDa05Bf2D2c827Af80Bd28Dc0b9b4FB0c);
 
         assertEq(harness.targetFor(196).settlementToken, 0x779Ded0c9e1022225f8E0630b35a9b54bE713736);
+        assertEq(harness.targetFor(196).aavePool, 0xE3F3Caefdd7180F884c01E57f65Df979Af84f116);
+        assertEq(
+            harness.targetFor(196).aaveAddressesProvider,
+            0xdFf435BCcf782f11187D3a4454d96702eD78e092
+        );
+        assertEq(harness.targetFor(196).aaveAToken, 0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297);
         assertEq(harness.targetFor(968).settlementToken, 0x75edC9335175Fc0552D51D48439F229c10420fe3);
         assertEq(harness.targetFor(677).settlementToken, 0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C);
 

@@ -11,14 +11,22 @@ contract EntitlementFactoryTest is RouteLockBase {
     // Issuer gating
     // ---------------------------------------------------------------------
 
-    function test_unregisteredIssuerCannotCreateClass() public {
+    function test_unregisteredIssuerCanCreateClassAndIsRegistered() public {
         vm.prank(stranger);
-        vm.expectRevert(
-            abi.encodeWithSelector(EntitlementFactory.IssuerNotRegistered.selector, stranger)
-        );
         factory.createClass(
             CLASS_ID, TERMS_HASH, address(token), PRICE, OBLIGATION, validUntil, MAX_SUPPLY
         );
+
+        assertTrue(factory.isRegisteredIssuer(stranger));
+        assertTrue(factory.hasRole(Roles.ISSUER_ROLE, stranger));
+    }
+
+    function test_anyoneCanRegisterAsIssuer() public {
+        vm.prank(stranger);
+        factory.registerSelf();
+
+        assertTrue(factory.isRegisteredIssuer(stranger));
+        assertTrue(factory.hasRole(Roles.ISSUER_ROLE, stranger));
     }
 
     function test_pausedIssuerCannotCreateClass() public {

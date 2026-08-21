@@ -212,8 +212,9 @@ deployed to mainnet, not an official bridged asset.
 ## Yield venues, verified 2026-08-17
 
 Added because "Aave is on X Layer" and "RouteLock can float its collateral into
-Aave on X Layer" turned out to be different claims, and only the first one is
-true.
+Aave on X Layer" are different claims. Both are now established for the
+strategy-aware deployment path, while the already-live escrow still uses raw
+collateral.
 
 Aave V3 launched on X Layer on 30 March 2026. Every address below was read off
 the chain rather than off the announcement, and the addresses themselves came
@@ -227,13 +228,13 @@ $ cast call 0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297 'symbol()(string)' --rpc-
 "aXlrUSDT0"
 
 $ cast call 0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297 'UNDERLYING_ASSET_ADDRESS()(address)' --rpc-url https://rpc.xlayer.tech
-0x779Ded0c9e1022225f8E0630b35a9b54bE713736          # NOT RouteLock's settlement token
+0x779Ded0c9e1022225f8E0630b35a9b54bE713736          # RouteLock's settlement token
 
 $ cast call 0x779Ded0c9e1022225f8E0630b35a9b54bE713736 'symbol()(string)' --rpc-url https://rpc.xlayer.tech
 "USD₮0"                                             # supply 113,309,004,080,663
 
 $ cast call 0x1E4a5963aBFD975d8c9021ce480b42188849D41d 'symbol()(string)' --rpc-url https://rpc.xlayer.tech
-"USDT"                                              # supply 3,829,200,805,666 — what RouteLock settles in
+"USDT"                                              # legacy token; not RouteLock settlement
 
 $ cast call 0xE3F3Caefdd7180F884c01E57f65Df979Af84f116 'getReservesList()(address[])' --rpc-url https://rpc.xlayer.tech
 [0x779Ded0c…, 0x4ae46a50…, 0xb7C00000…, 0xe538905c…, 0xE7B00000…,
@@ -247,8 +248,9 @@ X Layer mainnet settlement, so "our token is absent from Aave's reserves" was
 true of a token RouteLock should never have been settling in.
 
 The corrected position: **Aave's X Layer reserve and RouteLock's settlement token
-are the same asset, USD₮0.** A yield adapter needs no swap and no settlement
-change. What it still lacks is an environment — see below.
+are the same asset, USD₮0.** The strategy needs no swap and no settlement change.
+The new adapter is tested locally and against a disposable X Layer fork; only a
+fresh coordinated live deployment remains.
 
 ## Which USDT: the config named the wrong one
 
@@ -282,9 +284,9 @@ chain uses.
 ## Aave on X Layer: live on mainnet, absent on testnet
 
 On X Layer **testnet** the pool and provider both return `0x` — Aave is not
-deployed there at all, so there is no environment in which a yield adapter could
-be rehearsed before touching mainnet. That, not the asset, is what still blocks
-it.
+deployed there at all. The strategy is therefore rehearsed against local mocks
+and a disposable X Layer mainnet fork; no testnet Aave address is accepted by
+the deployment path.
 
 ### The general lesson, worth more than the specific addresses
 

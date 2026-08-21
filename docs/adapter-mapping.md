@@ -3,6 +3,11 @@
 `ActivationRegistry` stores five hashes per activation. Their names come from
 delivery, the first vertical this system was written for.
 
+The judge-facing chain lanes are explicit: **X Layer carries carbon** and
+**BOT Chain testnet 968 is reserved for compute**. The earlier carbon-shaped
+BOT smoke run is historical generic-contract evidence, not a compute receipt
+and not an active BOT carbon lane.
+
 **These field names are generic by accident of history and retained by choice.
 The contracts were written for delivery and now back carbon retirement and
 compute leasing without a single byte changed — which is the claim, demonstrated
@@ -13,8 +18,8 @@ rather than asserted.**
 | `parcelHash` | parcel spec — weight, dimensions, declared value, canonical items | retirement request — beneficiary, quantity, credit class | workload spec — image, resources, duration |
 | `documentsHash` | commercial invoice and shipping documents | retrieved evidence set — registry metadata and published adverse findings | provider acceptable-use policy set assessed against |
 | `decisionHash` | HS classification decision | credit-quality decision | workload-permission decision |
-| `carrierRefHash` | tracking number | Polygon retirement transaction hash | Akash lease ID (`dseq/gseq/oseq`) |
-| `carrierRawHash` | raw carrier API response | raw Carbonmark API response | raw lease query response |
+| `carrierRefHash` | tracking number | Polygon retirement transaction hash | Akash lease ID (`dseq/gseq/oseq/provider`) plus the exact service name |
+| `carrierRawHash` | raw carrier API response | raw Carbonmark API response | raw Akash Console deployment response |
 
 `parcelHash` is documented in the contract source as
 `hash(weight, dims, declaredValue, itemsCanonical)`. That comment is delivery

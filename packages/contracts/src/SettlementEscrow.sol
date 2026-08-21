@@ -7,6 +7,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {Roles} from "./RouteLockTypes.sol";
+import {ICollateralStrategy} from "./ICollateralStrategy.sol";
 
 /// @title SettlementEscrow
 /// @notice Holds buyer payments and issuer collateral. The only contract in the
@@ -35,10 +36,19 @@ contract SettlementEscrow is AccessControl, ReentrancyGuard {
     error NothingToClaim();
     error ZeroAddress();
     error ZeroAmount();
+    error StrategyAlreadySet();
+    error InvalidStrategy(address strategy);
+    error StrategyNotConfigured();
+    error StrategyAssetMismatch(address expected, address actual);
+    error IncompleteStrategyUnwind(uint256 remainingShares);
 
     event ClassRegistered(bytes32 indexed classId, address indexed issuer, address token, uint256 payoutObligation);
     event CollateralPosted(bytes32 indexed classId, address indexed from, uint256 amount);
     event CollateralWithdrawn(bytes32 indexed classId, address indexed to, uint256 amount);
+    event CollateralStrategySet(address indexed strategy, address indexed asset);
+    event CollateralInvested(bytes32 indexed classId, uint256 assets, uint256 shares);
+    event CollateralDisinvested(bytes32 indexed classId, uint256 assets, uint256 shares);
+    event StrategyEmergencyUnwound(bytes32 indexed classId, uint256 assets, uint256 shares);
     event DepositRecorded(uint256 indexed tokenId, bytes32 indexed classId, address indexed buyer, uint256 amount);
     event SettlementReleased(uint256 indexed tokenId, address indexed issuer, uint256 amount);
     event BuyerRefunded(uint256 indexed tokenId, address indexed buyer, uint256 amount);
@@ -64,10 +74,43 @@ contract SettlementEscrow is AccessControl, ReentrancyGuard {
     mapping(uint256 tokenId => Deposit) public deposits;
     mapping(address issuer => mapping(address token => uint256)) public claimable;
 
+    /// @notice The optional idle-collateral venue for this escrow deployment.
+    /// The original deployed escrows leave this at zero; a new deployment may
+    /// set it once to a verified AaveYieldAdapter.
+    address public collateralStrategy;
+
+    /// @notice Shares held for each class in `collateralStrategy`.
+    mapping(bytes32 classId => uint256) public strategyShares;
+
     constructor(address admin) {
         if (admin == address(0)) revert ZeroAddress();
         _grantRole(DEFAULT_ADMIN_ROLE, admin);
         _grantRole(Roles.ADMIN_ROLE, admin);
+    }
+
+    /// @notice Wire one strategy before offers are created. This is deliberately
+    /// one-way: changing an asset venue after classes exist would make their
+    /// collateral accounting ambiguous.
+    function setCollateralStrategy(address strategy) external onlyRole(Roles.ADMIN_ROLE) {
+        if (collateralStrategy != address(0)) revert StrategyAlreadySet();
+        if (strategy == address(0)) revert ZeroAddress();
+
+        try ICollateralStrategy(strategy).escrow() returns (address owner) {
+            if (owner != address(this)) revert InvalidStrategy(strategy);
+        } catch {
+            revert InvalidStrategy(strategy);
+        }
+
+        address strategyAsset;
+        try ICollateralStrategy(strategy).asset() returns (address asset_) {
+            strategyAsset = asset_;
+        } catch {
+            revert InvalidStrategy(strategy);
+        }
+        if (strategyAsset == address(0)) revert InvalidStrategy(strategy);
+
+        collateralStrategy = strategy;
+        emit CollateralStrategySet(strategy, strategyAsset);
     }
 
     // ---------------------------------------------------------------------
@@ -103,6 +146,33 @@ contract SettlementEscrow is AccessControl, ReentrancyGuard {
         emit CollateralPosted(classId, msg.sender, amount);
     }
 
+    /// @notice Move already-posted idle collateral into the configured venue.
+    /// Only the class issuer can choose to put their offer's backing to work.
+    /// The class keeps shares, not a stale asset amount, so accrued Aave yield
+    /// is reflected in the backing check.
+    function investCollateral(bytes32 classId, uint256 amount)
+        external
+        nonReentrant
+        returns (uint256 shares)
+    {
+        ClassEscrow storage esc = classEscrow[classId];
+        if (!esc.registered) revert UnknownClass(classId);
+        if (msg.sender != esc.issuer) revert AccessControlUnauthorizedAccount(msg.sender, Roles.ISSUER_ROLE);
+        if (amount == 0) revert ZeroAmount();
+        if (collateralStrategy == address(0)) revert StrategyNotConfigured();
+
+        address strategyAsset = ICollateralStrategy(collateralStrategy).asset();
+        if (strategyAsset != esc.token) revert StrategyAssetMismatch(esc.token, strategyAsset);
+        if (amount > esc.collateral) revert InsufficientCollateral(classId, esc.collateral, amount);
+
+        esc.collateral -= amount;
+        IERC20(esc.token).forceApprove(collateralStrategy, amount);
+        shares = ICollateralStrategy(collateralStrategy).deposit(amount);
+        strategyShares[classId] += shares;
+
+        emit CollateralInvested(classId, amount, shares);
+    }
+
     /// @notice Withdraw collateral down to — never below — outstanding obligations.
     function withdrawCollateral(bytes32 classId, uint256 amount) external nonReentrant {
         ClassEscrow storage esc = classEscrow[classId];
@@ -110,12 +180,30 @@ contract SettlementEscrow is AccessControl, ReentrancyGuard {
         if (msg.sender != esc.issuer) revert AccessControlUnauthorizedAccount(msg.sender, Roles.ISSUER_ROLE);
         if (amount == 0) revert ZeroAmount();
 
-        uint256 remaining = esc.collateral - amount; // reverts on underflow
-        if (remaining < esc.obligation) {
+        uint256 backing = _backing(classId, esc);
+        uint256 remaining = backing > amount ? backing - amount : 0;
+        if (backing < esc.obligation || remaining < esc.obligation) {
             revert InsufficientCollateral(classId, remaining, esc.obligation);
         }
 
-        esc.collateral = remaining;
+        uint256 rawCollateral = esc.collateral;
+        if (rawCollateral < amount) {
+            if (collateralStrategy == address(0)) {
+                revert InsufficientCollateral(classId, remaining, esc.obligation);
+            }
+
+            uint256 shortfall = amount - rawCollateral;
+            uint256 shares = ICollateralStrategy(collateralStrategy).previewWithdraw(shortfall);
+            uint256 classShares = strategyShares[classId];
+            if (shares > classShares) revert InsufficientCollateral(classId, remaining, esc.obligation);
+
+            uint256 received = ICollateralStrategy(collateralStrategy).redeem(shares);
+            strategyShares[classId] = classShares - shares;
+            rawCollateral += received;
+            emit CollateralDisinvested(classId, received, shares);
+        }
+
+        esc.collateral = rawCollateral - amount;
         IERC20(esc.token).safeTransfer(esc.issuer, amount);
 
         emit CollateralWithdrawn(classId, esc.issuer, amount);
@@ -140,8 +228,9 @@ contract SettlementEscrow is AccessControl, ReentrancyGuard {
         if (!esc.registered) revert UnknownClass(classId);
 
         uint256 newObligation = esc.obligation + esc.payoutObligation;
-        if (esc.collateral < newObligation) {
-            revert InsufficientCollateral(classId, esc.collateral, newObligation);
+        uint256 backing = _backing(classId, esc);
+        if (backing < newObligation) {
+            revert InsufficientCollateral(classId, backing, newObligation);
         }
         esc.obligation = newObligation;
 
@@ -208,12 +297,58 @@ contract SettlementEscrow is AccessControl, ReentrancyGuard {
     ///         and monitored from outside.
     function isFullyBacked(bytes32 classId) external view returns (bool) {
         ClassEscrow storage esc = classEscrow[classId];
-        return esc.collateral >= esc.obligation;
+        return _backing(classId, esc) >= esc.obligation;
+    }
+
+    /// @notice Current collateral value for one offer, including its Aave
+    /// position. This is the number the frontend should show to a provider.
+    function totalBacking(bytes32 classId) external view returns (uint256) {
+        ClassEscrow storage esc = classEscrow[classId];
+        return _backing(classId, esc);
+    }
+
+    /// @notice Return all strategy-held collateral to the escrow in an admin
+    /// emergency unwind. Every class with shares must be named; otherwise a
+    /// partial unwind could silently strand another class's backing in Aave.
+    function emergencyUnwindStrategy(bytes32[] calldata classIds)
+        external
+        onlyRole(Roles.ADMIN_ROLE)
+        nonReentrant
+    {
+        if (collateralStrategy == address(0)) revert StrategyNotConfigured();
+
+        for (uint256 i = 0; i < classIds.length; i++) {
+            bytes32 classId = classIds[i];
+            ClassEscrow storage esc = classEscrow[classId];
+            if (!esc.registered) revert UnknownClass(classId);
+
+            uint256 shares = strategyShares[classId];
+            if (shares == 0) continue;
+
+            uint256 assets = ICollateralStrategy(collateralStrategy).redeem(shares);
+            strategyShares[classId] = 0;
+            esc.collateral += assets;
+            emit StrategyEmergencyUnwound(classId, assets, shares);
+        }
+
+        uint256 remainingShares = ICollateralStrategy(collateralStrategy).totalShares();
+        if (remainingShares != 0) revert IncompleteStrategyUnwind(remainingShares);
     }
 
     // ---------------------------------------------------------------------
     // Internals
     // ---------------------------------------------------------------------
+
+    function _backing(bytes32 classId, ClassEscrow storage esc) private view returns (uint256) {
+        uint256 strategyValue;
+        if (collateralStrategy != address(0)) {
+            uint256 shares = strategyShares[classId];
+            if (shares != 0) {
+                strategyValue = ICollateralStrategy(collateralStrategy).previewRedeem(shares);
+            }
+        }
+        return esc.collateral + strategyValue;
+    }
 
     function _liveDeposit(uint256 tokenId) private view returns (Deposit storage dep) {
         dep = deposits[tokenId];

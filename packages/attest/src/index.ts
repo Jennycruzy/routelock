@@ -31,3 +31,5 @@ export {
   EntitlementState,
   ENTITLEMENT_STATE_NAMES,
 } from "./abi.ts";
+
+export { makeRetirementSigner, SignatureRefused } from "./signer.ts";

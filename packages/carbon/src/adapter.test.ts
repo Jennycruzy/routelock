@@ -6,6 +6,7 @@ import { isPlaceholderRetirement, registryOf } from "./types.ts";
 
 const testnet = getChain("xlayer_testnet");
 const mainnet = getChain("xlayer_mainnet");
+const botchain = getChain("botchain_testnet");
 const SANDBOX = "cm_api_sandbox_example";
 
 /// Nothing here calls the network. What is under test is the shape the adapter
@@ -18,6 +19,13 @@ test("the adapter declares carbon, and does not claim to be active", () => {
 
   assert.equal(adapter.vertical, "carbon");
   assert.equal(adapter.status, "in_development");
+});
+
+test("BOT Chain cannot construct the REST carbon adapter either", () => {
+  assert.throws(
+    () => new CarbonmarkAdapter(botchain, SANDBOX),
+    /BOT Chain Testnet does not allow the carbon fulfilment lane/,
+  );
 });
 
 test("a retirement is irreversible, and the adapter says so", () => {

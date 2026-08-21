@@ -140,7 +140,10 @@ export const THRESHOLDS = {
   carbon: CARBON_CONFIDENCE_THRESHOLD,
 } as const;
 
-/// A read-only carbon adapter: real inventory, and physically unable to spend.
+/// A read-only carbon adapter for API discovery and review: real inventory, and
+/// physically unable to spend. Consumer checkout uses its separately guarded
+/// adapter instance in `consumer.ts`, where the configured retirement relayer
+/// signs the issuer-side payment.
 ///
 /// The `sign` callback throws. That is not a placeholder — it is the same
 /// asymmetry `e2e.ts` uses deliberately, and it means the code path a visitor
@@ -169,6 +172,11 @@ export interface CarbonRulingResponse {
   readonly verdictOrdinal: number;
   readonly ground: unknown;
   readonly proposal: unknown;
+  /// The exact decision object whose canonical hash is committed when the
+  /// consumer completes the on-chain activation. Returning it lets the
+  /// relayer reconstruct the typed `Approved` gate without inventing a second
+  /// decision representation.
+  readonly decision: Record<string, unknown>;
   readonly engineVersion: string;
   readonly model: string;
   readonly decisionHash: string;
@@ -257,6 +265,7 @@ export async function ruleOnCarbon(
     verdictOrdinal: verdict,
     ground,
     proposal,
+    decision,
     engineVersion: CARBON_ENGINE_VERSION,
     model,
     // The same hash the operator's run would commit, computed the same way.

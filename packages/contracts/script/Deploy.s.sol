@@ -9,6 +9,8 @@ import {IAccessControl} from "@openzeppelin/contracts/access/IAccessControl.sol"
 
 import {ServiceEntitlement} from "../src/ServiceEntitlement.sol";
 import {SettlementEscrow} from "../src/SettlementEscrow.sol";
+import {AaveYieldAdapter} from "../src/AaveYieldAdapter.sol";
+import {IAaveV3AToken, IAaveV3AddressesProvider} from "../src/IAaveV3.sol";
 import {EntitlementFactory} from "../src/EntitlementFactory.sol";
 import {ActivationRegistry} from "../src/ActivationRegistry.sol";
 import {FulfilmentReceipt} from "../src/FulfilmentReceipt.sol";
@@ -35,6 +37,7 @@ import {Roles} from "../src/RouteLockTypes.sol";
 ///
 /// Required environment:
 ///   ROUTELOCK_ADMIN       address that ends up holding ADMIN_ROLE
+///   ROUTELOCK_ISSUER      initial provider address registered on the new factory
 ///   ROUTELOCK_ORACLE      backend signer; writes carrier-sourced facts
 ///   ROUTELOCK_COMPLIANCE  compliance service; records decisions, moves no money
 contract Deploy is Script {
@@ -44,6 +47,9 @@ contract Deploy is Script {
     error UnexpectedDecimals(address token, uint8 got, uint8 expected);
     error WiringAssertionFailed(string what);
     error RolesNotSeparated(string what, address shared);
+    error AaveVenueUnreadable(address target);
+    error AavePoolMismatch(address providerPool, address expectedPool);
+    error AaveReserveMismatch(address expectedAsset, address liveUnderlying);
 
     /// @dev Every settlement token below was verified live over RPC on
     ///      2026-08-13 and matches `packages/chain/src/chains.ts`. The address is
@@ -54,6 +60,9 @@ contract Deploy is Script {
         string key;
         address settlementToken;
         string settlementSymbol;
+        address aavePool;
+        address aaveAddressesProvider;
+        address aaveAToken;
     }
 
     struct Deployment {
@@ -62,6 +71,7 @@ contract Deploy is Script {
         EntitlementFactory factory;
         ActivationRegistry registry;
         FulfilmentReceipt receipt;
+        AaveYieldAdapter yieldAdapter;
     }
 
     string internal constant ENTITLEMENT_NAME = "RouteLock Entitlement";
@@ -76,23 +86,34 @@ contract Deploy is Script {
         Target memory target = _target(block.chainid);
 
         address admin = _envAddress("ROUTELOCK_ADMIN");
+        address issuer = _envAddress("ROUTELOCK_ISSUER");
         address oracle = _envAddress("ROUTELOCK_ORACLE");
         address compliance = _envAddress("ROUTELOCK_COMPLIANCE");
 
         _assertRoleSeparation(block.chainid, admin, oracle, compliance);
         _assertSettlementToken(target.settlementToken);
+        _assertYieldVenue(target);
 
         address deployer = msg.sender;
 
         vm.startBroadcast();
-        Deployment memory d = _deployAndWire(deployer, oracle, compliance);
+        Deployment memory d = _deployAndWire(
+            deployer,
+            oracle,
+            compliance,
+            target.settlementToken,
+            target.aavePool,
+            target.aaveAToken
+        );
+        d.factory.registerIssuer(issuer);
         if (admin != deployer) {
             _handOverAdmin(d, deployer, admin);
         }
         vm.stopBroadcast();
 
         _assertWiring(d, admin, oracle, compliance);
-        _write(d, target, admin, oracle, compliance);
+        _require(d.factory.isRegisteredIssuer(issuer), "factory.issuer");
+        _write(d, target, admin, issuer, oracle, compliance);
     }
 
     // ---------------------------------------------------------------------
@@ -107,6 +128,19 @@ contract Deploy is Script {
         internal
         returns (Deployment memory d)
     {
+        return _deployAndWire(admin, oracle, compliance, address(0), address(0), address(0));
+    }
+
+    /// @dev The mainnet X Layer target passes its verified Aave reserve here.
+    /// Testnet and BOT targets pass zeroes and retain the raw-collateral path.
+    function _deployAndWire(
+        address admin,
+        address oracle,
+        address compliance,
+        address settlementToken,
+        address aavePool,
+        address aaveAToken
+    ) internal returns (Deployment memory d) {
         d.entitlement = new ServiceEntitlement(ENTITLEMENT_NAME, ENTITLEMENT_SYMBOL, admin);
         d.escrow = new SettlementEscrow(admin);
         d.factory = new EntitlementFactory(admin, address(d.entitlement), address(d.escrow));
@@ -125,6 +159,13 @@ contract Deploy is Script {
         d.registry.grantRole(Roles.ORACLE_ROLE, oracle);
 
         d.receipt.grantRole(Roles.ORACLE_ROLE, oracle);
+
+        if (aavePool != address(0)) {
+            d.yieldAdapter = new AaveYieldAdapter(
+                address(d.escrow), aavePool, settlementToken, aaveAToken
+            );
+            d.escrow.setCollateralStrategy(address(d.yieldAdapter));
+        }
     }
 
     /// @dev Move admin off the deployer key. The deployer renounces last, so a
@@ -244,6 +285,15 @@ contract Deploy is Script {
         _require(d.registry.hasRole(Roles.ORACLE_ROLE, oracle), "registry.oracle");
         _require(d.receipt.hasRole(Roles.ORACLE_ROLE, oracle), "receipt.oracle");
 
+        if (address(d.yieldAdapter) != address(0)) {
+            _require(
+                d.escrow.collateralStrategy() == address(d.yieldAdapter),
+                "escrow.yieldAdapter"
+            );
+            _require(d.yieldAdapter.escrow() == address(d.escrow), "yieldAdapter.escrow");
+            _require(d.yieldAdapter.asset() != address(0), "yieldAdapter.asset");
+        }
+
         _require(address(d.factory.entitlement()) == address(d.entitlement), "factory.entitlement");
         _require(address(d.factory.escrow()) == address(d.escrow), "factory.escrow");
         _require(address(d.registry.entitlement()) == address(d.entitlement), "registry.entitlement");
@@ -288,6 +338,7 @@ contract Deploy is Script {
         Deployment memory d,
         Target memory target,
         address admin,
+        address issuer,
         address oracle,
         address compliance
     ) internal {
@@ -306,15 +357,49 @@ contract Deploy is Script {
         vm.serializeAddress(obj, "settlementToken", target.settlementToken);
         vm.serializeString(obj, "settlementSymbol", target.settlementSymbol);
         vm.serializeAddress(obj, "admin", admin);
+        vm.serializeAddress(obj, "issuer", issuer);
+        vm.serializeBool(obj, "permissionlessIssuers", true);
         vm.serializeAddress(obj, "oracle", oracle);
         vm.serializeAddress(obj, "compliance", compliance);
         vm.serializeAddress(obj, "serviceEntitlement", address(d.entitlement));
         vm.serializeAddress(obj, "settlementEscrow", address(d.escrow));
         vm.serializeAddress(obj, "entitlementFactory", address(d.factory));
         vm.serializeAddress(obj, "activationRegistry", address(d.registry));
+        vm.serializeAddress(obj, "aaveYieldAdapter", address(d.yieldAdapter));
         string memory json = vm.serializeAddress(obj, "fulfilmentReceipt", address(d.receipt));
 
         vm.writeJson(json, string.concat("../../deployments/", target.key, ".json"));
+    }
+
+    /// @notice Confirm the venue and the specific reserve before any new
+    /// escrow is deployed. Aave being present is not enough: the provider,
+    /// pool and aToken must all agree on RouteLock's settlement asset.
+    function _assertYieldVenue(Target memory target) internal view {
+        if (target.aavePool == address(0)) return;
+
+        if (target.aaveAddressesProvider.code.length == 0) {
+            revert AaveVenueUnreadable(target.aaveAddressesProvider);
+        }
+        if (target.aavePool.code.length == 0) revert AaveVenueUnreadable(target.aavePool);
+        if (target.aaveAToken.code.length == 0) revert AaveVenueUnreadable(target.aaveAToken);
+
+        address livePool;
+        try IAaveV3AddressesProvider(target.aaveAddressesProvider).getPool() returns (address pool) {
+            livePool = pool;
+        } catch {
+            revert AaveVenueUnreadable(target.aaveAddressesProvider);
+        }
+        if (livePool != target.aavePool) revert AavePoolMismatch(livePool, target.aavePool);
+
+        address underlying;
+        try IAaveV3AToken(target.aaveAToken).UNDERLYING_ASSET_ADDRESS() returns (address asset) {
+            underlying = asset;
+        } catch {
+            revert AaveVenueUnreadable(target.aaveAToken);
+        }
+        if (underlying != target.settlementToken) {
+            revert AaveReserveMismatch(target.settlementToken, underlying);
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -329,7 +414,10 @@ contract Deploy is Script {
             return Target({
                 key: "xlayer_testnet",
                 settlementToken: 0x9e29b3AaDa05Bf2D2c827Af80Bd28Dc0b9b4FB0c,
-                settlementSymbol: unicode"USD₮0"
+                settlementSymbol: unicode"USD₮0",
+                aavePool: address(0),
+                aaveAddressesProvider: address(0),
+                aaveAToken: address(0)
             });
         }
         if (chainId == 196) {
@@ -343,21 +431,30 @@ contract Deploy is Script {
             return Target({
                 key: "xlayer_mainnet",
                 settlementToken: 0x779Ded0c9e1022225f8E0630b35a9b54bE713736,
-                settlementSymbol: unicode"USD₮0"
+                settlementSymbol: unicode"USD₮0",
+                aavePool: 0xE3F3Caefdd7180F884c01E57f65Df979Af84f116,
+                aaveAddressesProvider: 0xdFf435BCcf782f11187D3a4454d96702eD78e092,
+                aaveAToken: 0xF356ae412dB5df43BD3a10746f7ad4e1C4De4297
             });
         }
         if (chainId == 968) {
             return Target({
                 key: "botchain_testnet",
                 settlementToken: 0x75edC9335175Fc0552D51D48439F229c10420fe3,
-                settlementSymbol: "USDT"
+                settlementSymbol: "USDT",
+                aavePool: address(0),
+                aaveAddressesProvider: address(0),
+                aaveAToken: address(0)
             });
         }
         if (chainId == 677) {
             return Target({
                 key: "botchain_mainnet",
                 settlementToken: 0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C,
-                settlementSymbol: "USDT"
+                settlementSymbol: "USDT",
+                aavePool: address(0),
+                aaveAddressesProvider: address(0),
+                aaveAToken: address(0)
             });
         }
         revert UnverifiedChain(chainId);

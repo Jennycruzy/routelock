@@ -1,0 +1,25 @@
+[Unit]
+Description=RouteLock BOT Chain build API and web application
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/routelock
+Environment=ROUTELOCK_API_PORT=8789
+Environment=ROUTELOCK_API_HOST=127.0.0.1
+Environment=ROUTELOCK_CHAIN=botchain_testnet
+Environment=ROUTELOCK_WEB_ROOT=/root/routelock/apps/web/public/botchain
+Environment=ROUTELOCK_WEB_INDEX=index.html
+Environment=ROUTELOCK_DATA_DIR=/root/routelock/data/botchain
+Environment=ROUTELOCK_SERVED_LEDGER=/root/routelock/data/botchain/served-inference.jsonl
+Environment=ROUTELOCK_RETIREMENTS_LEDGER=/root/routelock/data/botchain/retirements.jsonl
+ExecStart=/usr/local/bin/pnpm --filter @routelock/api start
+Restart=always
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

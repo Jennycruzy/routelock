@@ -1,10 +1,11 @@
 /// The API's view of the chain: read-only, and structurally so.
 ///
-/// **This process holds no key and constructs no wallet.** Every value it
-/// serves comes from `eth_call` or `eth_getLogs` against a real deployment, and
-/// every state change in RouteLock is made by an operator at a terminal, never
-/// by an HTTP request. A judge driving the frontend is reading a chain, not
-/// asking a server to sign for them.
+/// The state reader holds no key and constructs no wallet. Every value it serves
+/// comes from `eth_call` or `eth_getLogs` against a real deployment. The
+/// optional consumer service is the only API component allowed to use the
+/// deployment's narrowly-scoped compliance/oracle identities. The browser
+/// signs only its X Layer entitlement transactions; the configured retirement
+/// relayer signs the issuer-side Base payment.
 ///
 /// That is not a convention to be remembered — `no-signing.test.ts` reads this
 /// package's own source and fails if a signing import appears anywhere in it.
@@ -30,6 +31,13 @@ export interface Deployment {
   readonly fulfilmentReceipt: Address;
   readonly settlementToken: Address;
   readonly settlementSymbol: string;
+  /** Provider registered by the fresh deployment script; absent on legacy records. */
+  readonly issuer?: Address;
+  /** Fresh factories let any wallet create its first class and auto-register. */
+  readonly permissionlessIssuers?: boolean;
+  /** Present only in the strategy-aware deployment; absent on the original
+   * raw-collateral deployment already live on X Layer. */
+  readonly aaveYieldAdapter?: Address;
   readonly admin: Address;
   readonly oracle: Address;
   readonly compliance: Address;

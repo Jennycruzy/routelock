@@ -66,7 +66,7 @@ fi
 RPC="${!RPC_VAR:-}"
 [ -n "$RPC" ] || { echo "FATAL: $RPC_VAR is not set in .env" >&2; exit 1; }
 
-for v in ROUTELOCK_ADMIN ROUTELOCK_ORACLE ROUTELOCK_COMPLIANCE; do
+for v in ROUTELOCK_ADMIN ROUTELOCK_ISSUER ROUTELOCK_ORACLE ROUTELOCK_COMPLIANCE; do
   [ -n "${!v:-}" ] || { echo "FATAL: $v is not set in .env" >&2; exit 1; }
 done
 
@@ -89,6 +89,7 @@ fi
 echo "chain:      $CHAIN (id $ACTUAL, $NET)"
 echo "rpc:        $RPC"
 echo "admin:      $ROUTELOCK_ADMIN"
+echo "issuer:     $ROUTELOCK_ISSUER"
 echo "oracle:     $ROUTELOCK_ORACLE"
 echo "compliance: $ROUTELOCK_COMPLIANCE"
 echo "deployer:   keystore account '$ACCOUNT'"

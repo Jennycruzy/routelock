@@ -40,3 +40,19 @@ export function approve<TOrder, TDecision extends { readonly verdict: Verdict }>
     decisionHash: canonicalHash(decision),
   } as Approved<TOrder>;
 }
+
+/// Re-open an already-approved order after a process restart.
+///
+/// This is only for recovery after the exact decision hash has been read from
+/// an Activated on-chain entitlement. It does not assess or approve a new
+/// order; callers must prove that the chain already holds the approval before
+/// using the returned value to resume provider work.
+export function approveCommitted<TOrder>(
+  order: TOrder,
+  decisionHash: `0x${string}`,
+): Approved<TOrder> {
+  if (!/^0x[0-9a-fA-F]{64}$/.test(decisionHash)) {
+    throw new Error(`invalid committed decision hash ${decisionHash}`);
+  }
+  return { order, decisionHash } as Approved<TOrder>;
+}

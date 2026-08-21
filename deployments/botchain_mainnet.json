@@ -1,0 +1,18 @@
+{
+  "aaveYieldAdapter": "0x0000000000000000000000000000000000000000",
+  "activationRegistry": "0x1a338f7AA1577807E3C7d370230A72bA94c6c561",
+  "admin": "0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6",
+  "chain": "botchain_mainnet",
+  "chainId": 677,
+  "compliance": "0xA30D83117470c884fB3C35532d2a49Bc65B0922a",
+  "deployedAt": 1787323401,
+  "deployedAtBlock": 20452721,
+  "entitlementFactory": "0xb028Db801E0ACe18E16aa39BD30663E020D814ef",
+  "fulfilmentReceipt": "0x4d6897657434fca9dC674F7B1Ba523812F796761",
+  "issuer": "0x69eb1bAA26BffCD0fA9089aa2187F6Ca3e2A54f6",
+  "oracle": "0x25CE528149563c217167b9cE148604FEbeCC151e",
+  "serviceEntitlement": "0xC9bF75F4c0950bC5c53538A12Dc172C13a274dBe",
+  "settlementEscrow": "0xC47c81B384cb20D23B18dA760C8E5f4587Ab7997",
+  "settlementSymbol": "USDT",
+  "settlementToken": "0xaBabc7Ddc03e501d190C676BF3d92ef0e6e87a3C"
+}

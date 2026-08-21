@@ -150,9 +150,9 @@ function decodeAddress(hex: string): string {
  *
  * This exists because of what it found the first time it ran. Aave V3 launched
  * on X Layer in March 2026, which made "float idle collateral into Aave" look
- * like a wiring task. It is not: the market lists USD₮0 and RouteLock settles
- * mainnet in USDT, two different contracts, and Aave's reserve list does not
- * contain RouteLock's token at all.
+ * like a wiring task. The market and RouteLock now both use canonical USD₮0;
+ * the remaining distinction is whether a particular escrow deployment has
+ * actually wired the strategy.
  *
  * An announcement says a protocol is on a chain. It does not say the asset you
  * hold is listed on it, and that is the fact an adapter actually depends on.

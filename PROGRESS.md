@@ -1,7 +1,34 @@
-# PROGRESS
+# PROGRESS — RouteLock Agent / AI RWA
+
+RouteLock Agent is the product: AI checks a collateral-backed real-world
+service promise, records the decision, and gates settlement on provider proof.
+The current live lane is carbon retirement on X Layer; BOT Chain is the compute
+lane being completed.
 
 Running state of the build. Updated at the end of every session. This file
 reflects reality — including what is broken and what is untouched.
+
+## Current state — 21 August 2026
+
+- A fresh X Layer mainnet deployment with Aave and permissionless provider
+  onboarding is live and is now the API/frontend target. Its factory is
+  `0x31D6803f22b5447cd862bF3f108160f7aDb326ba`, escrow is
+  `0x8e7bB4133F73ae04e006116f0Fc7479A4Fe9030d`, and Aave adapter is
+  `0x78694f4DE40B6E443f70F0E1E204833Be6D28143`.
+- The fresh catalogue is empty because offers are not copied between
+  deployments. Any provider can create an offer and post USD₮0; the first offer
+  registers that wallet automatically. For a one-unit 0.1 USD₮0 offer, the
+  required backing is 0.1 USD₮0.
+- The previous raw-collateral offer and retirement proof remain historical
+  evidence on the old deployment; they were not migrated into the fresh
+  factory.
+- The customer catalog refresh bug after provider funding is fixed. The browser
+  now rereads the customer catalog after `postCollateral`, so the offer changes
+  from unavailable to selectable without relying on stale page state.
+- `AaveYieldAdapter` and strategy-aware escrow accounting are implemented and
+  deployed. The API reports `yield.enabled: true`, and the browser adopts the
+  fresh API-reported addresses. No collateral has been invested into Aave yet;
+  the provider offer must be created and backed first.
 
 ---
 
@@ -677,14 +704,23 @@ probed live, with a control call), `/api/fulfilment` (the retirement, re-verifie
 per request), `/api/carbon/inventory`, `/api/rule/hs`, `/api/rule/carbon`,
 `/api/replay/:tokenId`, `/api/budget`.
 
+The web surface is now explicitly two-sided. The landing page routes into a
+dedicated X Layer carbon page or BOT Chain compute page. Each page has a
+customer view and a provider view. X Layer provider controls read live offers
+and let any provider wallet create a class and post collateral; its first offer
+self-registers the wallet. BOT's
+provider view exposes the real lease-and-proof activation gate. The merchant
+API routes are `/api/merchant/capabilities`, `/api/merchant/catalog`,
+`/api/merchant/classes/:classId` and `/api/merchant/draft`; it never signs an
+provider transaction.
+
 Three decisions worth not re-litigating:
 
-- **The API holds no key and signs nothing**, and that is asserted structurally:
-  `no-signing.test.ts` reads the package's own source and fails if
-  `createWalletClient`, `privateKeyToAccount`, `writeContract`,
-  `COMPLIANCE_PRIVATE_KEY` or nine other symbols appear in code. A grep, not a
-  runtime check, because a runtime check can only fail once the dangerous code
-  exists and runs.
+- **The base API state reader holds no key and signs nothing.** The optional
+  consumer service uses only the deployment's narrowly scoped compliance and
+  oracle roles; the browser signs consumer transactions and Base payment
+  authorization. `no-signing.test.ts` still reads the consumer source and fails
+  if a payment-signing shortcut appears.
 - **A refusal returns 200.** `NEEDS_INFORMATION` and `REFUSED` are outcomes, so
   the only 4xx are a malformed request and — as `402` — an exhausted budget. The
   three verdict cards on the page are deliberately identical in size and weight;
@@ -947,9 +983,11 @@ the outputs — a post-hoc instrument applied to both arms, not a pre-registered
 test. It does not zero the baseline (4 of 15 rows, not 0), but it is a
 description of a change, not proof of one.
 
-### Role separation enforced, a resale market built, and the Aave question answered
+### Role separation enforced, a resale market built, and the Aave flow implemented
 
-Three items off the resume list, and the third one closed by not building it.
+The Aave strategy and permissionless provider onboarding are implemented,
+fork-tested, and deployed on mainnet. The remaining product step is creating
+and backing the first offer.
 
 **`ADMIN`/`ORACLE` separation is now a precondition, not a reminder.**
 `Deploy.s.sol` refuses a mainnet deploy (196, 677) where the two are the same
@@ -973,31 +1011,38 @@ A listing is a standing offer its own lifecycle can invalidate, and checking onl
 at listing time would let the payment leg run before the ERC-721 transfer
 reverted.
 
-**The `YieldAdapter` was not built, and the reason is the finding.** The resume
-list said to extend `verify:chains` before wiring anything. Doing that first is
-what caught it:
+**Aave was verified before it was wired.** `verify:chains` established the live
+X Layer reserve and the corrected USD₮0 settlement asset:
 
 | | |
 |---|---|
 | Aave V3 on X Layer mainnet | live, provider `getPool()` agrees with the pool |
 | Its stablecoin reserve | **USD₮0** `0x779Ded0c…` |
-| RouteLock's mainnet settlement | **USDT** `0x1E4a5963…` — ⛔ wrong, corrected below |
-| Ours in Aave's 9-reserve list | **absent** |
+| RouteLock's mainnet settlement | **USD₮0** `0x779Ded0c…` — the same asset |
+| USD₮0 in Aave's reserve | **present**, aToken `aXlrUSDT0` |
 | Aave on X Layer testnet | **not deployed** — `0x` at both addresses |
 
 Aave being on X Layer and RouteLock being able to float its collateral there are
-different claims, and only the first is true. Closing it needs a settlement
-change or a swap, and a swap is a different product with price risk the solvency
-invariant would then have to cover. There is also nowhere to rehearse it: Aave is
-mainnet-only on X Layer, where the deployer holds 0 USDT.
+different claims. The first is live; the second is now implemented in source
+with no swap because the reserve is USD₮0. The existing escrow address cannot be
+upgraded, so activation requires a fresh coordinated deployment rather than an
+in-place toggle.
+
+`AaveYieldAdapter.sol` supplies idle collateral and issues internal shares. The
+escrow values each class's shares against the adapter's current Aave assets,
+counts that value in mint/withdrawal solvency checks, and provides an all-class
+admin emergency unwind. Seven local strategy tests and a two-test X Layer fork
+rehearsal pass. The fork test reads live pool/provider/aToken state and deploys
+the new contracts only inside the disposable fork; it moves no live money.
 
 ⛔ **The trap for next time:** a protocol being deployed on a chain says nothing
 about whether the asset you hold is listed on it. Ask the chain about the pair,
-not about the protocol. `verify:chains` now does exactly that on every run,
-including cross-checking the `settlesInVenueAsset` claim against the two
-addresses it describes, so it cannot drift into a lie.
+not about the protocol. `verify:chains` continues to cross-check the
+`settlesInVenueAsset` claim against the addresses it describes. `Deploy.s.sol`
+now repeats the provider and aToken-underlying checks before it deploys the
+strategy-aware X Layer mainnet set.
 
-### ⛔ Correction: mainnet settled in the wrong token, and it produced a wrong finding
+### Historical correction: mainnet was once configured to the wrong token
 
 **X Layer mainnet settlement was `0x1E4a5963…` ("Tether USD", `USDT`). It is now
 `0x779Ded0c…` (`USD₮0`).** The first is X Layer's legacy bridged USDT, being
@@ -1015,12 +1060,12 @@ Verified before acting on it:
 X Layer **testnet** already settled in USD₮0 — the 1952 faucet dispenses it — so
 the two environments disagreed with each other for four days.
 
-**The finding this invalidated.** The entry above concluding "Aave does not list
-RouteLock's settlement token, so no yield adapter can be built without a swap"
-was wrong. Every `cast` reading behind it was correct; the config they were
-compared against was not. `settlesInVenueAsset` is now **true**, the adapter needs
-no swap, and what actually blocks it is that Aave is mainnet-only on X Layer so
-there is nowhere to rehearse.
+**This historical correction changed the implementation plan.** The old
+conclusion that no adapter could be built without a swap was wrong: every live
+reading was correct, but the settlement config being compared against it was
+wrong. The corrected `settlesInVenueAsset` value is **true**, so the adapter
+needs no swap. The remaining live step is the fresh coordinated deployment;
+the disposable fork rehearsal now exists and passes.
 
 ⛔ **Two traps, and the second is the expensive one:**
 
@@ -1093,5 +1138,75 @@ Anything funded for mainnet must be USD₮0 `0x779Ded0c…`.
 
 ### Next action
 
-Apply for BOT mainnet gas support, then deploy chain 677 and rerun the live
-verification/role checks on mainnet.
+Top up the Anthropic account used by the private compute key, then resume the
+BOT Chain testnet compute e2e from `HANDOFF.md`. Only after a real Akash lease
+and ingress proof are complete should BOT mainnet gas support and chain 677 be
+the next deployment step.
+
+### Compute checkpoint — 18 August 2026
+
+- The live BOT compute runner was exercised with the real Akash Console API,
+  official Console terms page, Anthropic model catalog, BOT RPC and GHCR image
+  registry. No mock bid, SDL, model response, provider or ingress URL was used.
+- `hello-world.yaml` is pinned to the live image digest
+  `sha256:2872578146c16a510f182e62bc1132ec38af4f70a38841c4642e76ae75da5bb1`;
+  the registry returned HTTP 200 and the SDL was checked against the digest,
+  port, CPU, memory and storage values.
+- The operator supplied Nigeria, authorized-deployer, over-18, eligibility and
+  lawful-use declarations. The strict decision gate returned
+  `NEEDS_INFORMATION` at confidence 0.80 on the last successful call and
+  correctly stopped before signer unlock, BOT transactions or Akash creation.
+- The final retry with the pinned digest and explicit eligibility facts was
+  rejected by Anthropic with HTTP 400 for insufficient credits before
+  inference. The compute ledger contains 4 recorded calls, estimated at
+  $0.1505 total; the private local cap is now 5, leaving one call after top-up.
+- **Resume:** top up the Anthropic account, then run the exact command in
+  `HANDOFF.md` §“Current resume point — BOT compute”. Do not delete the ledger,
+  raise the cap, rerun the carbon-shaped BOT smoke path, or unlock a keystore
+  manually before an `APPROVED` result.
+
+## Continuation — 20 August 2026
+
+- Re-ran the exact live BOT compute command after local validation: compute
+  tests pass 4/4, compliance tests pass 131/131, and the attest typecheck passes.
+- The real BOT RPC and Akash policy preflight passed. Anthropic again returned
+  HTTP 400 for insufficient credits before inference. The compute ledger remains
+  at 4 calls; no signer unlock, BOT transaction or Akash deployment occurred.
+- Hardened `compute-e2e.ts` against the public RPC's stale-read behavior: it now
+  retries the issuer's `claimable` balance, waits for the post-release class
+  obligation to clear before withdrawing collateral, and rechecks the final
+  escrow balance before declaring settlement complete.
+- Completed the consumer frontend wallet sequence: live capability/catalog
+  loading, allowance/approval, entitlement mint, attestation submission,
+  exact EIP-712 payment signing and provider/settlement rendering. The API
+  catalog was fixed to enumerate live minted class mappings because X Layer's
+  public RPC rejects historical log ranges above 100 blocks.
+- Verified `node --check apps/web/public/app.js`, API typecheck/tests, and the
+  live local API endpoints. At that testnet checkpoint, the catalog returned
+  four real classes, all unavailable because their collateral was already
+  withdrawn; the UI correctly kept checkout disabled while identifying the X
+  Layer carbon product itself as active. The current mainnet offer is documented
+  at the top of this file and is now backed for one retirement.
+- Aligned the judge-facing frontend and API around explicit lanes. X Layer
+  carbon is `active`; BOT Chain compute is `in_development`. BOT API mode now
+  boots without constructing a carbon adapter, reports live BOT contracts and
+  roles, and returns a clear lane error for carbon-only routes. The API's
+  `lanes` payload, README, handoff and page now use the same wording.
+- Fixed the oracle configuration mismatch: the consumer relayer accepts the
+  existing encrypted Foundry `routelock-oracle` account through
+  `ROUTELOCK_ORACLE_KEYSTORE_ACCOUNT` and unlocks it only when settlement needs
+  it. A raw `ROUTELOCK_ORACLE_PRIVATE_KEY` is optional, not required project
+  infrastructure.
+- Verified API runtime modes against X Layer testnet 1952, X Layer mainnet 196
+  (`checkoutEnabled: true` with the keystore account configured), and BOT Chain
+  testnet 968 (`compute.supported: true`).
+- Reworked the judge-facing page around the actual product story rather than
+  network selection: provider promise → RouteLock review → proof-backed payment.
+  X Layer mainnet is now the default live experience, with an explicit
+  `Start carbon retirement` action and a post-connection `Enter carbon
+  retirement` action. BOT has its own `Enter compute service` status action.
+- Removed the visible testnet/API/relayer explanation from the primary product
+  message. Testnet is now a secondary inspection option, and unfinished BOT
+  compute is clearly gated without looking like a missing or fake purchase.
+- **Next action remains:** top up the Anthropic account, then rerun the exact
+  command in `HANDOFF.md`. The cap remains 5; the ledger was not changed.

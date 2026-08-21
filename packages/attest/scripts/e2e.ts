@@ -48,7 +48,7 @@ import type { Account, Address, PublicClient, WalletClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
 import { CarbonmarkX402Adapter, RetirementLedger, capsFromEnv as retirementCaps } from "@routelock/carbon";
-import { getChain } from "@routelock/chain";
+import { assertVerticalAllowed, getChain } from "@routelock/chain";
 import {
   budgetCapsFromEnv,
   decideCarbon,
@@ -258,6 +258,9 @@ async function main(): Promise<void> {
 
   const chainKey = process.env.ROUTELOCK_CHAIN ?? "xlayer_testnet";
   const chain = getChain(chainKey);
+  // This script is the carbon lane. BOT Chain is reserved for the future
+  // compute e2e and must fail before any signer or state-changing call.
+  assertVerticalAllowed(chain, "carbon");
   const deployment = JSON.parse(
     readFileSync(fileURLToPath(new URL(`../../../deployments/${chainKey}.json`, import.meta.url)), "utf8"),
   ) as Deployment;

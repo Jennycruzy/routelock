@@ -3,190 +3,229 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RouteLock — a compliance engine that refuses</title>
-<meta name="description" content="Tokenised service obligations on X Layer, gated by an AI compliance engine that refuses when its confidence is insufficient. Every value on this page is read live from the chain.">
-<link rel="stylesheet" href="/app.css">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+<title>RouteLock Agent — AI for real-world service assets</title>
+<meta name="description" content="RouteLock Agent is an AI decision and proof layer for real-world services. Any provider wallet can publish a collateral-backed promise; payment moves only after proof.">
+    <link rel="stylesheet" href="/app.css?v=20260821-xlayer-agent-permissionless">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='12' y='12' width='76' height='76' rx='22' fill='%23131f1a'/><path d='M31 51h38M50 31v38' stroke='%23eb7162' stroke-width='7' stroke-linecap='round'/></svg>">
 </head>
 <body>
 
-<header class="top">
-  <div class="wrap">
-    <div class="brand">
-      <span class="lock">🔒</span>
-      <div>
-        <h1>RouteLock</h1>
-        <p class="tagline">A service provider's obligation, tokenised on X Layer and gated by a compliance engine that <strong>refuses when it is not sure</strong>.</p>
-      </div>
-    </div>
-    <div id="live" class="pills" aria-live="polite">
-      <span class="pill loading">reading the chain…</span>
-    </div>
+<header class="site-header">
+  <div class="shell nav-wrap">
+    <a class="brand" href="#top" aria-label="RouteLock home">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span>ROUTELOCK AGENT</span>
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="#agent">Agent</a>
+      <a href="#services">Services</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#live">What's live</a>
+    </nav>
+    <button id="wallet-button" class="button button-dark button-small" type="button">Connect wallet <span aria-hidden="true">↗</span></button>
   </div>
 </header>
 
-<main class="wrap">
-
-  <!-- ─────────────────────────────────────────────────────────────
-       The guarantee. First, because it is the only claim here that
-       cannot be made by asserting it.
-       ───────────────────────────────────────────────────────────── -->
-  <section id="guarantee-section">
-    <h2>1. The engine cannot move money — check it, don't take it</h2>
-    <p class="lede">
-      <code>SettlementEscrow</code> does not merely withhold <code>COMPLIANCE_ROLE</code> from the
-      compliance service. It <strong>reverts when anyone tries to grant it</strong>, including its own
-      admin. The two calls below run against the live deployment when this page loads: one that must
-      fail, and a control from the same caller that must succeed — because a revert on its own could
-      just mean a wrong address.
-    </p>
-    <div id="guarantee" class="probe-list">
-      <p class="muted">probing…</p>
-    </div>
-    <details id="roles-details">
-      <summary>The full role graph, re-read live <span id="roles-summary" class="muted"></span></summary>
-      <div id="roles"></div>
-    </details>
-  </section>
-
-  <!-- ─────────────────────────────────────────────────────────────
-       What was actually fulfilled. Second, because after the
-       guarantee this is the only other thing on the page that a
-       stranger can check at a third party rather than here.
-       ───────────────────────────────────────────────────────────── -->
-  <section id="fulfilment-section">
-    <h2>2. What has actually been fulfilled</h2>
-    <p class="lede">
-      An adapter counts as active here only when it is deployed <em>and</em> one real fulfilment
-      exists with a proof URL a stranger can open. Below is every retirement this system has
-      performed, re-verified against the provider when you loaded this page — not read from a stored
-      copy. The certificate lives at the registry that issued the credit, so it is checkable without
-      trusting anything here.
-    </p>
-    <div id="fulfilment">
-      <p class="muted">reading the ledger and re-verifying…</p>
-    </div>
-  </section>
-
-  <!-- ─────────────────────────────────────────────────────────────
-       Ruling on the visitor's own goods. No route is hardcoded:
-       origin and destination are free text, anywhere to anywhere.
-       ───────────────────────────────────────────────────────────── -->
-  <section id="hs-section">
-    <h2>3. Rule on your own goods</h2>
-    <p class="lede">
-      Real inference against the HS nomenclature, right now. Describe anything, from anywhere to
-      anywhere. The model proposes a classification and a confidence; <strong>deterministic code
-      decides</strong> the verdict. A refusal and a request for more information are shown exactly as
-      prominently as an approval, because they are outcomes and not errors.
-    </p>
-
-    <form id="hs-form" class="card form">
-      <label class="full">
-        <span>What are the goods?</span>
-        <textarea id="hs-description" rows="3" maxlength="600" required
-          placeholder="e.g. Lithium-ion power bank, 20000 mAh, aluminium casing, for retail sale"></textarea>
-      </label>
-      <label>
-        <span>Origin</span>
-        <input id="hs-origin" required maxlength="2" size="2" placeholder="NG" autocapitalize="characters">
-      </label>
-      <label>
-        <span>Destination</span>
-        <input id="hs-destination" required maxlength="2" size="2" placeholder="GB" autocapitalize="characters">
-      </label>
-      <label>
-        <span>Declared value</span>
-        <input id="hs-value" type="number" min="1" step="any" value="120">
-      </label>
-      <label>
-        <span>Currency</span>
-        <input id="hs-currency" maxlength="3" size="3" value="USD" autocapitalize="characters">
-      </label>
-      <label>
-        <span>Weight (kg)</span>
-        <input id="hs-weight" type="number" min="0.01" step="any" value="0.6">
-      </label>
-      <div class="actions full">
-        <button type="submit" id="hs-submit">Rule on it</button>
-        <span class="muted small">Two ISO country codes. Same country in both fields is a domestic
-          lane and the confidence bar it has to clear is lower.</span>
+<main id="top">
+  <section id="agent" class="hero shell landing-view">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="eyebrow-line"></span> AI RWA / ROUTELOCK AGENT</div>
+      <h1>RouteLock Agent.<br><em>AI for real-world promises.</em></h1>
+      <p class="hero-lede">RouteLock Agent is the AI decision and proof layer for real-world services. Any provider wallet can publish a collateral-backed promise; the agent checks the request, records the decision, and refuses when the evidence is not strong enough. It never controls customer funds: payment moves only after the provider's work is proved.</p>
+      <div class="agent-brief">
+        <div class="agent-brief-head"><span>WHAT THE AGENT DOES</span><span>AI RWA TRACK</span></div>
+        <strong>Anyone can publish a provider promise. The agent connects it to a service that can be checked in the real world.</strong>
+        <div class="agent-brief-grid"><span><b>CHECK</b> Reads the request and live provider evidence.</span><span><b>DECIDE</b> Approves, asks for information or refuses.</span><span><b>PROVE</b> Keeps payment behind provider proof.</span></div>
       </div>
-    </form>
-
-    <div id="hs-result"></div>
-  </section>
-
-  <!-- ─────────────────────────────────────────────────────────────
-       Carbon: the vertical that leads, because its fulfilment proof
-       is a public certificate rather than a parcel only two parties
-       can see.
-       ───────────────────────────────────────────────────────────── -->
-  <section id="carbon-section">
-    <h2>4. Rule on a real carbon credit</h2>
-    <p class="lede">
-      The obligation RouteLock tokenises here is not the credit — the credit is already a real-world
-      asset in a registry. It is the <em>obligation to retire one</em>, which is the unenforceable
-      part: offsets sold at checkout are paid for immediately and retired later, in bulk, if at all.
-      The inventory below is read live from the Klima x402 endpoint, which needs no API key and no
-      account. <strong>Pricing and discovery cost nothing; nothing on this page can spend or
-      retire.</strong>
-    </p>
-    <div class="actions">
-      <button id="carbon-load">Load live inventory</button>
-      <span id="carbon-status" class="muted small"></span>
+      <div class="hero-actions">
+        <a class="button button-dark" href="#services">Use the agent <span aria-hidden="true">↓</span></a>
+        <button id="hero-connect" class="text-link text-button" type="button">Connect wallet <span aria-hidden="true">↗</span></button>
+      </div>
+      <div id="wallet-status" class="hero-note"><span class="check-circle">✓</span> Your wallet is not connected.</div>
     </div>
-    <div id="carbon-inventory"></div>
-    <div id="carbon-result"></div>
+
+    <div class="hero-art" aria-label="RouteLock service selection">
+      <div class="art-grid"></div>
+      <div class="network-orbit orbit-one"></div>
+      <div class="network-orbit orbit-two"></div>
+      <div class="network-line line-one"><span></span></div>
+      <div class="network-line line-two"><span></span></div>
+      <div class="hero-console">
+        <div class="console-top"><span>ROUTELOCK AGENT</span><span class="console-live"><i></i> ACTIVE</span></div>
+        <div class="console-title">AI decision.<br><em>RWA proof.</em></div>
+        <div class="console-divider"></div>
+      <div class="console-network"><span class="network-signal"></span><span id="current-network">Carbon retirement</span><strong>↗</strong></div>
+      </div>
+      <button type="button" class="network-badge badge-x" data-select-network="xlayer_mainnet" aria-label="Select X Layer Mainnet"><b>XL</b><span>X LAYER</span></button>
+      <div class="art-caption">PROMISE IN.<br>PROOF OUT.</div>
+    </div>
   </section>
 
-  <!-- ─────────────────────────────────────────────────────────────
-       The audit trail. This is the BOT Chain criterion and the
-       "don't trust us" half of the pitch in one endpoint.
-       ───────────────────────────────────────────────────────────── -->
-  <section id="replay-section">
-    <h2>5. Replay any decision on chain</h2>
-    <p class="lede">
-      <code>ActivationRegistry</code> stores five commitments, the engine version, the verdict and
-      the attempt count — and no plaintext, ever. Enter a token id to read what the chain holds. Every
-      response carries the <code>cast</code> command that reproduces it without this server.
-    </p>
-    <form id="replay-form" class="inline-form">
-      <label>
-        <span>Token id</span>
-        <input id="replay-token" type="number" min="0" step="1" value="4" required>
-      </label>
-      <button type="submit">Read the chain</button>
-    </form>
-    <div id="replay-result"></div>
+  <section id="services" class="networks-section section-pad landing-view">
+    <div class="shell">
+      <div class="section-kicker">01 / AGENT SERVICE LANES</div>
+      <div class="section-heading-row">
+        <h2>Give the agent<br><em>a real service.</em></h2>
+        <p class="body-copy">The real-world asset is a provider's collateral-backed promise to perform. Any wallet can publish the first offer; RouteLock Agent checks the customer request before payment and records proof after work. Choose the service lane you want to inspect.</p>
+      </div>
+
+      <div class="network-cards">
+        <article class="network-card network-card-xlayer" data-network-card="xlayer">
+          <div class="card-head"><span class="card-label"><i class="status-dot live"></i> CARBON RETIREMENT</span><span class="card-state">LIVE</span></div>
+          <h3>A carbon promise with a public certificate.</h3>
+          <p>A real carbon credit is retired for the request. RouteLock records the promise, checks the request, and links the provider's certificate to the completed service.</p>
+          <button type="button" class="button button-dark network-connect" data-service="xlayer" data-connect-network="xlayer_mainnet">Open carbon retirement <span aria-hidden="true">↗</span></button>
+          <div class="card-foot"><span>Live service on X Layer</span><span>Payment: USD₮0</span></div>
+        </article>
+
+      </div>
+      <p id="network-message" class="network-message" aria-live="polite"></p>
+    </div>
   </section>
 
-  <section id="honesty">
-    <h2>What this page does not do</h2>
-    <p class="lede">
-      Stated here rather than discovered later, because a demo that overstates itself is worse than a
-      smaller one that does not.
-    </p>
-    <ul class="plain" id="honesty-list">
-      <li><strong>Nothing here signs anything.</strong> This server holds no key. Minting, committing
-        a decision and retiring a credit are operator actions run from a terminal, each with its own
-        explicit opt-in.</li>
-      <li><strong>A ruling you request is not committed on chain.</strong> Writing to the registry
-        needs <code>COMPLIANCE_ROLE</code>, held by a key this process does not have. The decisions
-        that <em>are</em> on chain are readable in section 5.</li>
-      <li><strong>Model calls are capped and rate limited</strong>, from a ledger separate from the
-        operator's. When the cap is reached this API answers <code>402</code> and says so rather than
-        quietly degrading.</li>
-      <li id="honesty-budget" class="muted">budget: reading…</li>
-    </ul>
+  <section id="xlayer-view" class="consumer-section section-pad service-view" hidden>
+    <div class="shell">
+      <div class="service-toolbar"><a href="#services">← Back to services</a><span>LIVE X LAYER / CARBON RETIREMENT</span></div>
+      <div class="section-kicker">02 / TRY A LIVE SERVICE</div>
+      <div class="section-heading-row">
+        <h2>From a request<br><em>to proof.</em></h2>
+        <p class="body-copy">The live carbon service is available when any provider has published and backed an offer. RouteLock Agent checks the request first, then the customer wallet approves the X Layer service steps. The RouteLock relayer pays the issuer-side retirement on Base, so customers do not need Base USDC.</p>
+      </div>
+
+      <div class="service-switch" role="tablist" aria-label="Choose your role">
+        <button type="button" class="service-tab active" data-service-role="xlayer" data-role="buyer">I need carbon retired</button>
+        <button type="button" class="service-tab" data-service-role="xlayer" data-role="merchant">I provide carbon retirement</button>
+      </div>
+
+      <div id="xlayer-buyer-view" class="role-view">
+        <div id="consumer-capability" class="consumer-capability" aria-live="polite">
+          <span class="loading-dot"></span> Checking the service status…
+        </div>
+
+        <div class="consumer-grid">
+          <div class="consumer-panel consumer-carbon-panel">
+            <div class="panel-head"><span class="card-label"><i class="status-dot live"></i> CARBON RETIREMENT</span><span id="carbon-panel-state" class="panel-state">LOADING</span></div>
+            <h3>Retire a real carbon credit.</h3>
+            <p class="panel-copy">Choose a backed service offer and a live carbon credit. RouteLock Agent reviews the request before your wallet approves the X Layer entitlement and request. The RouteLock relayer handles the issuer-side Base retirement and links its public certificate to the finished service.</p>
+            <div id="carbon-form" class="consumer-form" hidden>
+              <label>Service offer<select id="offering-select"></select></label>
+              <label>Carbon credit<select id="carbon-class-select"></select></label>
+              <div class="form-row">
+                <label>Amount in tonnes<input id="carbon-tonnes" type="number" min="0.001" max="1" step="0.001" value="0.001"></label>
+                <label>Name on the certificate<input id="carbon-beneficiary" type="text" maxlength="120" value="RouteLock consumer"></label>
+              </div>
+              <label>Note for the certificate<input id="carbon-message" type="text" maxlength="180" value="RouteLock carbon retirement"></label>
+              <button id="carbon-start" type="button" class="button button-dark">Review this request <span aria-hidden="true">↗</span></button>
+            </div>
+            <div id="carbon-empty" class="empty-state">Checking for a live carbon offer…</div>
+            <div id="consumer-order" class="consumer-order" hidden></div>
+          </div>
+        </div>
+        <p id="consumer-message" class="network-message" aria-live="polite"></p>
+      </div>
+
+      <div id="xlayer-merchant-view" class="role-view" hidden>
+        <div id="merchant-capability" class="consumer-capability warning" aria-live="polite"><span class="loading-dot"></span> Checking provider controls…</div>
+        <div class="merchant-intro"><div><div class="section-kicker">PROVIDER SIDE / PERMISSIONLESS</div><h3>Publish and back your carbon offer.</h3></div><p>Connect any provider wallet. Your first offer registers that wallet automatically; no admin approval is required. RouteLock Agent reads the live offer, while your wallet approves every offer and collateral action.</p></div>
+        <div class="merchant-grid">
+          <div class="merchant-panel">
+            <div class="panel-head"><span class="card-label"><i class="status-dot live"></i> YOUR LIVE OFFERS</span><span id="merchant-issuer-state" class="panel-state">CONNECT WALLET</span></div>
+            <div id="merchant-offers" class="merchant-offers"><p class="empty-state">Connect the provider wallet to read its offers.</p></div>
+            <div class="merchant-fund-row">
+              <label>Offer to fund<select id="merchant-class-select"><option value="">No offer loaded</option></select></label>
+              <label>Collateral amount<input id="merchant-collateral" type="text" inputmode="decimal" value="0.10" placeholder="0.10"></label>
+              <button id="merchant-fund" type="button" class="button button-dark">Back this offer <span aria-hidden="true">↗</span></button>
+            </div>
+            <div id="merchant-yield" class="merchant-yield" aria-live="polite"><span class="loading-dot"></span> Checking whether idle backing can earn yield…</div>
+            <div class="merchant-fund-row">
+              <label>Amount to put to work<input id="merchant-invest-amount" type="text" inputmode="decimal" value="0.10" placeholder="0.10"></label>
+              <span></span>
+              <button id="merchant-invest" type="button" class="button button-dark" disabled>Put backing to work <span aria-hidden="true">↗</span></button>
+            </div>
+            <div class="merchant-fund-row">
+              <label>Free backing to withdraw<input id="merchant-withdraw-amount" type="text" inputmode="decimal" value="0.10" placeholder="0.10"></label>
+              <span></span>
+              <button id="merchant-withdraw" type="button" class="button button-ghost" disabled>Withdraw free backing <span aria-hidden="true">↗</span></button>
+            </div>
+          </div>
+          <div class="merchant-panel">
+            <div class="panel-head"><span class="card-label"><i class="status-dot live"></i> NEW OFFER</span><span class="panel-state">X LAYER</span></div>
+            <h3>Create a service promise.</h3>
+            <form id="merchant-offer-form" class="consumer-form">
+              <label>What are you offering?<input id="merchant-offer-label" type="text" maxlength="120" value="Carbon retirement service"></label>
+              <label>What will you do for the customer?<textarea id="merchant-offer-terms" rows="3" maxlength="800">Retire the selected carbon credit and provide its public certificate.</textarea></label>
+              <div class="form-row">
+                <label>Customer price<input id="merchant-price" type="text" inputmode="decimal" value="0.10"></label>
+                <label>Promise backing<input id="merchant-payout" type="text" inputmode="decimal" value="0.10"></label>
+              </div>
+              <div class="form-row">
+                <label>Units available<input id="merchant-supply" type="number" min="1" step="1" value="5"></label>
+                <label>Valid for days<input id="merchant-valid-days" type="number" min="1" step="1" value="30"></label>
+              </div>
+              <label>Initial collateral<input id="merchant-initial-collateral" type="text" inputmode="decimal" value="0.50"></label>
+              <button id="merchant-create" type="submit" class="button button-dark">Create and back offer <span aria-hidden="true">↗</span></button>
+            </form>
+          </div>
+        </div>
+        <p id="merchant-message" class="network-message" aria-live="polite"></p>
+      </div>
+    </div>
   </section>
 
+  <section id="how-it-works" class="simple-section section-pad landing-view">
+    <div class="shell">
+      <div class="section-kicker">03 / HOW A SERVICE WORKS</div>
+      <div class="section-heading-row">
+        <h2>One service.<br><em>One clear journey.</em></h2>
+        <p class="body-copy">Any provider can set the offer and put money behind the promise. A customer chooses a live carbon credit. RouteLock Agent checks the request, then records the public retirement proof before the provider is paid.</p>
+      </div>
+      <div class="lane-how">
+        <article class="how-lane how-lane-carbon">
+          <div class="how-lane-head"><span><i class="status-dot live"></i> X LAYER / CARBON RETIREMENT</span><strong>LIVE</strong></div>
+          <h3>Retire a real carbon credit.</h3>
+          <div class="how-steps">
+            <div class="how-step"><span>01</span><div><strong>Any provider backs the offer</strong><p>Any wallet publishes the price, terms and available supply; its first offer registers it automatically. The provider then deposits enough USD₮0 into RouteLock to cover every promise.</p></div></div>
+            <div class="how-step"><span>02</span><div><strong>Customer chooses the credit</strong><p>The customer connects a wallet, chooses a live credit and submits their name and retirement message. No payment moves before the request is checked.</p></div></div>
+            <div class="how-step"><span>03</span><div><strong>The AI agent checks and retires</strong><p>RouteLock Agent reviews the request against live carbon inventory, provider terms and backing. If approved, the issuer-side relay retires the credit and receives a public certificate.</p></div></div>
+            <div class="how-step"><span>04</span><div><strong>X Layer records the result</strong><p>The certificate and payment result are written into the service record. The provider is paid only after that proof is present; otherwise the customer is protected.</p></div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="live" class="live-section section-pad landing-view">
+    <div class="shell">
+      <div class="section-kicker light-kicker">04 / WHAT'S LIVE <span id="live-read-at">READING NOW</span></div>
+      <div class="live-heading"><h2>What you can<br><em>verify today.</em></h2><p>This build serves the X Layer carbon retirement product and its live proof path.</p></div>
+      <div class="live-grid">
+        <div class="live-card live-card-primary"><div class="live-card-head"><span><i class="status-dot live"></i> CARBON RETIREMENT</span><span>LIVE</span></div><strong>Real work, freshness checked</strong><p>Public certificates can be opened and checked. RouteLock labels historical records stale instead of presenting them as current proof.</p><a class="live-link" href="#services">See the carbon service <span aria-hidden="true">↗</span></a></div>
+      </div>
+      <div id="live-details" class="live-details"><p class="loading-copy">Checking current service status…</p></div>
+    </div>
+  </section>
+
+  <section class="plain-footer-section section-pad landing-view">
+    <div class="shell plain-footer-grid"><div><div class="section-kicker">05 / THE POINT</div><h2>Make the promise<br><em>easy to check.</em></h2></div><div><p class="body-copy">RouteLock makes a provider's promise visible before payment, checks the request before work starts, and records what actually happened afterwards.</p><button type="button" class="button button-dark" id="footer-connect">Connect wallet <span aria-hidden="true">↗</span></button></div></div>
+  </section>
 </main>
 
-<footer class="wrap">
-  <p id="foot" class="muted small"></p>
-</footer>
+<footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><span></span></span><span>ROUTELOCK / X LAYER</span></a><p id="foot" class="muted small">Choose a service to begin.</p><a href="#top" class="back-top">Back to top ↑</a></div></footer>
 
-<script src="/app.js"></script>
+<div id="wallet-modal" class="modal-backdrop" hidden>
+  <div class="wallet-modal" role="dialog" aria-modal="true" aria-labelledby="wallet-title">
+    <button id="wallet-close" class="modal-close" type="button" aria-label="Close">×</button>
+    <div class="section-kicker">CONNECT WALLET</div>
+    <h2 id="wallet-title">Choose a wallet.</h2>
+    <p class="modal-copy">Connect your wallet when you are ready to approve the X Layer service steps. RouteLock never receives your private key. Your wallet shows the X Layer approvals; the RouteLock relayer handles the issuer-side Base retirement.</p>
+    <div class="wallet-options">
+      <button type="button" class="wallet-option" data-wallet-provider="metamask"><span class="wallet-logo fox">M</span><span><strong>MetaMask</strong><small>Browser wallet</small></span><b>↗</b></button>
+      <button type="button" class="wallet-option" data-wallet-provider="okx"><span class="wallet-logo okx">OK</span><span><strong>OKX Wallet</strong><small>Browser wallet</small></span><b>↗</b></button>
+    </div>
+    <p id="wallet-modal-message" class="network-message" aria-live="polite"></p>
+  </div>
+</div>
+
+    <script src="/app.js?v=20260821-xlayer-agent-permissionless"></script>
 </body>
 </html>

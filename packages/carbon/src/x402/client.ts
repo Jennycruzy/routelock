@@ -47,7 +47,7 @@ export interface QuoteRequest {
 }
 
 export interface PrepareRequest extends QuoteRequest {
-  /// The wallet that signs and pays. Must hold USDC on Base; **needs no ETH**,
+  /// The account that signs and pays. It must hold USDC on Base; **needs no ETH**,
   /// which is the whole reason the relay path was chosen over self-submit.
   readonly from: string;
   /// Who the retirement is credited to on-chain. Required — the endpoint

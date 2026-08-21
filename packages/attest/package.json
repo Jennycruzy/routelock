@@ -9,6 +9,7 @@
     "test": "tsx --test src/*.test.ts",
     "verify:registry": "tsx scripts/verify-registry.ts",
     "e2e": "tsx scripts/e2e.ts",
+    "compute:e2e": "tsx scripts/compute-e2e.ts",
     "recover": "tsx scripts/recover-escrow.ts"
   },
   "dependencies": {
@@ -16,7 +17,8 @@
     "@routelock/compliance": "workspace:*",
     "@routelock/fulfilment": "workspace:*",
     "viem": "^2.21.0",
-    "@routelock/carbon": "workspace:*"
+    "@routelock/carbon": "workspace:*",
+    "@routelock/compute": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.19.2",

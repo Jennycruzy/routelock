@@ -19,6 +19,7 @@ import { creditedAsRequested, RETRYABLE_CODES, X402_HOST, X402Error } from "./ty
 
 const testnet = getChain("xlayer_testnet");
 const mainnet = getChain("xlayer_mainnet");
+const botchain = getChain("botchain_testnet");
 const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 const SIGNATURE = `0x${"ab".repeat(65)}`;
 const NONCE = `0x${"40".repeat(32)}`;
@@ -131,13 +132,20 @@ function build(
   return { adapter, ledger, seen };
 }
 
-test("the adapter declares carbon and does not claim to be active", () => {
+test("the adapter declares the active X Layer carbon lane", () => {
   // docs/adapters.md is authoritative; this is its code-side copy. It moves to
   // "active" only once a real retirement has produced a public certificate.
   const { adapter } = build({});
   assert.equal(adapter.vertical, "carbon");
-  assert.equal(adapter.status, "in_development");
+  assert.equal(adapter.status, "active");
   assert.equal(adapter.reversible, false);
+});
+
+test("BOT Chain cannot construct the carbon adapter", () => {
+  assert.throws(
+    () => build({}, { chain: botchain }),
+    /BOT Chain Testnet does not allow the carbon fulfilment lane/,
+  );
 });
 
 test("the adapter reports live on a testnet chain, because it is", () => {

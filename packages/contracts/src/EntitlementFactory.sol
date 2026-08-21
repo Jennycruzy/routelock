@@ -59,10 +59,14 @@ contract EntitlementFactory is AccessControl, ReentrancyGuard, IEntitlementClass
     // ---------------------------------------------------------------------
 
     function registerIssuer(address issuer) external onlyRole(Roles.ADMIN_ROLE) {
-        if (issuer == address(0)) revert ZeroAddress();
-        isRegisteredIssuer[issuer] = true;
-        _grantRole(Roles.ISSUER_ROLE, issuer);
-        emit IssuerRegistered(issuer);
+        _registerIssuer(issuer);
+    }
+
+    /// @notice Let any wallet opt into provider status explicitly.
+    /// @dev `createClass` also calls this automatically, so a provider's first
+    ///      offer remains a single wallet transaction.
+    function registerSelf() external {
+        _registerIssuer(msg.sender);
     }
 
     /// @notice Pausing an issuer stops new classes and new mints. It does not
@@ -87,6 +91,10 @@ contract EntitlementFactory is AccessControl, ReentrancyGuard, IEntitlementClass
         uint64 validUntil,
         uint32 maxSupply
     ) external {
+        // Provider onboarding is permissionless on fresh deployments. The
+        // registration is atomic with class creation, so an invalid offer does
+        // not leave behind a registered wallet.
+        _registerIssuer(msg.sender);
         _requireActiveIssuer(msg.sender);
         if (_classes[classId].issuer != address(0)) revert ClassExists(classId);
         if (settlementToken == address(0)) revert ZeroAddress();
@@ -181,6 +189,14 @@ contract EntitlementFactory is AccessControl, ReentrancyGuard, IEntitlementClass
     // ---------------------------------------------------------------------
     // Internals
     // ---------------------------------------------------------------------
+
+    function _registerIssuer(address issuer) internal {
+        if (issuer == address(0)) revert ZeroAddress();
+        if (isRegisteredIssuer[issuer]) return;
+        isRegisteredIssuer[issuer] = true;
+        _grantRole(Roles.ISSUER_ROLE, issuer);
+        emit IssuerRegistered(issuer);
+    }
 
     function _requireClass(bytes32 classId) private view returns (ServiceSpec storage spec) {
         spec = _classes[classId];

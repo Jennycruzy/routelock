@@ -21,7 +21,7 @@ import type {
   Receipt,
   VerificationResult,
 } from "@routelock/fulfilment";
-import type { ChainConfig } from "@routelock/chain";
+import { assertVerticalAllowed, type ChainConfig } from "@routelock/chain";
 import { CarbonmarkClient } from "./carbonmark.ts";
 import { CarbonmarkError, type Listing, type Registry } from "./types.ts";
 
@@ -82,6 +82,7 @@ export class CarbonmarkAdapter
     apiKey: string | undefined,
     now: () => Date = () => new Date(),
   ) {
+    assertVerticalAllowed(chain, "carbon");
     this.#client = new CarbonmarkClient(chain, apiKey);
     this.live = this.#client.live;
     this.#now = now;

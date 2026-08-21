@@ -11,6 +11,7 @@
 
 export type ChainEnv = "test" | "live";
 export type CarrierMode = "sandbox" | "live";
+export type AdapterVertical = "delivery" | "carbon" | "compute";
 
 /**
  * Settlement is behind a discriminated union from day one so that a chain
@@ -35,9 +36,9 @@ export type Settlement =
  *
  * `asset` is the token the venue actually accepts. It is stored separately from
  * the chain's `settlement.token` and **deliberately not assumed equal** — on
- * X Layer they are not. Collapsing them into one field is precisely the mistake
- * that would produce an adapter that compiles, deploys, and reverts on its first
- * real deposit.
+ * X Layer they happen to be equal only after the canonical USD₮0 correction.
+ * Keeping both fields prevents an adapter from silently assuming equality on a
+ * different chain and then reverting on its first real deposit.
  */
 export type YieldVenue =
   | {
@@ -68,6 +69,13 @@ export interface ChainConfig {
   readonly yieldVenue: YieldVenue;
   readonly env: ChainEnv;
   readonly carrierMode: CarrierMode;
+  /**
+   * The verticals this chain lane is allowed to load. This is deliberately
+   * part of chain configuration rather than an environment variable: a
+   * judge-facing deployment must not change meaning because a shell variable
+   * changed.
+   */
+  readonly allowedVerticals: readonly AdapterVertical[];
 }
 
 export const CHAINS = {
@@ -98,6 +106,7 @@ export const CHAINS = {
     },
     env: "test",
     carrierMode: "sandbox",
+    allowedVerticals: ["carbon", "delivery"],
   },
 
   xlayer_mainnet: {
@@ -120,9 +129,9 @@ export const CHAINS = {
       //   supply     113,309,004,080,663  vs  3,829,200,805,666   (30x)
       //   transfers  6,175                vs  324                 (19x, sampled
       //              over ten 100-block windows spanning ~50k blocks)
-      //   Aave       listed               vs  absent from all 9 reserves
-      //   testnet    the 1952 faucet dispenses USD₮0, so testnet already
-      //              settled in this asset while mainnet did not
+      //   Aave       USD₮0 listed         vs legacy token absent from reserves
+      //   testnet    the 1952 faucet dispenses USD₮0, matching mainnet's
+      //              canonical settlement asset
       //
       // The lesson is the one this file already teaches, applied one level
       // further: `symbol()` returning "USDT" proves a token calls itself USDT,
@@ -149,6 +158,7 @@ export const CHAINS = {
     },
     env: "live",
     carrierMode: "live",
+    allowedVerticals: ["carbon", "delivery"],
   },
 
   botchain_testnet: {
@@ -170,6 +180,7 @@ export const CHAINS = {
     },
     env: "test",
     carrierMode: "sandbox",
+    allowedVerticals: ["compute"],
   },
 
   botchain_mainnet: {
@@ -191,6 +202,7 @@ export const CHAINS = {
     },
     env: "live",
     carrierMode: "live",
+    allowedVerticals: ["compute"],
   },
 } as const satisfies Record<string, ChainConfig>;
 
@@ -242,6 +254,27 @@ export function getChain(key: string): ChainConfig {
     );
   }
   return chain;
+}
+
+/**
+ * Refuse to load an adapter on the wrong chain lane.
+ *
+ * BOT Chain is reserved for compute, while X Layer carries the live carbon
+ * lane. Keeping this at the shared chain boundary makes the rule apply to
+ * every adapter constructor and not only to one demo script.
+ */
+export function assertVerticalAllowed(
+  chain: ChainConfig,
+  vertical: AdapterVertical,
+): void {
+  if (chain.allowedVerticals.includes(vertical)) return;
+
+  throw new Error(
+    `FATAL: ${chain.name} does not allow the ${vertical} fulfilment lane. ` +
+      `Allowed lanes: ${chain.allowedVerticals.join(", ")}. ` +
+      `This chain's vertical binding is fixed in code, not configurable by ` +
+      `an environment variable.`,
+  );
 }
 
 /**

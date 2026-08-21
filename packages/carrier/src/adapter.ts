@@ -24,7 +24,7 @@ import type {
   Receipt,
   VerificationResult,
 } from "@routelock/fulfilment";
-import type { ChainConfig } from "@routelock/chain";
+import { assertVerticalAllowed, type ChainConfig } from "@routelock/chain";
 import { ShipbubbleClient } from "./shipbubble.ts";
 import type { Consignment, Lane, Quote } from "./types.ts";
 import { isCrossBorder } from "./types.ts";
@@ -72,6 +72,7 @@ export class ShipbubbleAdapter
   #client: ShipbubbleClient;
 
   constructor(chain: ChainConfig, carrierKey: string | undefined) {
+    assertVerticalAllowed(chain, "delivery");
     this.#client = new ShipbubbleClient(chain, carrierKey);
     this.live = this.#client.live;
   }

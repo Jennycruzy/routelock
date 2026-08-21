@@ -4,11 +4,12 @@
  *          UCR-437-2023, 0.027725 USDC on Base, discharging entitlement 4 on
  *          X Layer. Certificate and the checks that confirmed it are in
  *          docs/adapters.md.
- * Chain:   X Layer. The entitlement, collateral, escrow, compliance decision
- *          and audit trail are all on X Layer, and nothing of RouteLock is
- *          deployed anywhere else. The issuer's payment to the supplier crosses
- *          on Base (8453) because that is where the supplier's rails are — a
- *          cost of goods, not a settlement layer.
+ * Chain:   X Layer carbon lane. The entitlement, collateral, escrow, compliance
+ *          decision and audit trail for carbon are all on X Layer. BOT Chain's
+ *          separate generic deployment is reserved for compute and rejects this
+ *          adapter. The issuer's payment to the supplier crosses on Base (8453)
+ *          because that is where the supplier's rails are — a cost of goods,
+ *          not a settlement layer.
  * Access:  Keyless. Carbonmark's REST API is KYB-gated (compliance review, a
  *          signed API Services Agreement, then dashboard keys) and cannot be
  *          cleared on a build timeline. The Klima x402 endpoint needs no key
@@ -58,6 +59,7 @@ import type {
 } from "@routelock/fulfilment";
 import {
   assertKeylessSpendAllowed,
+  assertVerticalAllowed,
   FULFILMENT_CHAINS,
   KLIMA_X402_SPEND,
   type ChainConfig,
@@ -93,7 +95,8 @@ export interface X402Order {
   /// time of the order rather than from a cached or hardcoded list.
   readonly carbonClass: string;
   readonly tonnes: number;
-  /// The wallet that signs and pays. Holds USDC on Base and needs no ETH.
+  /// The account that signs and pays. In the production consumer flow this is
+  /// the issuer/RouteLock relayer; it holds USDC on Base and needs no ETH.
   readonly from: string;
   /// Credited on-chain. Permanent and un-editable once the retirement
   /// confirms, which is why the endpoint refuses to default it.
@@ -169,7 +172,7 @@ export class CarbonmarkX402Adapter
 {
   readonly name = "Carbonmark (Klima x402)";
   readonly vertical = "carbon" as const;
-  readonly status = "in_development" as const;
+  readonly status = "active" as const;
   /// **Always true, and not derived from the chain.**
   ///
   /// Every other adapter reads this off the chain because its provider has a
@@ -193,6 +196,7 @@ export class CarbonmarkX402Adapter
   #certificateWait: { timeoutMs: number; intervalMs: number };
 
   constructor(chain: ChainConfig, options: X402AdapterOptions) {
+    assertVerticalAllowed(chain, "carbon");
     this.#chain = chain;
     this.#client = options.client ?? new KlimaX402Client();
     this.#ledger = options.ledger;
@@ -303,7 +307,14 @@ export class CarbonmarkX402Adapter
   ///
   /// Steps 5 and 6 are the pair that a crash falls between, and step 5 is what
   /// makes that survivable.
-  async fulfil(approved: Approved<X402Order>): Promise<Receipt> {
+  /// Prepare the exact authorization a consumer wallet must sign.
+  ///
+  /// This is deliberately separate from `fulfil()`: the caller can inspect the
+  /// exact authorization before the configured payer signs it, while the
+  /// server owns the relay and the crash-safe ledger. Preparing is free; no
+  /// ledger attempt is recorded until the signed authorization is handed back
+  /// to `fulfilSigned()`.
+  async prepareAuthorization(approved: Approved<X402Order>): Promise<PreparedAuthorization> {
     const { order } = approved;
     const key = idempotencyKey({
       entitlementTokenId: order.entitlementTokenId,
@@ -324,6 +335,47 @@ export class CarbonmarkX402Adapter
     this.#assertAuthorizationMatchesOrder(prepared, order);
     this.#ledger.assertMaySpend(key, prepared.authValue);
 
+    return prepared;
+  }
+
+  /// Relay an authorization signed by the order's wallet.
+  ///
+  /// `prepared` must be the object returned by `prepareAuthorization()` and
+  /// `signature` must be produced over its exact `typedData`. The endpoint's
+  /// salt and nonce remain inside `actionsRetireRequest`; the server does not
+  /// reconstruct or edit the payment body.
+  async fulfilSigned(
+    approved: Approved<X402Order>,
+    prepared: PreparedAuthorization,
+    signature: string,
+  ): Promise<Receipt> {
+    const { order } = approved;
+    const key = idempotencyKey({
+      entitlementTokenId: order.entitlementTokenId,
+      classId: order.classId,
+      carbonClass: order.carbonClass,
+      tonnes: order.tonnes,
+      beneficiaryAddress: order.beneficiaryAddress,
+    });
+
+    const prior = this.#ledger.latest(key);
+    if (prior !== undefined && prior.state !== "failed" && prior.state !== "abandoned") {
+      throw new DuplicateRetirement(key, prior);
+    }
+
+    assertKeylessSpendAllowed(this.#chain, KLIMA_X402_SPEND, this.#env);
+    this.#assertAuthorizationMatchesOrder(prepared, order);
+    this.#ledger.assertMaySpend(key, prepared.authValue);
+
+    if (!/^0x[0-9a-fA-F]{130}$/.test(signature)) {
+      throw new X402Error(
+        "invalid_signature",
+        "the wallet returned a signature that is not a 65-byte hex signature",
+        400,
+        "actions/retire",
+      );
+    }
+
     this.#ledger.record({
       key,
       state: "attempting",
@@ -335,7 +387,6 @@ export class CarbonmarkX402Adapter
       nonce: prepared.nonce,
     });
 
-    const signature = await this.#sign(prepared.typedData);
     const body = withSignature(prepared.actionsRetireRequest, signature);
 
     let settled;
@@ -417,6 +468,12 @@ export class CarbonmarkX402Adapter
       currency: "USDC",
       live: true,
     };
+  }
+
+  async fulfil(approved: Approved<X402Order>): Promise<Receipt> {
+    const prepared = await this.prepareAuthorization(approved);
+    const signature = await this.#sign(prepared.typedData);
+    return this.fulfilSigned(approved, prepared, signature);
   }
 
   /// Re-check a retirement by its Base transaction hash, against the public

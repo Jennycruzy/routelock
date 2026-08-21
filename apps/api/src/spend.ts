@@ -21,6 +21,10 @@ import type { BudgetCaps } from "@routelock/compliance";
 /// rulings to understand the system; a hundred adds nothing but cost.
 export const SERVED_LEDGER = "data/served-inference.jsonl";
 
+function servedLedger(): string {
+  return process.env["ROUTELOCK_SERVED_LEDGER"] ?? SERVED_LEDGER;
+}
+
 export function servedCaps(env: NodeJS.ProcessEnv = process.env): BudgetCaps {
   const maxCalls = Number(env["ROUTELOCK_SERVED_MAX_CALLS"] ?? 40);
   const softLimitUsd = Number(env["ROUTELOCK_SERVED_SOFT_LIMIT_USD"] ?? 2);
@@ -36,7 +40,7 @@ export function servedCaps(env: NodeJS.ProcessEnv = process.env): BudgetCaps {
 }
 
 export function servedBudget(env: NodeJS.ProcessEnv = process.env): InferenceBudget {
-  return new InferenceBudget(ledgerPath(SERVED_LEDGER), servedCaps(env));
+  return new InferenceBudget(ledgerPath(env["ROUTELOCK_SERVED_LEDGER"] ?? SERVED_LEDGER), servedCaps(env));
 }
 
 export interface BudgetReport {
@@ -56,7 +60,7 @@ export function reportBudget(budget: InferenceBudget, caps: BudgetCaps): BudgetR
     spentUsdEstimate: Number(budget.spentUsd.toFixed(4)),
     softLimitUsd: caps.softLimitUsd,
     overSoftLimit: budget.overSoftLimit,
-    ledger: SERVED_LEDGER,
+    ledger: servedLedger(),
   };
 }
 

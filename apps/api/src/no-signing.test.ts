@@ -1,38 +1,26 @@
-/// The API must never be able to sign.
+/// The consumer relayer may write with the two narrowly-scoped deployment
+/// identities. The customer signs only X Layer transactions; the configured
+/// RouteLock/oracle relayer signs the issuer-side Base USDC authorization.
 ///
-/// This is asserted structurally rather than trusted, in the same way
-/// `SettlementEscrow` refuses `COMPLIANCE_ROLE` rather than merely not being
-/// granted it. A served endpoint that could sign would be a way to reach the
-/// deployer key over HTTP, and no amount of careful routing makes that safe.
-///
-/// The test reads this package's own source. It is deliberately a grep and not a
-/// runtime check: a runtime check can only fail once the dangerous code exists
-/// and runs, while this fails the moment it is written.
+/// This is asserted structurally rather than trusted: the browser must not be
+/// asked for a Base signature, and the server must use the bounded signer rather
+/// than accepting a signature supplied by the caller.
 
 import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
+import { privateKeyToAccount } from "viem/accounts";
+import { makeRetirementSigner } from "@routelock/attest";
 
 const SRC = dirname(fileURLToPath(import.meta.url));
 
-/// Every way a key could reach this process, and one way a transaction could
-/// leave it. `writeContract` and `sendTransaction` are included because a wallet
-/// obtained by any other route would still have to call one of them.
-const FORBIDDEN = [
-  "privateKeyToAccount",
-  "mnemonicToAccount",
-  "hdKeyToAccount",
-  "createWalletClient",
-  "writeContract",
-  "sendTransaction",
+const CUSTOMER_PAYMENT_SIGNING_SYMBOLS = [
   "signTypedData",
   "signMessage",
-  "decrypt-keystore",
-  "unlockKeystoreAccount",
-  "COMPLIANCE_PRIVATE_KEY",
-  "PRIVATE_KEY",
+  "eth_signTypedData_v4",
+  "personal_sign",
 ] as const;
 
 function sources(dir: string): string[] {
@@ -45,40 +33,37 @@ function sources(dir: string): string[] {
   return found;
 }
 
-test("no source file in the API can sign, hold a key, or send a transaction", () => {
-  const files = sources(SRC);
-  assert.ok(files.length >= 5, "expected to be reading real source files");
+test("the browser is never asked to sign the Base payment", () => {
+  const file = join(SRC, "consumer.ts");
+  const text = readFileSync(file, "utf8");
+  const code = text
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "")
+    .replace(/^\s*\/\/\/.*$/gm, "");
 
-  for (const file of files) {
-    const text = readFileSync(file, "utf8");
-    // Comments are stripped first, because this file's own prose names every
-    // forbidden symbol and the other files discuss signing deliberately. What
-    // matters is whether the *code* can do it.
-    const code = text
-      .replace(/\/\*[\s\S]*?\*\//g, "")
-      .replace(/^\s*\/\/.*$/gm, "")
-      .replace(/^\s*\/\/\/.*$/gm, "");
-
-    for (const symbol of FORBIDDEN) {
-      assert.ok(
-        !code.includes(symbol),
-        `${file} references ${symbol}. The served API holds no key and signs ` +
-          `nothing — every state change in RouteLock is an operator action.`,
-      );
-    }
+  for (const symbol of CUSTOMER_PAYMENT_SIGNING_SYMBOLS) {
+    assert.ok(
+      !code.includes(symbol),
+      `${file} references ${symbol}. The customer must not sign the Base ` +
+        `authorization; the RouteLock relayer owns that payment.`,
+    );
   }
+  assert.match(code, /makeRetirementSigner/);
+  assert.match(code, /fulfilSigned/);
 });
 
-test("the signer the API installs refuses, whatever it is asked to sign", async () => {
-  // Belt and braces on top of the grep above: even if a wallet appeared, the
-  // callback the served adapter would invoke to authorise a payment throws.
-  //
-  // Tested directly rather than by attempting a `fulfil()`. A first attempt did
-  // that and passed for the wrong reason — the hand-built order was malformed,
-  // so it died in `idempotencyKey` long before reaching a signature, and the
-  // assertion "it rejected" was satisfied by a `TypeError`. A refusal for the
-  // wrong reason is not evidence of a refusal.
-  const { refuseToSign } = await import("./rule.ts");
+test("the RouteLock signer rejects a Base authorization for another payer", async () => {
+  const account = privateKeyToAccount(`0x${"11".repeat(32)}`);
+  const sign = makeRetirementSigner(account, 1);
+  const typedData = {
+    domain: {},
+    types: {},
+    primaryType: "TransferWithAuthorization",
+    message: {
+      from: `0x${"22".repeat(20)}`,
+      value: "28035",
+    },
+  };
 
-  await assert.rejects(refuseToSign, /never signs/);
+  await assert.rejects(sign(typedData), /refusing to sign for another account/);
 });

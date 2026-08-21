@@ -69,6 +69,9 @@ importers:
       '@routelock/compliance':
         specifier: workspace:*
         version: link:../compliance
+      '@routelock/compute':
+        specifier: workspace:*
+        version: link:../compute
       '@routelock/fulfilment':
         specifier: workspace:*
         version: link:../fulfilment
@@ -141,6 +144,22 @@ importers:
       viem:
         specifier: ^2.21.0
         version: 2.55.16(typescript@5.9.3)
+    devDependencies:
+      tsx:
+        specifier: ^4.19.2
+        version: 4.23.12
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  packages/compute:
+    dependencies:
+      '@routelock/chain':
+        specifier: workspace:*
+        version: link:../chain
+      '@routelock/fulfilment':
+        specifier: workspace:*
+        version: link:../fulfilment
     devDependencies:
       tsx:
         specifier: ^4.19.2
