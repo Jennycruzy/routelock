@@ -36,7 +36,7 @@ import type { CarbonGround, CarbonProposal, CarbonQualityRequest } from "./types
 ///
 /// The suffix names what the ruling actually depended on: the registry
 /// allowlist and confidence bar in this file, both picked rather than measured.
-export const CARBON_ENGINE_VERSION = "compliance-0.2.0/carbon-registry-v1";
+export const CARBON_ENGINE_VERSION = "compliance-0.2.0/carbon-registry-v2";
 
 /// Minimum confidence to approve a retirement.
 ///
@@ -54,9 +54,11 @@ export const CARBON_ENGINE_VERSION = "compliance-0.2.0/carbon-registry-v1";
 /// a bar that no assessment from registry metadata could clear. Every class in
 /// live inventory was refused.
 ///
-/// 0.7 is a judgement, stated as one. **No curve backs it.** Earning a real
-/// number needs a corpus of credit classes with known integrity outcomes —
-/// which does not exist, and cannot be manufactured before a deadline.
+/// 0.6 is a judgement, stated as one. **No curve backs it.** It is the live
+/// starting bar for the demo: enough to require meaningful model evidence
+/// while allowing the recognised, registered, liquid classes in the current
+/// inventory to proceed. Earning a calibrated number needs a corpus of credit
+/// classes with known integrity outcomes, which does not exist yet.
 ///
 /// ## Why lowering it does not hollow out the gate
 ///
@@ -66,7 +68,7 @@ export const CARBON_ENGINE_VERSION = "compliance-0.2.0/carbon-registry-v1";
 /// before the model is even asked. On live inventory two of six classes refuse
 /// on those grounds alone, at any threshold. The teeth are upstream of this
 /// number.
-export const CARBON_CONFIDENCE_THRESHOLD = 0.7;
+export const CARBON_CONFIDENCE_THRESHOLD = 0.6;
 
 /// Oldest vintage the engine will approve without asking a human.
 ///

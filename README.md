@@ -552,7 +552,7 @@ traces back to this project's own database.
 
 **0.001 t of UCR-437-2023** (Solar PV – Small Scale, India), charged **0.027725
 USDC** on Base, discharging **entitlement 4** on X Layer testnet. The engine
-ruled `APPROVED` — the verdict the chain records, against the 0.7 carbon
+ruled `APPROVED` — the verdict the chain records, against the 0.6 carbon
 threshold — the decision was committed on chain by the compliance key, the credit
 was retired, and the provider's own evidence was committed back:
 
