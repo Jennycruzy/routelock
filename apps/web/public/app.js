@@ -22,9 +22,15 @@ const NETWORKS = {
     settlement: "USD₮0",
     settlementDecimals: 6,
     contracts: {
-      entitlementFactory: "0x87A78Cf1e419B9C707bA2848001DB2B3889afAf3",
-      settlementEscrow: "0x573fCA3A981218d1C148a63D9B27Bf1ef5867171",
+      // Fresh Aave-enabled, permissionless X Layer deployment. These values
+      // are only the safe first paint; the API deployment is still authoritative
+      // once capabilities load.
+      entitlementFactory: "0x31D6803f22B5447cd862bF3f108160f7aDb326ba",
+      serviceEntitlement: "0x105BAF5638fD84a1CADfF695498288BE20362293",
+      settlementEscrow: "0x8e7bB4133F73ae04e006116f0Fc7479A4Fe9030d",
+      activationRegistry: "0xaA251a902B699935DfE0e6F784C6dB49043fcCd2",
       settlementToken: "0x779Ded0c9e1022225f8E0630b35a9b54bE713736",
+      aaveYieldAdapter: "0x78694f4DE40B6E443f70F0E1E204833Be6D28143",
     },
   },
 };
