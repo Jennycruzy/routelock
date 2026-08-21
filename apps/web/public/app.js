@@ -990,7 +990,14 @@ async function createMerchantOffer(event) {
     if (!label || !terms || price < 0n || payout <= 0n || !Number.isInteger(supply) || supply <= 0 || !Number.isInteger(validDays) || validDays <= 0) {
       throw new Error("complete the offer details with a valid price, backing, supply and validity period");
     }
-    const draft = await post("/api/merchant/draft", { label, terms });
+    const draft = await post("/api/merchant/draft", { label, terms, issuer: walletAccount });
+    const classExists = await merchantReadBool(
+      network.contracts.entitlementFactory,
+      calldata("0x6caa4707", bytes32Word(draft.classId)),
+    );
+    if (classExists) {
+      throw new Error("This wallet already has an offer with that name. Change the offer name before trying again.");
+    }
     const validUntil = BigInt(Math.floor(Date.now() / 1000) + validDays * 86400);
     await sendMerchantTransaction(
       network.contracts.entitlementFactory,

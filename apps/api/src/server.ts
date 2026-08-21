@@ -341,17 +341,22 @@ async function handle(request: IncomingMessage, response: ServerResponse): Promi
         const body = await readJsonBody(request);
         const label = body["label"];
         const terms = body["terms"];
+        const issuer = body["issuer"];
         if (typeof label !== "string" || label.trim() === "") {
           throw new BadRequest("label is required to create a service offer");
         }
         if (typeof terms !== "string" || terms.trim() === "") {
           throw new BadRequest("terms are required to create a service offer");
         }
+        if (typeof issuer !== "string" || !/^0x[0-9a-fA-F]{40}$/.test(issuer.trim())) {
+          throw new BadRequest("issuer must be the connected provider wallet address");
+        }
         // This endpoint never signs or broadcasts. It only applies the same
-        // deterministic hash convention used by the contracts and e2e tools;
-        // the connected provider wallet still creates the class on chain.
+        // deterministic hash convention used by the contracts and e2e tools.
+        // Include the provider wallet so two permissionless providers may use
+        // the same human-readable offer label without colliding on classId.
         send(response, 200, {
-          classId: keccak256(toBytes(`routelock:class:${label.trim()}`)),
+          classId: keccak256(toBytes(`routelock:class:${issuer.trim().toLowerCase()}:${label.trim()}`)),
           termsHash: keccak256(toBytes(terms.trim())),
         });
         return;
