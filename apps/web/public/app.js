@@ -787,7 +787,7 @@ function renderMerchantOffers() {
   if (!list || !select) return;
   const offerings = [...merchantOfferings.values()];
   if (!offerings.length) {
-    list.innerHTML = `<p class="empty-state">No offer owned by this wallet was found. Create one on the right, or connect the provider wallet that created an existing offer.</p>`;
+    list.innerHTML = `<p class="empty-state">No offer owned by this wallet was found. Create one on the right, or connect the wallet that created an existing offer.</p>`;
     select.innerHTML = `<option value="">No offer loaded</option>`;
     return;
   }
@@ -821,7 +821,7 @@ async function loadMerchantData() {
   if (!walletAccount) {
     merchantPermissionless = false;
     capability.className = "consumer-capability warning";
-    capability.innerHTML = `<span class="status-dot testing"></span> <strong>Connect a provider wallet to publish offers.</strong> The page will read live class backing and let that wallet approve every change.`;
+    capability.innerHTML = `<span class="status-dot testing"></span> <strong>Any wallet can be an issuer.</strong> Connect yours to sign the X Layer offer and collateral transactions; no admin approval is required.`;
     $("merchant-issuer-state").textContent = "CONNECT WALLET";
     return;
   }
