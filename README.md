@@ -12,7 +12,7 @@ verifiable fulfilment evidence has been recorded.
 | Network | Product | What is live | Public proof |
 |---|---|---|---|
 | **X Layer mainnet (196)** | Carbon retirement | Permissionless offers, USD₮0 collateral and escrow, AI-assisted approval, fulfilment receipts, and optional Aave V3 yield | [Retirement certificate](https://app.carbonmark.com/retirements/id/8453-0xdb7451c298d6f57b58874bd1f7e7c447863ed1e1190c98cc45478c9aae285f0d-0) |
-| **BOT Chain mainnet (677)** | Decentralized compute | USDT-backed compute entitlement, AI policy decision, real Akash lease, provider evidence, and proof-gated settlement | [Akash workload](https://pl96kdv4mtbl3348hro782shmc.ingress.boogle.cloud/) · [Settlement](https://scan.botchain.ai/tx/0x9cfb98f4c5ae1db9bf318ab3a0cd631385d4da40c43067eeaab595880c288cab) |
+| **BOT Chain mainnet (677)** | Decentralized compute | USDT-backed compute entitlement, AI policy decision, real Akash lease, provider evidence, and proof-gated settlement | [Akash workload](https://f55mg7h4k5a0f4li7ne2ljrjj8.ingress.boogle.cloud/) · [Settlement](https://scan.botchain.ai/tx/0x9cfb98f4c5ae1db9bf318ab3a0cd631385d4da40c43067eeaab595880c288cab) |
 
 > **Status — completed:** carbon retirement is active on X Layer and compute
 > fulfilment is active on BOT Chain. Both lanes have completed a real external
@@ -121,8 +121,8 @@ The production run completed a real Akash workload and proof-gated settlement:
 | Entitlement | `1` — `Activated`, decision `APPROVED` |
 | Service class | `compute-hello-world-mainnet-1787324033` |
 | Decision hash | `0xd16f0c5b65f44cd5dcbec5c2a645981b8184fd959864963df6986f809f86d38f` |
-| Akash lease | `1787325423512:1:1:akash1k94uya5rhrtj9rfw850az9aq2d6vdpjmtnlgd0#web` |
-| Provider proof | [Public Akash ingress](https://pl96kdv4mtbl3348hro782shmc.ingress.boogle.cloud/) |
+| Current Akash lease | `1787507697713:1:1:akash1k94uya5rhrtj9rfw850az9aq2d6vdpjmtnlgd0#web` |
+| Current provider proof | [Public Akash ingress](https://f55mg7h4k5a0f4li7ne2ljrjj8.ingress.boogle.cloud/) |
 | On-chain proof | [BOT Chain settlement](https://scan.botchain.ai/tx/0x9cfb98f4c5ae1db9bf318ab3a0cd631385d4da40c43067eeaab595880c288cab) |
 
 Provider evidence was committed before `releaseToIssuer`. The completed record
@@ -214,7 +214,7 @@ Run the independent BOT Chain build:
 ROUTELOCK_CHAIN=botchain_mainnet \
 ROUTELOCK_API_PORT=8789 \
 ROUTELOCK_WEB_INDEX=botchain/index.html \
-ROUTELOCK_COMPUTE_PROOF_URL=https://pl96kdv4mtbl3348hro782shmc.ingress.boogle.cloud/ \
+ROUTELOCK_COMPUTE_PROOF_URL=https://f55mg7h4k5a0f4li7ne2ljrjj8.ingress.boogle.cloud/ \
 pnpm --filter @routelock/api start
 ```
 

@@ -7,9 +7,13 @@ Wants=network-online.target
 Type=simple
 User=root
 WorkingDirectory=/root/routelock
+# The provider-run credentials live in the ignored private compute file. Keep
+# them on the BOT service only; the X Layer service must never inherit them.
+EnvironmentFile=-/root/routelock/.env.compute.local
 Environment=ROUTELOCK_API_PORT=8789
 Environment=ROUTELOCK_API_HOST=127.0.0.1
-Environment=ROUTELOCK_CHAIN=botchain_testnet
+Environment=ROUTELOCK_CHAIN=botchain_mainnet
+Environment=ROUTELOCK_COMPUTE_PROOF_URL=https://f55mg7h4k5a0f4li7ne2ljrjj8.ingress.boogle.cloud/
 Environment=ROUTELOCK_WEB_ROOT=/root/routelock/apps/web/public/botchain
 Environment=ROUTELOCK_WEB_INDEX=index.html
 Environment=ROUTELOCK_DATA_DIR=/root/routelock/data/botchain
