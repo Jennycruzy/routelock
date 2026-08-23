@@ -137,6 +137,18 @@ const FACTORY_ABI = [
 const ESCROW_ABI = [
   {
     type: "function",
+    name: "deposits",
+    stateMutability: "view",
+    inputs: [{ name: "tokenId", type: "uint256" }],
+    outputs: [
+      { name: "classId", type: "bytes32" },
+      { name: "buyer", type: "address" },
+      { name: "amount", type: "uint256" },
+      { name: "settled", type: "bool" },
+    ],
+  },
+  {
+    type: "function",
     name: "postCollateral",
     stateMutability: "nonpayable",
     inputs: [{ name: "classId", type: "bytes32" }, { name: "amount", type: "uint256" }],
@@ -787,12 +799,20 @@ async function main(): Promise<void> {
     onChain.carrierRawHash !== finalFields.carrierRawHash
   ) throw new Error("BOT Chain activation record does not match the published compute evidence");
   const settled = await publicClient.readContract({ address: deployment.settlementEscrow, abi: ESCROW_ABI, functionName: "classEscrow", args: [classId] });
-  let escrowBalance = await publicClient.readContract({ address: settlementToken, abi: ERC20_ABI, functionName: "balanceOf", args: [deployment.settlementEscrow] });
-  for (let attempt = 0; attempt < 5 && escrowBalance !== 0n; attempt += 1) {
-    await new Promise((resolve) => setTimeout(resolve, 2000 * (attempt + 1)));
-    escrowBalance = await publicClient.readContract({ address: settlementToken, abi: ERC20_ABI, functionName: "balanceOf", args: [deployment.settlementEscrow] });
+  // The escrow is shared by every marketplace class. Its global token balance
+  // may correctly contain collateral for unrelated live offers, so completion
+  // must be asserted against this class and this entitlement only.
+  const deposit = await publicClient.readContract({
+    address: deployment.settlementEscrow,
+    abi: ESCROW_ABI,
+    functionName: "deposits",
+    args: [tokenId],
+  });
+  if (settled[3] !== 0n || settled[4] !== 0n || deposit[3] !== true) {
+    throw new Error(
+      `compute escrow did not settle cleanly: collateral=${settled[3]} obligation=${settled[4]} depositSettled=${deposit[3]}`,
+    );
   }
-  if (settled[4] !== 0n || escrowBalance !== 0n) throw new Error(`escrow is not empty after settlement: obligation=${settled[4]} balance=${escrowBalance}`);
   const verifiedAgain = await adapter.verify(receipt.ref);
   if (!verifiedAgain.found) throw new Error("Akash proof stopped verifying after BOT Chain settlement");
 
