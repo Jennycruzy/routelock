@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RouteLock — BOT Chain AI compute</title>
+<meta name="description" content="Choose an AI compute service or publish your own provider capacity. Akash runs the work and BOT Chain records the job.">
+<base href="/botchain/compute/">
+<link rel="stylesheet" href="../app.css?v=20260822-botchain-compute5">
+<link rel="stylesheet" href="compute.css?v=20260822-botchain-compute5">
+</head>
+<body class="compute-workspace-page">
+
+<header class="site-header">
+  <div class="shell nav-wrap">
+    <a class="brand" href="../" aria-label="Back to BOT Chain home">
+      <span class="brand-mark" aria-hidden="true"><span></span></span>
+      <span>ROUTELOCK / BOT CHAIN</span>
+    </a>
+    <nav class="nav" aria-label="Compute navigation">
+      <a href="#choose">Choose a path</a>
+      <a href="#ai">What the AI does</a>
+      <a href="#proof">Live proof</a>
+    </nav>
+    <button id="wallet-button" class="button button-dark button-small" type="button">Connect wallet <span aria-hidden="true">↗</span></button>
+  </div>
+</header>
+
+<main>
+  <section class="compute-hero shell">
+    <div class="compute-hero-copy">
+      <div class="eyebrow"><span class="eyebrow-line"></span> BOT CHAIN 677 / AI COMPUTE</div>
+      <h1>Put AI work<br><em>on real compute.</em></h1>
+      <p class="hero-lede">RouteLock connects a customer request to provider capacity. Akash runs the workload, the AI checks whether the job is allowed, and BOT Chain records the service and payment.</p>
+      <div class="hero-actions">
+        <a class="button button-dark" href="#choose">Choose your path <span aria-hidden="true">↓</span></a>
+        <a class="text-link" href="#ai">See what the AI checks <span aria-hidden="true">↗</span></a>
+      </div>
+      <div id="wallet-status" class="workspace-wallet-state"><span class="check-circle">✓</span> Connect once when you are ready to buy or provide.</div>
+    </div>
+    <aside class="compute-hero-note">
+      <span class="section-kicker">THE ROUTE</span>
+      <strong>Request a service</strong>
+      <span>↓</span>
+      <strong>AI checks the policy</strong>
+      <span>↓</span>
+      <strong>Akash runs the work</strong>
+      <span>↓</span>
+      <strong>BOT Chain records proof</strong>
+    </aside>
+  </section>
+
+  <section id="choose" class="choice-section section-pad">
+    <div class="shell">
+      <div class="section-kicker">01 / START HERE</div>
+      <div class="section-heading-row choice-heading">
+        <h2>How do you want<br><em>to use compute?</em></h2>
+        <p class="body-copy">Choose a path. The next view is your service page: browse an available job or publish the capacity you can provide.</p>
+      </div>
+
+      <div id="role-entry" class="role-entry-grid">
+        <button class="role-entry-card role-entry-buyer" type="button" data-role="buyer">
+          <span class="role-entry-number">01</span>
+          <span class="role-entry-kicker">FOR CUSTOMERS</span>
+          <h3>I need computing<br><em>power.</em></h3>
+          <p>Browse provider-backed services, choose a job, and approve the BOT Chain payment from your wallet.</p>
+          <span class="role-entry-cta">Browse services <b aria-hidden="true">↗</b></span>
+        </button>
+        <button class="role-entry-card role-entry-provider" type="button" data-role="provider">
+          <span class="role-entry-number">02</span>
+          <span class="role-entry-kicker">FOR PROVIDERS</span>
+          <h3>I provide computing<br><em>power.</em></h3>
+          <p>Describe your machine or workload, set your price, lock security, and make capacity available to customers.</p>
+          <span class="role-entry-cta">Publish a service <b aria-hidden="true">↗</b></span>
+        </button>
+      </div>
+
+      <div id="service-view" class="service-view" hidden>
+        <div class="service-page-head">
+          <button id="back-to-roles" class="text-link service-back" type="button"><span aria-hidden="true">←</span> Choose another path</button>
+          <div class="section-kicker"><span id="service-kicker">SERVICE PAGE</span></div>
+          <h2 id="service-title">Choose a service.<br><em>Run the work.</em></h2>
+          <p id="service-intro" class="body-copy">Every card below is a live provider offer read from BOT Chain Mainnet.</p>
+        </div>
+
+        <div id="buyer-role" class="role-panel service-panel">
+          <div class="service-panel-copy">
+            <span class="service-label">LIVE SERVICE CATALOG</span>
+            <h3>Pick the job<br><em>you want to run.</em></h3>
+            <p>These are not presentation tiles. Each service card is backed by an on-chain provider offer with an available job, price, and collateral state.</p>
+            <div class="service-note"><strong>After you choose</strong><span>Your wallet approves the service payment, then records the job entitlement on BOT Chain 677.</span></div>
+          </div>
+          <div class="service-catalog-column">
+            <div id="buyer-offers" class="service-catalog" aria-live="polite"><p class="workspace-message">Loading available services…</p></div>
+            <section id="buyer-checkout" class="buyer-checkout" hidden aria-labelledby="checkout-title">
+              <div class="checkout-head">
+                <div><span class="service-label">CUSTOMER CHECKOUT</span><h3 id="checkout-title">Configure your job.</h3></div>
+                <button id="checkout-close" class="text-link" type="button">Close ×</button>
+              </div>
+              <ol class="checkout-steps" aria-label="Checkout progress">
+                <li data-checkout-step="configure" class="active"><span>01</span> Configure</li>
+                <li data-checkout-step="review"><span>02</span> Review</li>
+                <li data-checkout-step="purchase"><span>03</span> Purchase</li>
+                <li data-checkout-step="track"><span>04</span> Track</li>
+              </ol>
+
+              <form id="buyer-configure" class="compute-form checkout-pane">
+                <div id="checkout-offer" class="checkout-offer-summary"></div>
+                <label>Job name<input id="buyer-job-name" required maxlength="80" placeholder="Product image classification"></label>
+                <label>What should the workload do?<textarea id="buyer-workload" required maxlength="1000" rows="5" placeholder="Describe the input, task, and expected behavior."></textarea></label>
+                <label>Required output<textarea id="buyer-output" required maxlength="500" rows="3" placeholder="Describe the result or file you expect back."></textarea></label>
+                <label>Input or dataset reference (optional)<input id="buyer-input-ref" maxlength="300" placeholder="HTTPS or IPFS reference—never enter a secret"></label>
+                <button class="button button-dark" type="submit">Review request <span aria-hidden="true">→</span></button>
+              </form>
+
+              <div id="buyer-review" class="checkout-pane" hidden>
+                <div id="checkout-review-content" class="checkout-review"></div>
+                <p class="checkout-disclosure">Your full request stays in this browser. RouteLock commits its hash on BOT Chain so the provider result can be checked against the request without publishing private input.</p>
+                <div class="checkout-actions"><button id="checkout-edit" class="button button-ghost" type="button">Edit request</button><button id="checkout-buy" class="button button-dark" type="button">Approve &amp; purchase <span aria-hidden="true">↗</span></button></div>
+              </div>
+
+              <div id="buyer-purchase" class="checkout-pane" hidden>
+                <div class="checkout-progress-card"><span class="loading-dot"></span><div><strong id="purchase-title">Preparing wallet transaction…</strong><p id="purchase-detail">Keep this page open while BOT Chain confirms each step.</p></div></div>
+              </div>
+
+              <div id="buyer-track" class="checkout-pane" hidden>
+                <div id="track-summary" class="track-summary"></div>
+                <div id="track-timeline" class="track-timeline" aria-live="polite"></div>
+                <div class="checkout-actions"><button id="track-refresh" class="button button-ghost" type="button">Refresh status</button><a id="track-transaction" class="button button-dark" target="_blank" rel="noreferrer">View purchase <span aria-hidden="true">↗</span></a></div>
+              </div>
+            </section>
+            <p id="buyer-message" class="workspace-message" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div id="provider-role" class="role-panel service-panel" hidden>
+          <div class="service-panel-copy">
+            <span class="service-label">PROVIDER SERVICE PAGE</span>
+            <h3>Turn your capacity<br><em>into a service.</em></h3>
+            <p>Publish once and customers can discover the offer. Your wallet creates the offer and locks the security; RouteLock only derives the identifiers and reads the chain.</p>
+            <div class="service-note"><strong>Anyone can provide</strong><span>The fresh BOT Chain factory accepts provider onboarding from any wallet. No X Layer account is involved.</span></div>
+          </div>
+          <div class="service-catalog-column">
+            <form id="provider-form" class="compute-form service-form">
+              <label>Service name<input id="provider-label" required maxlength="80" placeholder="GPU inference" value="Compute capacity"></label>
+              <label>What can a customer run?<textarea id="provider-terms" required maxlength="500" rows="4" placeholder="Describe the workload, hardware and acceptable use."></textarea></label>
+              <div class="compute-form-row">
+                <label>Customer price (USDT)<input id="provider-price" required inputmode="decimal" value="0.10"></label>
+                <label>Your payout (USDT)<input id="provider-payout" required inputmode="decimal" value="0.10"></label>
+              </div>
+              <div class="compute-form-row">
+                <label>Security held (USDT)<input id="provider-collateral" required inputmode="decimal" value="1.00"></label>
+                <label>Jobs available<input id="provider-supply" required inputmode="numeric" value="10"></label>
+              </div>
+              <label>Keep this service open (days)<input id="provider-days" required inputmode="numeric" value="30"></label>
+              <button id="provider-publish" class="button button-dark" type="submit">Publish service <span aria-hidden="true">↗</span></button>
+            </form>
+            <p id="provider-message" class="workspace-message" aria-live="polite">Checking whether provider publishing is open…</p>
+          </div>
+        </div>
+
+        <details id="settings" class="settings-card">
+          <summary>Provider setup for a new Akash run <span>+</span></summary>
+          <div class="settings-inner">
+            <p class="body-copy">Operator-only settings for launching a fresh Akash workload. Customers do not need these values; the verified workload below is already live.</p>
+            <div class="settings-grid">
+              <div><code>CONSOLE_API_URL</code><span>Akash control plane</span></div>
+              <div><code>API_KEY</code><span>Server access</span></div>
+              <div><code>SDL_PATH</code><span>Workload definition</span></div>
+              <div><code>SERVICE_NAME</code><span>Service to open</span></div>
+              <div><code>DEPOSIT_USD</code><span>Akash budget</span></div>
+              <div><code>*_POLL_MS</code><span>Wait times</span></div>
+            </div>
+            <p id="settings-state" class="workspace-message" aria-live="polite">Checking provider setup…</p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="ai" class="ai-section section-pad">
+    <div class="shell">
+      <div class="section-kicker">02 / THE AI LAYER</div>
+      <div class="section-heading-row ai-heading">
+        <h2>The AI is the<br><em>policy gate.</em></h2>
+        <p class="body-copy">It does not hold a wallet and it does not move money. It reads the requested workload against the exact Akash acceptable-use policy, then supplies evidence for a deterministic decision.</p>
+      </div>
+      <div class="ai-grid">
+        <article class="ai-card">
+          <span class="ai-card-number">01</span>
+          <span class="service-label">READ THE REQUEST</span>
+          <h3>Understand the workload.</h3>
+          <p>The model receives the service name, workload description, SDL, operator declaration, and the policy retrieved from Akash.</p>
+        </article>
+        <article class="ai-card">
+          <span class="ai-card-number">02</span>
+          <span class="service-label">PROPOSE EVIDENCE</span>
+          <h3>Find conflicts or gaps.</h3>
+          <p>It returns policy conflicts, missing information, confidence, and a short rationale. Uncertainty is visible instead of being silently approved.</p>
+        </article>
+        <article class="ai-card">
+          <span class="ai-card-number">03</span>
+          <span class="service-label">APPLY THE RULE</span>
+          <h3>Let code decide.</h3>
+          <p>Deterministic rules apply the confidence threshold and refuse or request information when the evidence is not strong enough.</p>
+        </article>
+      </div>
+      <div class="ai-boundary"><span>THE GUARANTEE</span><strong>AI proposes. Rules decide. Proof gates settlement.</strong><p>The provider must still deliver a reachable workload. BOT Chain only releases the provider-side path after the recorded proof checks pass.</p></div>
+    </div>
+  </section>
+
+  <section id="proof" class="compute-section section-pad">
+    <div class="shell">
+      <div class="section-kicker">03 / VERIFIED EXECUTION</div>
+      <div class="compute-section-heading">
+        <div>
+          <h2>See where the<br><em>work runs.</em></h2>
+          <p class="body-copy">The current proof is a real Akash provider workload. Open it to see the execution point; the marketplace and payment records remain on BOT Chain.</p>
+        </div>
+        <div id="compute-capability" class="consumer-capability warning" aria-live="polite"><span class="loading-dot"></span> Checking compute…</div>
+      </div>
+      <div class="execution-grid">
+        <article class="execution-card execution-card-primary">
+          <div class="panel-head"><span><i class="status-dot live"></i> LIVE AKASH WORKLOAD</span><span id="execution-state">CHECKING</span></div>
+          <h3>Open the verified<br><em>provider endpoint.</em></h3>
+          <p class="panel-copy">The completed proof workload is a public Next.js service running behind an Akash lease.</p>
+          <a id="live-ingress" class="button button-dark" href="https://pl96kdv4mtbl3348hro782shmc.ingress.boogle.cloud/" target="_blank" rel="noreferrer">Open live workload <span aria-hidden="true">↗</span></a>
+          <p id="ingress-detail" class="workspace-message" aria-live="polite">Loading current workload…</p>
+        </article>
+        <article class="execution-card">
+          <div class="panel-head"><span>BOT CHAIN</span><span>677</span></div>
+          <h3>One route.<br><em>Proof at every step.</em></h3>
+          <div class="proof-list">
+            <div><span>01</span><p><strong>Service</strong> A provider offer is read from the live factory and escrow.</p></div>
+            <div><span>02</span><p><strong>Decision</strong> The AI policy assessment is constrained by deterministic rules.</p></div>
+            <div><span>03</span><p><strong>Settlement</strong> Provider payment follows a reachable workload proof.</p></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="../"><span class="brand-mark" aria-hidden="true"><span></span></span><span>ROUTELOCK / BOT CHAIN</span></a><p class="muted small">Choose a service → AI policy gate → Akash execution → BOT Chain proof.</p><a href="#choose" class="back-top">Back to services ↑</a></div></footer>
+
+<div id="wallet-modal" class="modal-backdrop" hidden>
+  <div class="wallet-modal" role="dialog" aria-modal="true" aria-labelledby="wallet-title">
+    <button id="wallet-close" class="modal-close" type="button" aria-label="Close">×</button>
+    <div class="section-kicker">BOT CHAIN WALLET</div>
+    <h2 id="wallet-title">Connect once.</h2>
+    <p class="modal-copy">Choose a wallet. It will be switched to BOT Chain Mainnet 677 before a transaction is sent.</p>
+    <div class="wallet-options">
+      <button type="button" class="wallet-option" data-wallet-provider="metamask"><span class="wallet-logo fox">M</span><span><strong>MetaMask</strong><small>Browser wallet</small></span><b>↗</b></button>
+      <button type="button" class="wallet-option" data-wallet-provider="okx"><span class="wallet-logo okx">OK</span><span><strong>OKX Wallet</strong><small>Browser wallet</small></span><b>↗</b></button>
+    </div>
+    <p id="wallet-modal-message" class="network-message" aria-live="polite"></p>
+  </div>
+</div>
+
+<script>window.ROUTELOCK_BASE_PATH="/botchain";</script>
+<script src="compute.js?v=20260822-botchain-compute5"></script>
+</body>
+</html>

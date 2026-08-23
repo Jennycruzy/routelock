@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RouteLock Agent — BOT Chain compute</title>
-<meta name="description" content="RouteLock BOT Chain compute build: provider work, result and ingress proof before payment.">
+<title>RouteLock Agent — BOT Chain</title>
+<meta name="description" content="RouteLock turns a compute request into a live Akash workload with BOT Chain proof.">
 <base href="/botchain/">
-<link rel="stylesheet" href="app.css?v=20260821-botchain-separate">
+<link rel="stylesheet" href="app.css?v=20260822-botchain-landing">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='12' y='12' width='76' height='76' rx='22' fill='%23131f1a'/><path d='M31 51h38M50 31v38' stroke='%23eb7162' stroke-width='7' stroke-linecap='round'/></svg>'>
 </head>
 <body>
@@ -19,30 +19,27 @@
     </a>
     <nav class="nav" aria-label="Main navigation">
       <a href="#agent">Agent</a>
-      <a href="#service">Compute</a>
-      <a href="#how-it-works">How it works</a>
-      <a href="#live">Status</a>
+      <a href="compute/">Compute build</a>
     </nav>
-    <button id="wallet-button" class="button button-dark button-small" type="button">Connect wallet <span aria-hidden="true">↗</span></button>
+    <a class="button button-dark button-small" href="compute/">Open compute build <span aria-hidden="true">↗</span></a>
   </div>
 </header>
 
 <main id="top">
-  <section id="agent" class="hero shell landing-view">
+  <section id="agent" class="hero shell">
     <div class="hero-copy">
       <div class="eyebrow"><span class="eyebrow-line"></span> BOT CHAIN / AI COMPUTE</div>
-      <h1>Compute with proof.<br><em>Provider work you can check.</em></h1>
-      <p class="hero-lede">This is the independent BOT Chain build. RouteLock checks the workload, waits for a real provider lease and result, and records ingress proof before customer payment opens.</p>
+      <h1>Computing power.<br><em>With proof attached.</em></h1>
+      <p class="hero-lede">RouteLock turns a request for compute into a verifiable provider job. A wallet starts the BOT Chain path, Akash runs the workload, and the result is opened at its live ingress before settlement is released.</p>
       <div class="agent-brief">
-        <div class="agent-brief-head"><span>BOT CHAIN BUILD</span><span>TESTNET 968</span></div>
-        <strong>The customer flow stays closed until a real provider run can be independently verified.</strong>
-        <div class="agent-brief-grid"><span><b>CHECK</b> Reviews the requested workload and policy.</span><span><b>RUN</b> Waits for the provider lease and result.</span><span><b>PROVE</b> Records the provider response on BOT Chain.</span></div>
+        <div class="agent-brief-head"><span>WHAT THIS DOES</span><span>MAINNET 677</span></div>
+        <strong>One route from a customer request to provider work you can inspect.</strong>
+        <div class="agent-brief-grid"><span><b>REQUEST</b> Connect a wallet and choose the compute path.</span><span><b>EXECUTE</b> Akash runs the workload on a live provider lease.</span><span><b>PROVE</b> BOT Chain records the evidence and settlement.</span></div>
       </div>
       <div class="hero-actions">
-        <a class="button button-dark" href="#service">Open compute build <span aria-hidden="true">↓</span></a>
-        <button id="hero-connect" class="text-link text-button" type="button">Connect wallet <span aria-hidden="true">↗</span></button>
+        <a class="button button-dark" href="compute/">Open compute build <span aria-hidden="true">↓</span></a>
+        <a class="text-link" href="compute/">See where the work runs <span aria-hidden="true">↗</span></a>
       </div>
-      <div id="wallet-status" class="hero-note"><span class="check-circle">✓</span> Your wallet is not connected.</div>
     </div>
 
     <div class="hero-art" aria-label="BOT Chain compute build">
@@ -52,102 +49,33 @@
       <div class="network-line line-one"><span></span></div>
       <div class="network-line line-two"><span></span></div>
       <div class="hero-console">
-        <div class="console-top"><span>BOT CHAIN BUILD</span><span class="console-live"><i></i> TESTNET</span></div>
+        <div class="console-top"><span>BOT CHAIN BUILD</span><span class="console-live"><i></i> MAINNET</span></div>
         <div class="console-title">AI compute.<br><em>Provider proof.</em></div>
         <div class="console-divider"></div>
-        <div class="console-network"><span class="network-signal"></span><span id="current-network">AI compute</span><strong>↗</strong></div>
+        <div class="console-network"><span class="network-signal"></span><span>Akash live lease</span><strong>↗</strong></div>
       </div>
-      <button type="button" class="network-badge badge-b" aria-label="BOT Chain Testnet"><b>BOT</b><span>CHAIN 968</span></button>
+      <div class="network-badge badge-b" aria-label="BOT Chain Mainnet"><b>BOT</b><span>CHAIN 677</span></div>
       <div class="art-caption">WORK IN.<br>PROOF OUT.</div>
     </div>
   </section>
 
-  <section id="service" class="simple-section section-pad landing-view">
+  <section class="simple-section section-pad landing-intro">
     <div class="shell">
-      <div class="service-toolbar"><a href="/">← X Layer build</a><span>INDEPENDENT BOT CHAIN BUILD</span></div>
-      <div class="section-kicker">01 / BOT CHAIN COMPUTE</div>
-      <div class="simple-heading"><h2>Computing power<br><em>with proof.</em></h2></div>
-      <div class="service-switch" role="tablist" aria-label="Choose your role">
-        <button type="button" class="service-tab active" data-service-role="botchain" data-role="buyer">I need computing power</button>
-        <button type="button" class="service-tab" data-service-role="botchain" data-role="merchant">I provide computing power</button>
-      </div>
-
-      <div id="botchain-view" class="role-view">
-        <div id="botchain-buyer-view" class="role-view">
-          <p class="service-intro">The customer request opens only after the provider run is real from start to finish: lease, live result, ingress and BOT Chain record.</p>
-          <div id="bot-capability" class="consumer-capability warning" aria-live="polite"><span class="loading-dot"></span> Checking the BOT Chain build…</div>
-          <div class="compute-gate compute-gate-large"><span>01</span><strong>Customer requests are gated by the proof run</strong><p>The compute adapter, policy check and BOT Chain testnet contracts are built. One real provider lease and public result are still required before payment opens.</p></div>
-        </div>
-
-        <div id="botchain-merchant-view" class="role-view" hidden>
-          <p class="service-intro">This is the provider side of the BOT Chain build. The provider run must create a real compute lease, check its result and commit the evidence before customer payment opens.</p>
-          <div class="merchant-status-grid">
-            <div class="merchant-status-card"><span class="status-dot testing"></span><strong>Provider run</strong><p>Built and preflighted; the live lease and ingress proof are the activation gate.</p></div>
-            <div class="merchant-status-card"><span class="status-dot testing"></span><strong>BOT Chain record</strong><p>The generic entitlement, escrow and registry contracts are deployed on testnet 968.</p></div>
-            <div class="merchant-status-card"><span class="status-dot live"></span><strong>Provider controls</strong><p>Provider actions remain wallet-controlled. This build never invents a result.</p></div>
-          </div>
-          <div class="compute-gate compute-gate-large"><span>02</span><strong>Provider activation is the next live step</strong><p>When the real workload returns a checkable result, this build can expose the customer flow without borrowing state from X Layer.</p></div>
-        </div>
-        <p id="bot-message" class="network-message" aria-live="polite"></p>
-      </div>
-    </div>
-  </section>
-
-  <section id="how-it-works" class="simple-section section-pad landing-view">
-    <div class="shell">
-      <div class="section-kicker">02 / HOW BOT CHAIN WORKS</div>
+      <div class="section-kicker">01 / START HERE</div>
       <div class="section-heading-row">
-        <h2>One build.<br><em>One proof path.</em></h2>
-        <p class="body-copy">This page does not load X Layer offers, carbon inventory or Aave controls. It talks only to the BOT Chain compute API and its own deployment.</p>
+        <h2>The landing page<br><em>stays simple.</em></h2>
+        <p class="body-copy">The actual compute workspace lives inside this BOT Chain build. Open it when you are ready to connect a wallet, inspect the live execution point, or enter the provider path.</p>
       </div>
-      <div class="lane-how">
-        <article class="how-lane how-lane-compute">
-          <div class="how-lane-head"><span><i class="status-dot testing"></i> BOT CHAIN / AI COMPUTE</span><strong>IN DEVELOPMENT</strong></div>
-          <h3>Buy computing power with proof.</h3>
-          <div class="how-steps">
-            <div class="how-step"><span>01</span><div><strong>Provider describes the work</strong><p>The provider defines the workload, acceptable-use rules, price and available capacity on the BOT Chain build.</p></div></div>
-            <div class="how-step"><span>02</span><div><strong>Customer submits a job</strong><p>RouteLock checks the request before a provider is hired or customer money is released.</p></div></div>
-            <div class="how-step"><span>03</span><div><strong>A real provider runs it</strong><p>The system creates a real lease, waits for the named service and checks the returned endpoint.</p></div></div>
-            <div class="how-step"><span>04</span><div><strong>BOT Chain records the proof</strong><p>The lease, result and provider response become the independently checkable work record.</p></div></div>
-          </div>
-        </article>
+      <div class="landing-facts">
+        <div><span>EXECUTION</span><strong>Akash provider lease</strong></div>
+        <div><span>NETWORK</span><strong>BOT Chain Mainnet · 677</strong></div>
+        <div><span>PROOF</span><strong>Live ingress + on-chain record</strong></div>
+        <a class="button button-dark" href="compute/">Enter the compute workspace <span aria-hidden="true">↗</span></a>
       </div>
     </div>
-  </section>
-
-  <section id="live" class="live-section section-pad landing-view">
-    <div class="shell">
-      <div class="section-kicker light-kicker">03 / BOT BUILD STATUS <span id="live-read-at">READING NOW</span></div>
-      <div class="live-heading"><h2>What this build<br><em>can prove today.</em></h2><p>The compute build remains explicit about the provider-run gate.</p></div>
-      <div class="live-grid">
-        <div class="live-card live-card-primary"><div class="live-card-head"><span><i class="status-dot testing"></i> AI COMPUTE</span><span>IN DEVELOPMENT</span></div><strong>Waiting for a real provider run</strong><p>The adapter and testnet contracts exist. Customer checkout stays closed until lease, result, ingress and chain proof are all present.</p></div>
-      </div>
-      <div id="live-details" class="live-details"><p class="loading-copy">Checking BOT Chain status…</p></div>
-    </div>
-  </section>
-
-  <section class="plain-footer-section section-pad landing-view">
-    <div class="shell plain-footer-grid"><div><div class="section-kicker">04 / SEPARATE BUILDS</div><h2>Compute here.<br><em>Carbon elsewhere.</em></h2></div><div><p class="body-copy">The X Layer carbon build and the BOT Chain compute build share a domain, not application state.</p><button type="button" class="button button-dark" id="footer-connect">Connect wallet <span aria-hidden="true">↗</span></button></div></div>
   </section>
 </main>
 
-<footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><span></span></span><span>ROUTELOCK / BOT CHAIN</span></a><p id="foot" class="muted small">This is the independent BOT Chain build.</p><span><a href="/" class="back-top">X Layer build ↗</a> · <a href="#top" class="back-top">Back to top ↑</a></span></div></footer>
-
-<div id="wallet-modal" class="modal-backdrop" hidden>
-  <div class="wallet-modal" role="dialog" aria-modal="true" aria-labelledby="wallet-title">
-    <button id="wallet-close" class="modal-close" type="button" aria-label="Close">×</button>
-    <div class="section-kicker">CONNECT WALLET</div>
-    <h2 id="wallet-title">Choose a wallet.</h2>
-    <p class="modal-copy">Connect your wallet when you are ready to approve a BOT Chain action. RouteLock never receives your private key.</p>
-    <div class="wallet-options">
-      <button type="button" class="wallet-option" data-wallet-provider="metamask"><span class="wallet-logo fox">M</span><span><strong>MetaMask</strong><small>Browser wallet</small></span><b>↗</b></button>
-      <button type="button" class="wallet-option" data-wallet-provider="okx"><span class="wallet-logo okx">OK</span><span><strong>OKX Wallet</strong><small>Browser wallet</small></span><b>↗</b></button>
-    </div>
-    <p id="wallet-modal-message" class="network-message" aria-live="polite"></p>
-  </div>
-</div>
-
-<script>window.ROUTELOCK_BUILD="botchain";window.ROUTELOCK_BASE_PATH="/botchain";</script>
-<script src="app.js?v=20260821-botchain-separate"></script>
+<footer class="site-footer"><div class="shell footer-inner"><a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"><span></span></span><span>ROUTELOCK / BOT CHAIN</span></a><p class="muted small">Request → Akash execution → BOT Chain proof.</p><a href="#top" class="back-top">Back to top ↑</a></div></footer>
 </body>
 </html>

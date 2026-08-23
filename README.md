@@ -104,6 +104,8 @@ Settlement asset: USD₮0 (`0x779Ded0c9e1022225f8E0630b35a9b54bE713736`, 6 decim
 BOT Chain is RouteLock's production compute lane. Its Akash adapter:
 
 - evaluates a submitted workload against the live acceptable-use policy;
+- lets a buyer configure and review a workload, purchase its entitlement, and
+  track the resulting request from the customer interface;
 - creates an Akash deployment from an operator-supplied SDL;
 - selects and accepts a live provider bid;
 - waits for the named service and verifies its public ingress;
@@ -242,7 +244,6 @@ configured networks. Deployment broadcasts are retained under
 ## Current limitations
 
 - Delivery/Shipbubble is a reference implementation and is not deployed.
-- BOT Chain consumer checkout is narrower than the completed provider-side flow.
 - The fresh X Layer factory requires a provider to create and back an offer
   before checkout; no provider collateral has yet been supplied to Aave.
 - Testnets are retained for verification and history, not presented as
