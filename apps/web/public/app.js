@@ -398,10 +398,23 @@ async function waitForWalletReceipt(hash) {
 
 async function sendWalletTransaction(to, data, label) {
   setConsumerMessage(`${label} — confirm it in your wallet…`, "pending");
-  const hash = await walletProvider.request({
+  let promptTimer;
+  const walletRequest = walletProvider.request({
     method: "eth_sendTransaction",
     params: [{ from: walletAccount, to, data }],
   });
+  const promptTimeout = new Promise((_, reject) => {
+    promptTimer = setTimeout(
+      () => reject(new Error("Your wallet did not answer within 90 seconds. Open the wallet extension, approve or reject the pending request, then try again.")),
+      90_000,
+    );
+  });
+  let hash;
+  try {
+    hash = await Promise.race([walletRequest, promptTimeout]);
+  } finally {
+    clearTimeout(promptTimer);
+  }
   setConsumerMessage(`${label} submitted. Waiting for the chain…`, "pending");
   await waitForWalletReceipt(hash);
   return hash;
@@ -418,10 +431,28 @@ async function readAllowance(token, owner, spender) {
   return BigInt(result || "0x0");
 }
 
+async function readTokenBalance(token, owner) {
+  const result = await walletProvider.request({
+    method: "eth_call",
+    params: [{
+      to: token,
+      data: calldata("0x70a08231", addressWord(owner)),
+    }, "latest"],
+  });
+  return BigInt(result || "0x0");
+}
+
 async function approveEntitlementPayment(order) {
   const contracts = consumerContracts();
   const token = order.offering.settlementToken || contracts.settlementToken;
   const amount = BigInt(order.offering.priceAtomic);
+  const balance = await readTokenBalance(token, walletAccount);
+  if (balance < amount) {
+    const shortfall = amount - balance;
+    throw new Error(
+      `Your wallet has ${displayAtomic(balance)} but this service costs ${displayAtomic(amount)}. Add at least ${displayAtomic(shortfall)} before approving the service.`,
+    );
+  }
   const allowance = await readAllowance(token, walletAccount, contracts.settlementEscrow);
   if (allowance >= amount) return null;
   return sendWalletTransaction(
