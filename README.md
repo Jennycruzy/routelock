@@ -244,8 +244,6 @@ configured networks. Deployment broadcasts are retained under
 ## Current limitations
 
 - Delivery/Shipbubble is a reference implementation and is not deployed.
-- The fresh X Layer factory requires a provider to create and back an offer
-  before checkout; no provider collateral has yet been supplied to Aave.
 - Testnets are retained for verification and history, not presented as
   additional production products.
 
